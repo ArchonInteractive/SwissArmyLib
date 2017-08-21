@@ -46,6 +46,9 @@
     <Compile Include="Automata\State.cs" />
     <Compile Include="Collections\DictionaryWithDefault.cs" />
     <Compile Include="Collections\ShuffleBag.cs" />
+    <Compile Include="Gravity\GravitationalEntity.cs" />
+    <Compile Include="Gravity\CircularGravitationalPoint.cs" />
+    <Compile Include="Gravity\GravitationalSystem.cs" />
     <Compile Include="Pooling\GameObjectPool.cs" />
     <Compile Include="Pooling\IPool.cs" />
     <Compile Include="Pooling\IPoolable.cs" />
