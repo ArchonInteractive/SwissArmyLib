@@ -1,16 +1,17 @@
 ﻿using System;
 using System.Collections.Generic;
+using Archon.SwissArmyLib.Collections;
 using UnityEngine;
 
 namespace Archon.SwissArmyLib.Events
 {
     public static class EventSystem
     {
-        private static readonly Dictionary<int, List<IEventListener>> EventListeners = new Dictionary<int, List<IEventListener>>();
+        private static readonly Dictionary<int, PrioritizedList<IEventListener>> EventListeners = new Dictionary<int, PrioritizedList<IEventListener>>();
 
         public static void Invoke(int eventId)
         {
-            List<IEventListener> listeners;
+            PrioritizedList<IEventListener> listeners;
             if (EventListeners.TryGetValue(eventId, out listeners))
             {
                 for (var i = 0; i < listeners.Count; i++)
@@ -28,18 +29,18 @@ namespace Archon.SwissArmyLib.Events
             }
         }
 
-        public static void AddListener(int eventId, IEventListener listener)
+        public static void AddListener(int eventId, IEventListener listener, int priority = 0)
         {
-            List<IEventListener> listeners;
+            PrioritizedList<IEventListener> listeners;
             if (!EventListeners.TryGetValue(eventId, out listeners))
-                EventListeners[eventId] = listeners = new List<IEventListener>();
+                EventListeners[eventId] = listeners = new PrioritizedList<IEventListener>();
 
-            listeners.Add(listener);
+            listeners.Add(listener, priority);
         }
 
         public static void RemoveListener(int eventId, IEventListener listener)
         {
-            List<IEventListener> listeners;
+            PrioritizedList<IEventListener> listeners;
             if (EventListeners.TryGetValue(eventId, out listeners))
                 listeners.Remove(listener);
         }
@@ -52,7 +53,7 @@ namespace Archon.SwissArmyLib.Events
 
         public static void Clear(int eventId)
         {
-            List<IEventListener> listeners;
+            PrioritizedList<IEventListener> listeners;
             if (EventListeners.TryGetValue(eventId, out listeners))
                 listeners.Clear();
         }
@@ -60,11 +61,11 @@ namespace Archon.SwissArmyLib.Events
 
     public static class EventSystem<T>
     {
-        private static readonly Dictionary<int, List<IEventListener<T>>> EventListeners = new Dictionary<int, List<IEventListener<T>>>();
+        private static readonly Dictionary<int, PrioritizedList<IEventListener<T>>> EventListeners = new Dictionary<int, PrioritizedList<IEventListener<T>>>();
 
         public static void Invoke(int eventId, T args)
         {
-            List<IEventListener<T>> listeners;
+            PrioritizedList<IEventListener<T>> listeners;
             if (EventListeners.TryGetValue(eventId, out listeners))
             {
                 for (var i = 0; i < listeners.Count; i++)
@@ -82,18 +83,18 @@ namespace Archon.SwissArmyLib.Events
             }
         }
 
-        public static void AddListener(int eventId, IEventListener<T> listener)
+        public static void AddListener(int eventId, IEventListener<T> listener, int priority = 0)
         {
-            List<IEventListener<T>> listeners;
+            PrioritizedList<IEventListener<T>> listeners;
             if (!EventListeners.TryGetValue(eventId, out listeners))
-                EventListeners[eventId] = listeners = new List<IEventListener<T>>();
+                EventListeners[eventId] = listeners = new PrioritizedList<IEventListener<T>>();
 
-            listeners.Add(listener);
+            listeners.Add(listener, priority);
         }
 
         public static void RemoveListener(int eventId, IEventListener<T> listener)
         {
-            List<IEventListener<T>> listeners;
+            PrioritizedList<IEventListener<T>> listeners;
             if (EventListeners.TryGetValue(eventId, out listeners))
                 listeners.Remove(listener);
         }
@@ -106,7 +107,7 @@ namespace Archon.SwissArmyLib.Events
 
         public static void Clear(int eventId)
         {
-            List<IEventListener<T>> listeners;
+            PrioritizedList<IEventListener<T>> listeners;
             if (EventListeners.TryGetValue(eventId, out listeners))
                 listeners.Clear();
         }
