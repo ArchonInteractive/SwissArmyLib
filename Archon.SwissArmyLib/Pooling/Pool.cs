@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using Archon.SwissArmyLib;
+using Archon.SwissArmyLib.Events;
 using Archon.SwissArmyLib.Pooling;
 
 public class Pool<T> : IPool<T>, TellMeWhen.ITimerCallback where T : class
