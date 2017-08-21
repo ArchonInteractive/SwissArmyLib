@@ -51,6 +51,9 @@
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TellMeWhen.cs" />
     <Compile Include="Utils\Extensions\ListExtensions.cs" />
+    <Compile Include="Utils\Shake\BaseShake.cs" />
+    <Compile Include="Utils\Shake\Shake.cs" />
+    <Compile Include="Utils\Shake\Shake2D.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>
