@@ -43,6 +43,19 @@ namespace Archon.SwissArmyLib.Events
             if (EventListeners.TryGetValue(eventId, out listeners))
                 listeners.Remove(listener);
         }
+
+        public static void Clear()
+        {
+            foreach (var listenerList in EventListeners.Values)
+                listenerList.Clear();
+        }
+
+        public static void Clear(int eventId)
+        {
+            List<IEventListener> listeners;
+            if (EventListeners.TryGetValue(eventId, out listeners))
+                listeners.Clear();
+        }
     }
 
     public static class EventSystem<T>
@@ -83,6 +96,19 @@ namespace Archon.SwissArmyLib.Events
             List<IEventListener<T>> listeners;
             if (EventListeners.TryGetValue(eventId, out listeners))
                 listeners.Remove(listener);
+        }
+
+        public static void Clear()
+        {
+            foreach (var listenerList in EventListeners.Values)
+                listenerList.Clear();
+        }
+
+        public static void Clear(int eventId)
+        {
+            List<IEventListener<T>> listeners;
+            if (EventListeners.TryGetValue(eventId, out listeners))
+                listeners.Clear();
         }
     }
 
