@@ -41,6 +41,8 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Collections\DictionaryWithDefault.cs" />
+    <Compile Include="Collections\ShuffleBag.cs" />
     <Compile Include="Pooling\GameObjectPool.cs" />
     <Compile Include="Pooling\IPool.cs" />
     <Compile Include="Pooling\IPoolable.cs" />
@@ -48,6 +50,7 @@
     <Compile Include="Pooling\PoolHelper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="TellMeWhen.cs" />
+    <Compile Include="Utils\Extensions\ListExtensions.cs" />
   </ItemGroup>
   <Import Project="$(MSBuildToolsPath)\Microsoft.CSharp.targets" />
 </Project>

@@ -11,7 +11,7 @@ namespace Archon.SwissArmyLib
         private static readonly LinkedList<Entry> EntriesScaled = new LinkedList<Entry>();
         private static readonly LinkedList<Entry> EntriesUnscaled = new LinkedList<Entry>();
 
-        private static TellMeWhen Instance { get; }
+        private static TellMeWhen Instance { get; set; }
 
         static TellMeWhen()
         {
