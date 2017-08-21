@@ -58,8 +58,9 @@ public class GameObjectPool<T> : Pool<T> where T : Object
 
     private static GameObject GetGameObject(T obj)
     {
-        if (obj is Component)
-            return (obj as Component).gameObject;
+        var component = obj as Component;
+        if (component != null)
+            return component.gameObject;
 
         return obj as GameObject;
     }

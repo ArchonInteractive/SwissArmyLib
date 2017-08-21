@@ -2,11 +2,11 @@
 using System.Collections.Generic;
 using UnityEngine;
 
-namespace Archon.SwissArmyLib
+namespace Archon.SwissArmyLib.Events
 {
     public class TellMeWhen : MonoBehaviour
     {
-        public const int NO_ID = -1;
+        public const int NoId = -1;
 
         private static readonly LinkedList<Entry> EntriesScaled = new LinkedList<Entry>();
         private static readonly LinkedList<Entry> EntriesUnscaled = new LinkedList<Entry>();
@@ -20,13 +20,13 @@ namespace Archon.SwissArmyLib
             Instance = gameObject.AddComponent<TellMeWhen>();
         }
 
-        public static void Exact(float time, ITimerCallback callback, int id = NO_ID, object args = null)
+        public static void Exact(float time, ITimerCallback callback, int id = NoId, object args = null)
         {
             var entry = new Entry(time, callback, id, args);
             InsertIntoList(entry, EntriesScaled);
         }
 
-        public static void Exact(float time, float repeatInterval, ITimerCallback callback, int id = NO_ID, object args = null)
+        public static void Exact(float time, float repeatInterval, ITimerCallback callback, int id = NoId, object args = null)
         {
             var entry = new Entry(time, callback, id, args)
             {
@@ -37,7 +37,7 @@ namespace Archon.SwissArmyLib
             InsertIntoList(entry, EntriesScaled);
         }
 
-        public static void Seconds(float seconds, ITimerCallback callback, int id = NO_ID, object args = null, bool repeating = false)
+        public static void Seconds(float seconds, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             if (repeating)
                 Exact(Time.time + seconds, seconds, callback, id, args);
@@ -45,23 +45,23 @@ namespace Archon.SwissArmyLib
                 Exact(Time.time + seconds, callback, id, args);
         }
 
-        public static void Minutes(float minutes, ITimerCallback callback, int id = NO_ID, object args = null, bool repeating = false)
+        public static void Minutes(float minutes, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             Seconds(minutes * 60, callback, id, args, repeating);
         }
 
-        public static void Hours(float hours, ITimerCallback callback, int id = NO_ID, object args = null, bool repeating = false)
+        public static void Hours(float hours, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             Seconds(hours * 60 * 60, callback, id, args, repeating);
         }
 
-        public static void ExactUnscaled(float time, ITimerCallback callback, int id = NO_ID, object args = null)
+        public static void ExactUnscaled(float time, ITimerCallback callback, int id = NoId, object args = null)
         {
             var entry = new Entry(time, callback, id, args);
             InsertIntoList(entry, EntriesUnscaled);
         }
 
-        public static void ExactUnscaled(float time, float repeatInterval, ITimerCallback callback, int id = NO_ID, object args = null)
+        public static void ExactUnscaled(float time, float repeatInterval, ITimerCallback callback, int id = NoId, object args = null)
         {
             var entry = new Entry(time, callback, id, args)
             { 
@@ -72,7 +72,7 @@ namespace Archon.SwissArmyLib
             InsertIntoList(entry, EntriesUnscaled);
         }
 
-        public static void SecondsUnscaled(float seconds, ITimerCallback callback, int id = NO_ID, object args = null, bool repeating = false)
+        public static void SecondsUnscaled(float seconds, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             if (repeating)
                 ExactUnscaled(Time.unscaledTime + seconds, seconds, callback, id, args);
@@ -80,12 +80,12 @@ namespace Archon.SwissArmyLib
                 ExactUnscaled(Time.unscaledTime + seconds, callback, id, args);
         }
 
-        public static void MinutesUnscaled(float minutes, ITimerCallback callback, int id = NO_ID, object args = null, bool repeating = false)
+        public static void MinutesUnscaled(float minutes, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             SecondsUnscaled(minutes * 60, callback, id, args, repeating);
         }
 
-        public static void HoursUnscaled(float hours, ITimerCallback callback, int id = NO_ID, object args = null, bool repeating = false)
+        public static void HoursUnscaled(float hours, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             SecondsUnscaled(hours * 60 * 60, callback, id, args, repeating);
         }
@@ -220,7 +220,7 @@ namespace Archon.SwissArmyLib
             public bool Repeating;
             public float RepeatingInterval;
 
-            public Entry(float time, ITimerCallback callback, int id = NO_ID, object args = null)
+            public Entry(float time, ITimerCallback callback, int id = NoId, object args = null)
             {
                 Time = time;
                 Callback = callback;
