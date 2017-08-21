@@ -35,7 +35,7 @@ namespace Archon.SwissArmyLib.Automata
         /// <summary>
         /// Call this every time the machine should update. Eg. every frame.
         /// </summary>
-        public void Update()
+        public void Update(float deltaTime)
         {
             var currentState = CurrentState;
             if (currentState != null)
@@ -44,7 +44,7 @@ namespace Archon.SwissArmyLib.Automata
 
                 // we only want to update the state if it's still the current one
                 if (currentState == CurrentState)
-                    currentState.Update();
+                    currentState.Update(deltaTime);
             }
         }
 

@@ -5,6 +5,8 @@ namespace Archon.SwissArmyLib.Automata
         public TMachine Machine { get; private set; }
         public TContext Context { get; private set; }
 
+        public float TimeInState { get; private set; }
+
         /// <summary>
         /// Used by the machine to set the state's context.
         /// </summary>
@@ -19,7 +21,10 @@ namespace Archon.SwissArmyLib.Automata
         /// <summary>
         /// Called when the state is entered.
         /// </summary>
-        public virtual void Begin() { }
+        public virtual void Begin()
+        {
+            TimeInState = 0;
+        }
 
         /// <summary>
         /// Called every frame just before <see cref="Update"/>. 
@@ -30,7 +35,10 @@ namespace Archon.SwissArmyLib.Automata
         /// <summary>
         /// Called every frame after <see cref="Reason"/>, if the state hasn't been changed.
         /// </summary>
-        public virtual void Update() { }
+        public virtual void Update(float deltaTime)
+        {
+            TimeInState += deltaTime;
+        }
 
         /// <summary>
         /// Called when the state is exited.

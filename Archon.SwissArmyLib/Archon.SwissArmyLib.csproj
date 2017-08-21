@@ -41,6 +41,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Automata\PushdownAutomaton.cs" />
+    <Compile Include="Automata\FiniteStateMachine.cs" />
+    <Compile Include="Automata\State.cs" />
     <Compile Include="Collections\DictionaryWithDefault.cs" />
     <Compile Include="Collections\ShuffleBag.cs" />
     <Compile Include="Pooling\GameObjectPool.cs" />
