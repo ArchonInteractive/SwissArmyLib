@@ -10,7 +10,7 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         public T Context { get; private set; }
 
-        public PdaState<T> CurrentState
+        public IPdaState<T> CurrentState
         {
             get
             {
@@ -18,8 +18,8 @@ namespace Archon.SwissArmyLib.Automata
             }
         }
 
-        private readonly Stack<PdaState<T>> _stateStack = new Stack<PdaState<T>>();
-        private readonly Dictionary<Type, Pool<PdaState<T>>> _statePools = new Dictionary<Type, Pool<PdaState<T>>>();
+        private readonly Stack<IPdaState<T>> _stateStack = new Stack<IPdaState<T>>();
+        private readonly Dictionary<Type, Pool<IPdaState<T>>> _statePools = new Dictionary<Type, Pool<IPdaState<T>>>();
 
         /// <summary>
         /// Creates a new PushdownAutomaton.
@@ -53,7 +53,7 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         /// <typeparam name="TState"></typeparam>
         /// <returns></returns>
-        public TState ChangeState<TState>() where TState : PdaState<T>
+        public TState ChangeState<TState>() where TState : IPdaState<T>
         {
             PopStateSilently();
             return PushStateSilently<TState>();
@@ -97,7 +97,7 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         /// <typeparam name="TState"></typeparam>
         /// <returns>The new state.</returns>
-        public TState PushState<TState>() where TState : PdaState<T>
+        public TState PushState<TState>() where TState : IPdaState<T>
         {
             if (CurrentState != null)
                 CurrentState.Pause();
@@ -110,10 +110,11 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         /// <typeparam name="TState"></typeparam>
         /// <returns>The new state.</returns>
-        public TState PushStateSilently<TState>() where TState : PdaState<T>
+        public TState PushStateSilently<TState>() where TState : IPdaState<T>
         {
             var newState = ObtainState<TState>();
-            newState.Initialize(this, Context);
+            newState.Machine = this;
+            newState.Context = Context;
             _stateStack.Push(newState);
             newState.Begin();
 
@@ -125,7 +126,7 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         /// <typeparam name="TState"></typeparam>
         /// <returns></returns>
-        private TState ObtainState<TState>() where TState : PdaState<T>
+        private TState ObtainState<TState>() where TState : IPdaState<T>
         {
             var pool = GetPool(typeof(TState));
             return (TState) pool.Spawn();
@@ -135,7 +136,7 @@ namespace Archon.SwissArmyLib.Automata
         /// Frees a state instance and makes it available for reuse.
         /// </summary>
         /// <param name="state"></param>
-        private void FreeState(PdaState<T> state)
+        private void FreeState(IPdaState<T> state)
         {
             var type = state.GetType();
             var pool = GetPool(type);
@@ -147,9 +148,9 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         /// <param name="stateType"></param>
         /// <returns></returns>
-        private Pool<PdaState<T>> GetPool(Type stateType)
+        private Pool<IPdaState<T>> GetPool(Type stateType)
         {
-            Pool<PdaState<T>> pool;
+            Pool<IPdaState<T>> pool;
             _statePools.TryGetValue(stateType, out pool);
             return pool;
         }
@@ -159,7 +160,7 @@ namespace Archon.SwissArmyLib.Automata
         /// A pool for the type will be created that will use the empty constructor.
         /// </summary>
         /// <typeparam name="TState"></typeparam>
-        public void RegisterStateType<TState>() where TState : PdaState<T>, new()
+        public void RegisterStateType<TState>() where TState : IPdaState<T>, new()
         {
             var type = typeof(TState);
             RegisterStateType(type, () => new TState());
@@ -171,23 +172,10 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         /// <param name="type"></param>
         /// <param name="creationMethod"></param>
-        public void RegisterStateType(Type type, Func<PdaState<T>> creationMethod)
+        public void RegisterStateType(Type type, Func<IPdaState<T>> creationMethod)
         {
-            var pool = new Pool<PdaState<T>>(creationMethod);
+            var pool = new Pool<IPdaState<T>>(creationMethod);
             _statePools[type] = pool;
         }
-    }
-
-    public class PdaState<T> : State<PushdownAutomaton<T>, T>
-    {
-        /// <summary>
-        /// Called when a state is pushed ontop of this state.
-        /// </summary>
-        public virtual void Pause() { }
-
-        /// <summary>
-        /// Called when the state above us is popped.
-        /// </summary>
-        public virtual void Resume() { }
     }
 }

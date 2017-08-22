@@ -3,6 +3,9 @@ using System.Collections.Generic;
 
 namespace Archon.SwissArmyLib.Automata
 {
+    public interface IFsmState<T> : IState<FiniteStateMachine<T>, T> { }
+    public class FsmState<T> : State<FiniteStateMachine<T>, T>, IFsmState<T> { }
+
     public class FiniteStateMachine<T>
     {
         /// <summary>
@@ -10,10 +13,10 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         public T Context { get; private set; }
 
-        public FsmState<T> CurrentState { get; private set; }
-        public FsmState<T> PreviousState { get; private set; }
+        public IFsmState<T> CurrentState { get; private set; }
+        public IFsmState<T> PreviousState { get; private set; }
 
-        private readonly Dictionary<Type, FsmState<T>> _states = new Dictionary<Type, FsmState<T>>();
+        private readonly Dictionary<Type, IFsmState<T>> _states = new Dictionary<Type, IFsmState<T>>();
 
         /// <summary>
         /// Creates a new Finite State Machine.
@@ -50,7 +53,7 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         /// <typeparam name="TState"></typeparam>
         /// <param name="state"></param>
-        public void RegisterState<TState>(TState state) where TState : FsmState<T>
+        public void RegisterState<TState>(TState state) where TState : IFsmState<T>
         {
             _states[typeof(TState)] = state;
         }
@@ -61,10 +64,10 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         /// <typeparam name="TState"></typeparam>
         /// <returns></returns>
-        public TState ChangeStateAuto<TState>() where TState : FsmState<T>, new()
+        public TState ChangeStateAuto<TState>() where TState : IFsmState<T>, new()
         {
             var type = typeof(TState);
-            FsmState<T> state;
+            IFsmState<T> state;
 
             if (!_states.TryGetValue(type, out state))
                 _states[type] = state = new TState();
@@ -78,10 +81,10 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         /// <typeparam name="TState"></typeparam>
         /// <returns></returns>
-        public TState ChangeState<TState>() where TState : FsmState<T>
+        public TState ChangeState<TState>() where TState : IFsmState<T>
         {
             var type = typeof(TState);
-            FsmState<T> state;
+            IFsmState<T> state;
 
             if (!_states.TryGetValue(type, out state))
                 throw new InvalidOperationException(string.Format("A state of type '{0}' is not registered, did you mean to use ChangeStateAuto?", type));
@@ -96,7 +99,7 @@ namespace Archon.SwissArmyLib.Automata
         /// <typeparam name="TState"></typeparam>
         /// <param name="state"></param>
         /// <returns></returns>
-        public TState ChangeState<TState>(TState state) where TState : FsmState<T>
+        public TState ChangeState<TState>(TState state) where TState : IFsmState<T>
         {
             if (CurrentState != null)
                 CurrentState.End();
@@ -107,13 +110,12 @@ namespace Archon.SwissArmyLib.Automata
             if (CurrentState != null)
             {
                 RegisterState(state);
-                CurrentState.Initialize(this, Context);
+                CurrentState.Machine = this;
+                CurrentState.Context = Context;
                 CurrentState.Begin();
             }
 
             return state;
         }
     }
-
-    public class FsmState<T> : State<FiniteStateMachine<T>, T> { }
 }

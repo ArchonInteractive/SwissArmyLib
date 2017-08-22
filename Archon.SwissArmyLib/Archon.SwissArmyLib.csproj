@@ -41,6 +41,9 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
+    <Compile Include="Automata\IPdaState.cs" />
+    <Compile Include="Automata\IState.cs" />
+    <Compile Include="Automata\PdaState.cs" />
     <Compile Include="Automata\PushdownAutomaton.cs" />
     <Compile Include="Automata\FiniteStateMachine.cs" />
     <Compile Include="Automata\State.cs" />

@@ -1,37 +1,29 @@
 namespace Archon.SwissArmyLib.Automata
 {
-    public class State<TMachine, TContext> : IState<TMachine, TContext>
+    public interface IState<TMachine, TContext>
     {
-        public TMachine Machine { get; set; }
-        public TContext Context { get; set; }
-
-        public float TimeInState { get; private set; }
+        TMachine Machine { get; set; }
+        TContext Context { get; set; }
 
         /// <summary>
         /// Called when the state is entered.
         /// </summary>
-        public virtual void Begin()
-        {
-            TimeInState = 0;
-        }
+        void Begin();
 
         /// <summary>
         /// Called every frame just before <see cref="Update"/>. 
         /// Use this to check whether you should change state.
         /// </summary>
-        public virtual void Reason() { }
+        void Reason();
 
         /// <summary>
         /// Called every frame after <see cref="Reason"/>, if the state hasn't been changed.
         /// </summary>
-        public virtual void Update(float deltaTime)
-        {
-            TimeInState += deltaTime;
-        }
+        void Update(float deltaTime);
 
         /// <summary>
         /// Called when the state is exited.
         /// </summary>
-        public virtual void End() { }
+        void End();
     }
 }
