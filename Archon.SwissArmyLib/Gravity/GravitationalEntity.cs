@@ -7,6 +7,8 @@ namespace Archon.SwissArmyLib.Gravity
     /// 
     /// For 2D physic see <see cref="GravitationalEntity2D"/>.
     /// </summary>
+    [AddComponentMenu("Archon/Gravity/GravitationalEntity")]
+    [RequireComponent(typeof(Rigidbody))]
     public class GravitationalEntity : MonoBehaviour
     {
         private Rigidbody _rigidbody;

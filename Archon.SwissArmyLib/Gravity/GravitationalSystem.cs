@@ -15,6 +15,7 @@ namespace Archon.SwissArmyLib.Gravity
     /// 
     /// <remarks>You might want to set Unity's gravity to (0,0,0).</remarks>
     /// </summary>
+    [AddComponentMenu("")]
     public class GravitationalSystem : MonoBehaviour {
 
         /// <summary>

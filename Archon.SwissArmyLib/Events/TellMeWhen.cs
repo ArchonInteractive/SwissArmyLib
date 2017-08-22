@@ -7,6 +7,7 @@ namespace Archon.SwissArmyLib.Events
     /// <summary>
     /// A utility class for getting notified after a specific amount of time.
     /// </summary>
+    [AddComponentMenu("")]
     public class TellMeWhen : MonoBehaviour
     {
         /// <summary>
