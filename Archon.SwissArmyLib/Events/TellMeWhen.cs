@@ -4,8 +4,14 @@ using UnityEngine;
 
 namespace Archon.SwissArmyLib.Events
 {
+    /// <summary>
+    /// A utility class for getting notified after a specific amount of time.
+    /// </summary>
     public class TellMeWhen : MonoBehaviour
     {
+        /// <summary>
+        /// Default id, if none is supplied
+        /// </summary>
         public const int NoId = -1;
 
         private static readonly LinkedList<Entry> EntriesScaled = new LinkedList<Entry>();
@@ -20,12 +26,27 @@ namespace Archon.SwissArmyLib.Events
             Instance = gameObject.AddComponent<TellMeWhen>();
         }
 
+        /// <summary>
+        /// Schedule a callback to be called at a specific <see cref="Time.time"/>.
+        /// </summary>
+        /// <param name="time">The <see cref="Time.time"/> at which the callback should be called.</param>
+        /// <param name="callback">The callback that will be notified.</param>
+        /// <param name="id">An id so that you can reidentify the origin of the timer. Optional, but useful if you have more than one timer.</param>
+        /// <param name="args">An optional args object that will be passed to the callback.</param>
         public static void Exact(float time, ITimerCallback callback, int id = NoId, object args = null)
         {
             var entry = new Entry(time, callback, id, args);
             InsertIntoList(entry, EntriesScaled);
         }
 
+        /// <summary>
+        /// Schedule a callback to be called at a specific <see cref="Time.time"/> and repeatedly every <paramref name="repeatInterval"/> there after.
+        /// </summary>
+        /// <param name="time">The <see cref="Time.time"/> at which the callback should be called.</param>
+        /// <param name="repeatInterval">The interval in seconds to repeat the timer.</param>
+        /// <param name="callback">The callback that will be notified.</param>
+        /// <param name="id">An id so that you can reidentify the origin of the timer. Optional, but useful if you have more than one timer.</param>
+        /// <param name="args">An optional args object that will be passed to the callback.</param>
         public static void Exact(float time, float repeatInterval, ITimerCallback callback, int id = NoId, object args = null)
         {
             var entry = new Entry(time, callback, id, args)
@@ -37,6 +58,14 @@ namespace Archon.SwissArmyLib.Events
             InsertIntoList(entry, EntriesScaled);
         }
 
+        /// <summary>
+        /// Schedule a callback to be called after a specific amount of (scaled) seconds.
+        /// </summary>
+        /// <param name="seconds">The amount of seconds before the callback should be called.</param>
+        /// <param name="callback">The callback that will be notified.</param>
+        /// <param name="id">An id so that you can reidentify the origin of the timer. Optional, but useful if you have more than one timer.</param>
+        /// <param name="args">An optional args object that will be passed to the callback.</param>
+        /// <param name="repeating">Whether the timer should repeat untill cancelled.</param>
         public static void Seconds(float seconds, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             if (repeating)
@@ -45,22 +74,40 @@ namespace Archon.SwissArmyLib.Events
                 Exact(Time.time + seconds, callback, id, args);
         }
 
+        /// <summary>
+        /// Schedule a callback to be called after a specific amount of (scaled) minutes.
+        /// </summary>
+        /// <param name="minutes">The amount of minutes before the callback should be called.</param>
+        /// <param name="callback">The callback that will be notified.</param>
+        /// <param name="id">An id so that you can reidentify the origin of the timer. Optional, but useful if you have more than one timer.</param>
+        /// <param name="args">An optional args object that will be passed to the callback.</param>
+        /// <param name="repeating">Whether the timer should repeat untill cancelled.</param>
         public static void Minutes(float minutes, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             Seconds(minutes * 60, callback, id, args, repeating);
         }
 
-        public static void Hours(float hours, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
-        {
-            Seconds(hours * 60 * 60, callback, id, args, repeating);
-        }
-
+        /// <summary>
+        /// Schedule a callback to be called at a specific <see cref="Time.unscaledTime"/>.
+        /// </summary>
+        /// <param name="time">The <see cref="Time.unscaledTime"/> at which the callback should be called.</param>
+        /// <param name="callback">The callback that will be notified.</param>
+        /// <param name="id">An id so that you can reidentify the origin of the timer. Optional, but useful if you have more than one timer.</param>
+        /// <param name="args">An optional args object that will be passed to the callback.</param>
         public static void ExactUnscaled(float time, ITimerCallback callback, int id = NoId, object args = null)
         {
             var entry = new Entry(time, callback, id, args);
             InsertIntoList(entry, EntriesUnscaled);
         }
 
+        /// <summary>
+        /// Schedule a callback to be called at a specific <see cref="Time.unscaledTime"/> and repeatedly every <paramref name="repeatInterval"/> there after.
+        /// </summary>
+        /// <param name="time">The <see cref="Time.unscaledTime"/> at which the callback should be called.</param>
+        /// <param name="repeatInterval">The interval in seconds to repeat the timer.</param>
+        /// <param name="callback">The callback that will be notified.</param>
+        /// <param name="id">An id so that you can reidentify the origin of the timer. Optional, but useful if you have more than one timer.</param>
+        /// <param name="args">An optional args object that will be passed to the callback.</param>
         public static void ExactUnscaled(float time, float repeatInterval, ITimerCallback callback, int id = NoId, object args = null)
         {
             var entry = new Entry(time, callback, id, args)
@@ -72,6 +119,14 @@ namespace Archon.SwissArmyLib.Events
             InsertIntoList(entry, EntriesUnscaled);
         }
 
+        /// <summary>
+        /// Schedule a callback to be called after a specific amount of (unscaled) seconds.
+        /// </summary>
+        /// <param name="seconds">The amount of seconds before the callback should be called.</param>
+        /// <param name="callback">The callback that will be notified.</param>
+        /// <param name="id">An id so that you can reidentify the origin of the timer. Optional, but useful if you have more than one timer.</param>
+        /// <param name="args">An optional args object that will be passed to the callback.</param>
+        /// <param name="repeating">Whether the timer should repeat untill cancelled.</param>
         public static void SecondsUnscaled(float seconds, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             if (repeating)
@@ -80,14 +135,17 @@ namespace Archon.SwissArmyLib.Events
                 ExactUnscaled(Time.unscaledTime + seconds, callback, id, args);
         }
 
+        /// <summary>
+        /// Schedule a callback to be called after a specific amount of (unscaled) minutes.
+        /// </summary>
+        /// <param name="minutes">The amount of minutes before the callback should be called.</param>
+        /// <param name="callback">The callback that will be notified.</param>
+        /// <param name="id">An id so that you can reidentify the origin of the timer. Optional, but useful if you have more than one timer.</param>
+        /// <param name="args">An optional args object that will be passed to the callback.</param>
+        /// <param name="repeating">Whether the timer should repeat untill cancelled.</param>
         public static void MinutesUnscaled(float minutes, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             SecondsUnscaled(minutes * 60, callback, id, args, repeating);
-        }
-
-        public static void HoursUnscaled(float hours, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
-        {
-            SecondsUnscaled(hours * 60 * 60, callback, id, args, repeating);
         }
 
         private static void CancelInternal(ITimerCallback callback, LinkedList<Entry> list)
@@ -129,26 +187,47 @@ namespace Archon.SwissArmyLib.Events
             }
         }
 
+        /// <summary>
+        /// Cancels all scaled timers for the given callback.
+        /// </summary>
+        /// <param name="callback">The callback of the timers to cancel.</param>
         public static void CancelScaled(ITimerCallback callback)
         {
             CancelInternal(callback, EntriesScaled);
         }
 
+        /// <summary>
+        /// Cancels a scaled timer for the given callback with a specific id.
+        /// </summary>
+        /// <param name="callback">The callback of the timer to cancel.</param>
+        /// <param name="id">The id of the timer to cancel.</param>
         public static void CancelScaled(ITimerCallback callback, int id)
         {
             CancelInternal(callback, id, EntriesScaled);
         }
 
+        /// <summary>
+        /// Cancels all unscaled timers for the given callback.
+        /// </summary>
+        /// <param name="callback">The callback of the timers to cancel.</param>
         public static void CancelUnscaled(ITimerCallback callback)
         {
             CancelInternal(callback, EntriesUnscaled);
         }
 
+        /// <summary>
+        /// Cancels a unscaled timer for the given callback with a specific id.
+        /// </summary>
+        /// <param name="callback">The callback of the timer to cancel.</param>
+        /// <param name="id">The id of the timer to cancel.</param>
         public static void CancelUnscaled(ITimerCallback callback, int id)
         {
             CancelInternal(callback, id, EntriesUnscaled);
         }
 
+        /// <summary>
+        /// Cancels all (both scaled and unscaled) timers for all callbacks.
+        /// </summary>
         public static void CancelAll()
         {
             EntriesScaled.Clear();
@@ -243,8 +322,16 @@ namespace Archon.SwissArmyLib.Events
             }
         }
 
+        /// <summary>
+        /// Defines a method to be used for timer events.
+        /// </summary>
         public interface ITimerCallback
         {
+            /// <summary>
+            /// Called when a timer is triggered (eg. after X amount of time).
+            /// </summary>
+            /// <param name="id">The id of the timer.</param>
+            /// <param name="args">The supplied event args if supplied when the timer was scheduled.</param>
             void OnTimesUp(int id, object args);
         }
     }
