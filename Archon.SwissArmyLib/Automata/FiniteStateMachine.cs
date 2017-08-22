@@ -13,7 +13,14 @@ namespace Archon.SwissArmyLib.Automata
         /// </summary>
         public T Context { get; private set; }
 
+        /// <summary>
+        /// The active state.
+        /// </summary>
         public IFsmState<T> CurrentState { get; private set; }
+
+        /// <summary>
+        /// The previously active state.
+        /// </summary>
         public IFsmState<T> PreviousState { get; private set; }
 
         private readonly Dictionary<Type, IFsmState<T>> _states = new Dictionary<Type, IFsmState<T>>();

@@ -5,6 +5,9 @@ namespace Archon.SwissArmyLib.Automata
         public TMachine Machine { get; set; }
         public TContext Context { get; set; }
 
+        /// <summary>
+        /// Amount of (active) time spent in this state since it was entered.
+        /// </summary>
         public float TimeInState { get; private set; }
 
         /// <summary>

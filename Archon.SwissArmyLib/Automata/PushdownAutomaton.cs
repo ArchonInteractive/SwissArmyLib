@@ -9,7 +9,10 @@ namespace Archon.SwissArmyLib.Automata
         /// A shared context which all states have access to.
         /// </summary>
         public T Context { get; private set; }
-
+        
+        /// <summary>
+        /// The active state.
+        /// </summary>
         public IPdaState<T> CurrentState
         {
             get

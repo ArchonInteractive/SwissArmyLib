@@ -3,17 +3,15 @@
 namespace Archon.SwissArmyLib.Gravity
 {
     /// <summary>
-    /// Makes this <see cref="GameObject"/>'s <see cref="Rigidbody"/> part of the gravitational system.
-    /// 
-    /// For 2D physic see <see cref="GravitationalEntity2D"/>.
+    /// Makes this <see cref="GameObject"/>'s <see cref="Rigidbody2D"/> part of the gravitational system.
     /// </summary>
-    public class GravitationalEntity : MonoBehaviour
+    public class GravitationalEntity2D : MonoBehaviour
     {
-        private Rigidbody _rigidbody;
+        private Rigidbody2D _rigidbody;
 
         private void Awake()
         {
-            _rigidbody = GetComponent<Rigidbody>();
+            _rigidbody = GetComponent<Rigidbody2D>();
         }
 
         private void OnEnable()

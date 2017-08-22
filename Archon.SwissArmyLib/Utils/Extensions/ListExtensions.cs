@@ -3,10 +3,18 @@ using System.Collections.Generic;
 
 namespace Archon.SwissArmyLib.Utils.Extensions
 {
+    /// <summary>
+    /// Extensions for List
+    /// </summary>
     public static class ListExtensions
     {
         private static readonly Random Random = new Random();
 
+        /// <summary>
+        /// Shuffles the list using Fisher–Yates shuffle algorithm.
+        /// </summary>
+        /// <typeparam name="T"></typeparam>
+        /// <param name="list">The list to shuffle.</param>
         public static void Shuffle<T>(this IList<T> list)
         {
             var n = list.Count;

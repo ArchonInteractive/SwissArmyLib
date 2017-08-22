@@ -7,7 +7,7 @@ namespace Archon.SwissArmyLib.Utils.Shake
         public float Duration { get; private set; }
         public int Frequency { get; private set; }
         public float Amplitude { get; private set; }
-        protected float StartTime;
+        protected float StartTime { get; set; }
 
         public float NormalizedTime
         {

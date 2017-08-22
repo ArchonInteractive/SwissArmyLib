@@ -2,7 +2,14 @@ namespace Archon.SwissArmyLib.Automata
 {
     public interface IState<TMachine, TContext>
     {
+        /// <summary>
+        /// The state machine this state belongs to.
+        /// </summary>
         TMachine Machine { get; set; }
+
+        /// <summary>
+        /// The context for this state.
+        /// </summary>
         TContext Context { get; set; }
 
         /// <summary>
