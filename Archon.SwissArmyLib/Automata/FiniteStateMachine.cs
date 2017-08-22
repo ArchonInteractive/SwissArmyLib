@@ -65,6 +65,27 @@ namespace Archon.SwissArmyLib.Automata
         }
 
         /// <summary>
+        /// Checks whether a state type is registered.
+        /// </summary>
+        /// <param name="stateType">The state type to check.</param>
+        /// <returns>True if registered, false otherwise.</returns>
+        public bool IsStateRegistered(Type stateType)
+        {
+            return _states.ContainsKey(stateType);
+;       }
+
+        /// <summary>
+        /// Generic version of <see cref="IsStateRegistered"/>.
+        /// Checks whether a state type is registered.
+        /// </summary>
+        /// <typeparam name="TState">The state type to check.</typeparam>
+        /// <returns>Tru if registered, false otherwise.</returns>
+        public bool IsStateRegistered<TState>() where TState : IFsmState<T>
+        {
+            return _states.ContainsKey(typeof(TState));
+        }
+
+        /// <summary>
         /// Changes the active state to the given state type.
         /// If a state of that type isn't already registered, it will automatically create a new instance using the empty constructor.
         /// </summary>
