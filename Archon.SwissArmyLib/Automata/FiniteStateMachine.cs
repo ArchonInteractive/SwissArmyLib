@@ -51,11 +51,10 @@ namespace Archon.SwissArmyLib.Automata
         /// Preemptively add a state instance.
         /// Useful if the state doesn't have an empty constructor and therefore cannot be used with ChangeStateAuto.
         /// </summary>
-        /// <typeparam name="TState"></typeparam>
-        /// <param name="state"></param>
-        public void RegisterState<TState>(TState state) where TState : IFsmState<T>
+        /// <param name="state">The state to register.</param>
+        public void RegisterState(IFsmState<T> state)
         {
-            _states[typeof(TState)] = state;
+            _states[state.GetType()] = state;
         }
 
         /// <summary>
