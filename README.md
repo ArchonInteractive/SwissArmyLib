@@ -1,4 +1,4 @@
-# SwissArmyLib
+# ![Logo](https://gitlab.com/archoninteractive/SwissArmyLib/raw/master/logo.png) &nbsp; SwissArmyLib
 ## Please note this library is under construction, and the API is definitely not stable. Also some things might currently be untested and broken.
 
 SwissArmyLib is an attempt to create a collection of useful utilities primarily intended for Unity projects, but feel free to rip parts out and use them for whatever you want.
