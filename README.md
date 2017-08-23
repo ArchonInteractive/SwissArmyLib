@@ -23,12 +23,16 @@ This project is under the very permissive MIT license and we honestly do not car
     * Support for both arbitrary classes and GameObjects
     * IPoolable interface for callbacks
     * Timed despawns
+* Service Locator
+	* A simple implementation of the Service Locator pattern
 * Gravity
     * Flexible gravitational system
     * Useful for planet gravity, black holes, magnets and all that sort of stuff.
 * Misc
     * Shake
         * Useful for creating proper screen shake
+	* Lazy<T>
+		* A backport of System.Lazy<T> from .NET 4.0+
     * Some niche collection types
 	* A few other tiny utilities
 
