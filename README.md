@@ -31,8 +31,8 @@ This project is under the very permissive MIT license and we honestly do not car
 * Misc
     * Shake
         * Useful for creating proper screen shake
-	* Lazy<T>
-		* A backport of System.Lazy<T> from .NET 4.0+
+	* Lazy&lt;T&gt;
+		* A backport of System.Lazy&lt;T&gt; from .NET 4.0+
     * Some niche collection types
 	* A few other tiny utilities
 
