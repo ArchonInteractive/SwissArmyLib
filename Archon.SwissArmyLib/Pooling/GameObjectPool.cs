@@ -2,66 +2,69 @@
 using UnityEngine;
 using Object = UnityEngine.Object;
 
-public class GameObjectPool<T> : Pool<T> where T : Object
+namespace Archon.SwissArmyLib.Pooling
 {
-    public T Prefab { get; private set; }
-
-    private readonly Transform _root;
-
-    public GameObjectPool(T prefab) : this(prefab.name, () => Object.Instantiate(prefab))
+    public class GameObjectPool<T> : Pool<T> where T : Object
     {
-        Prefab = prefab;
-    }
+        public T Prefab { get; private set; }
 
-    public GameObjectPool(string name, Func<T> create) : base(create)
-    {
-        var rootGO = new GameObject(string.Format("'{0}' Pool", name));
-        _root = rootGO.transform;
-    }
+        private readonly Transform _root;
 
-    public override T Spawn()
-    {
-        var obj = base.Spawn();
+        public GameObjectPool(T prefab) : this(prefab.name, () => Object.Instantiate(prefab))
+        {
+            Prefab = prefab;
+        }
 
-        var gameObject = GetGameObject(obj);
-        gameObject.SetActive(true);
+        public GameObjectPool(string name, Func<T> create) : base(create)
+        {
+            var rootGO = new GameObject(string.Format("'{0}' Pool", name));
+            _root = rootGO.transform;
+        }
 
-        return obj;
-    }
+        public override T Spawn()
+        {
+            var obj = base.Spawn();
 
-    public T Spawn(Vector3 position, Quaternion rotation, Transform parent)
-    {
-        var obj = Spawn();
+            var gameObject = GetGameObject(obj);
+            gameObject.SetActive(true);
 
-        var gameObject = GetGameObject(obj);
+            return obj;
+        }
 
-        var transform = gameObject.transform;
-        transform.position = position;
-        transform.rotation = rotation;
-        transform.parent = parent;
+        public T Spawn(Vector3 position, Quaternion rotation, Transform parent)
+        {
+            var obj = Spawn();
 
-        return obj;
-    }
+            var gameObject = GetGameObject(obj);
 
-    public override void Despawn(T target)
-    {
-        base.Despawn(target);
+            var transform = gameObject.transform;
+            transform.position = position;
+            transform.rotation = rotation;
+            transform.parent = parent;
 
-        CancelDespawn(target);
+            return obj;
+        }
 
-        var gameObject = GetGameObject(target);
-        gameObject.SetActive(false);
+        public override void Despawn(T target)
+        {
+            base.Despawn(target);
 
-        var transform = gameObject.transform;
-        transform.SetParent(_root, false);
-    }
+            CancelDespawn(target);
 
-    private static GameObject GetGameObject(T obj)
-    {
-        var component = obj as Component;
-        if (component != null)
-            return component.gameObject;
+            var gameObject = GetGameObject(target);
+            gameObject.SetActive(false);
 
-        return obj as GameObject;
+            var transform = gameObject.transform;
+            transform.SetParent(_root, false);
+        }
+
+        private static GameObject GetGameObject(T obj)
+        {
+            var component = obj as Component;
+            if (component != null)
+                return component.gameObject;
+
+            return obj as GameObject;
+        }
     }
 }
