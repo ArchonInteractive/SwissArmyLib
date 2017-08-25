@@ -1,4 +1,6 @@
 ﻿using System.Collections.Generic;
+using Archon.SwissArmyLib.Utils;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Archon.SwissArmyLib.Gravity
@@ -29,9 +31,7 @@ namespace Archon.SwissArmyLib.Gravity
 
         static GravitationalSystem()
         {
-            var gameObject = new GameObject("GravitationalSystem");
-            DontDestroyOnLoad(gameObject);
-            Instance = gameObject.AddComponent<GravitationalSystem>();
+            Instance = ServiceLocator.RegisterSingleton<GravitationalSystem>();
         }
 
         /// <summary>
@@ -88,6 +88,7 @@ namespace Archon.SwissArmyLib.Gravity
             Rigidbodies2D.Remove(rigidbody);
         }
 
+        [UsedImplicitly]
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -97,6 +98,7 @@ namespace Archon.SwissArmyLib.Gravity
             }
         }
 
+        [UsedImplicitly]
         private void FixedUpdate()
         {
             for (var i = 0; i < Rigidbodies.Count; i++)

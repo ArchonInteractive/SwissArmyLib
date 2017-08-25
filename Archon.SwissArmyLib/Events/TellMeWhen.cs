@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Archon.SwissArmyLib.Utils;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Archon.SwissArmyLib.Events
@@ -22,9 +24,7 @@ namespace Archon.SwissArmyLib.Events
 
         static TellMeWhen()
         {
-            var gameObject = new GameObject("TellMeWhen");
-            DontDestroyOnLoad(gameObject);
-            Instance = gameObject.AddComponent<TellMeWhen>();
+            Instance = ServiceLocator.RegisterSingleton<TellMeWhen>();
         }
 
         /// <summary>
@@ -235,6 +235,7 @@ namespace Archon.SwissArmyLib.Events
             EntriesUnscaled.Clear();
         }
 
+        [UsedImplicitly]
         private void Awake()
         {
             if (Instance != null && Instance != this)
@@ -244,6 +245,7 @@ namespace Archon.SwissArmyLib.Events
             }
         }
 
+        [UsedImplicitly]
         private void Update()
         {
             UpdateList(Time.time, EntriesScaled);
