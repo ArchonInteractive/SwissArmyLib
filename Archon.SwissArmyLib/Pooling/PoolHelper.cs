@@ -1,12 +1,13 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Archon.SwissArmyLib.Pooling
 {
     public static class PoolHelper
     {
-        private static readonly Dictionary<Object, object> Pools = new Dictionary<Object, object>();
-
+        private static readonly Dictionary<Object, GameObjectPool<Object>> Pools = new Dictionary<Object, GameObjectPool<Object>>();
         private static readonly Dictionary<Object, Object> Prefabs = new Dictionary<Object, Object>();
 
         public static T Spawn<T>(T prefab)
@@ -16,7 +17,7 @@ namespace Archon.SwissArmyLib.Pooling
             var obj = pool.Spawn();
             Prefabs[obj] = prefab;
 
-            return obj;
+            return obj as T;
         }
 
         public static T Spawn<T>(T prefab, Vector3 position, Quaternion rotation, Transform parent)
@@ -26,38 +27,49 @@ namespace Archon.SwissArmyLib.Pooling
             var obj = pool.Spawn(position, rotation, parent);
             Prefabs[obj] = prefab;
 
-            return obj;
+            return obj as T;
         }
 
-        public static void Despawn<T>(T target)
-            where T : Object
+        public static void Despawn(Object target)
         {
             var prefab = GetPrefab(target);
             var pool = GetPool(prefab);
             pool.Despawn(target);
         }
 
-        public static T GetPrefab<T>(T target)
+        public static void Despawn(IPoolable target)
+        {
+            var unityObject = target as Object;
+
+            if (unityObject == null)
+                throw new InvalidOperationException("Cannot despawn target because it is not a UnityEngine.Object!");
+
+            Despawn(unityObject);
+        }
+
+        public static Object GetPrefab(Object instance)
+        {
+            Object prefab;
+            Prefabs.TryGetValue(instance, out prefab);
+            return prefab;
+        }
+
+        public static T GetPrefab<T>(T instance)
             where T : Object
         {
             Object prefab;
-
-            Prefabs.TryGetValue(target, out prefab);
-
+            Prefabs.TryGetValue(instance, out prefab);
             return prefab as T;
         }
 
-        public static GameObjectPool<T> GetPool<T>(T prefab)
-            where T : Object
+        public static GameObjectPool<Object> GetPool(Object prefab)
         {
-            object obj;
-            Pools.TryGetValue(prefab, out obj);
+            GameObjectPool<Object> pool;
+            Pools.TryGetValue(prefab, out pool);
 
-            var pool = obj as GameObjectPool<T>;
-
-            if (obj == null)
+            if (pool == null)
             {
-                pool = new GameObjectPool<T>(prefab);
+                pool = new GameObjectPool<Object>(prefab);
                 Pools[prefab] = pool;
             }
 

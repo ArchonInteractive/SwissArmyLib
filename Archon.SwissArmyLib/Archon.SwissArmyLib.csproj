@@ -58,6 +58,7 @@
     <Compile Include="Gravity\SphericalGravitationalPoint.cs" />
     <Compile Include="Gravity\GravitationalEntity2D.cs" />
     <Compile Include="Gravity\GravitationalSystem.cs" />
+    <Compile Include="Pooling\PoolableGroup.cs" />
     <Compile Include="Utils\Lazy.cs" />
     <Compile Include="Pooling\GameObjectPool.cs" />
     <Compile Include="Pooling\IPool.cs" />
