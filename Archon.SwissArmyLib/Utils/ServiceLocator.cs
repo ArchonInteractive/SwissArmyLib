@@ -7,17 +7,15 @@ using Object = UnityEngine.Object;
 namespace Archon.SwissArmyLib.Utils
 {
     /// <summary>
-    /// A (somewhat) simple implementation of the service locator pattern.
-    /// 
-    /// The ServiceLocator knows about MonoBehaviours and how to work with them. 
-    /// Creating scene-specific resolvers that only live as long as their respective scene is also supported.
-    /// 
-    /// <remarks>
-    /// Please note that when you load a new scene, the MonoBehaviours in that scene will have their Awake() 
-    /// method called before their scene becomes the active one. This means you can't rely on 
-    /// SceneManager.GetActiveScene() to return the scene they're in, so you might want to use GameObject.scene
-    /// to specify which scene to register the resolver for.
-    /// </remarks>
+    ///     A (somewhat) simple implementation of the service locator pattern.
+    ///     The ServiceLocator knows about MonoBehaviours and how to work with them.
+    ///     Creating scene-specific resolvers that only live as long as their respective scene is also supported.
+    ///     <remarks>
+    ///         Please note that when you load a new scene, the MonoBehaviours in that scene will have their Awake()
+    ///         method called before their scene becomes the active one. This means you can't rely on
+    ///         SceneManager.GetActiveScene() to return the scene they're in, so you might want to use GameObject.scene
+    ///         to specify which scene to register the resolver for.
+    ///     </remarks>
     /// </summary>
     public static class ServiceLocator
     {
@@ -28,12 +26,6 @@ namespace Archon.SwissArmyLib.Utils
 
         private static GameObject _multiSceneGameObject;
         private static Scene _currentScene;
-
-        private class SceneData
-        {
-            public GameObject GameObject;
-            public readonly Dictionary<Type, Func<object>> Resolvers = new Dictionary<Type, Func<object>>();
-        }
 
         static ServiceLocator()
         {
@@ -53,46 +45,168 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers a concrete singleton of the given type.
-        /// 
-        /// The instance will be lazy loaded when resolved (if <paramref name="lazyload"/> is true).
+        ///     Registers a concrete singleton of the given type.
         /// </summary>
         /// <typeparam name="T">The type of the singleton.</typeparam>
-        /// <param name="lazyload">Should the singleton be initialized on first resolve instead of instantly.</param>
-        public static void RegisterSingleton<T>(bool lazyload = true) where T : new()
+        public static T RegisterSingleton<T>() where T : new()
         {
-            RegisterSingleton<T, T>(lazyload);
+            return RegisterSingleton<T, T>();
         }
 
         /// <summary>
-        /// Registers a scene-specific concrete singleton of the given type.
-        /// 
-        /// The instance will be lazy loaded when resolved (if <paramref name="lazyload"/> is true).
-        /// 
-        /// <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()"/>.</remarks>
+        ///     Registers a concrete singleton of the given type.
+        ///     The instance won't be created until the first time it is resolved.
         /// </summary>
         /// <typeparam name="T">The type of the singleton.</typeparam>
-        /// <param name="lazyload">Should the singleton be initialized on first resolve instead of instantly.</param>
-        public static void RegisterSingletonForScene<T>(bool lazyload = true) where T : new()
+        public static Lazy<T> RegisterLazySingleton<T>() where T : new()
         {
-            RegisterSingletonForScene<T, T>(_currentScene, lazyload);
+            return RegisterLazySingleton<T, T>();
         }
 
         /// <summary>
-        /// Registers a scene-specific concrete singleton of the given type.
-        /// 
-        /// The instance will be lazy loaded when resolved (if <paramref name="lazyload"/> is true).
+        ///     Registers a scene-specific concrete singleton of the given type.
+        ///     <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()" />.</remarks>
         /// </summary>
         /// <typeparam name="T">The type of the singleton.</typeparam>
-        /// <param name="lazyload">Should the singleton be initialized on first resolve instead of instantly.</param>
+        public static T RegisterSingletonForScene<T>() where T : new()
+        {
+            return RegisterSingletonForScene<T, T>(_currentScene);
+        }
+
+        /// <summary>
+        ///     Registers a scene-specific concrete singleton of the given type.
+        ///     The instance won't be created until the first time it is resolved.
+        ///     <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()" />.</remarks>
+        /// </summary>
+        /// <typeparam name="T">The type of the singleton.</typeparam>
+        public static Lazy<T> RegisterLazySingletonForScene<T>() where T : new()
+        {
+            return RegisterLazySingletonForScene<T, T>(_currentScene);
+        }
+
+        /// <summary>
+        ///     Registers a scene-specific concrete singleton of the given type.
+        /// </summary>
+        /// <typeparam name="T">The type of the singleton.</typeparam>
         /// <param name="scene">The scene to register the transient type for.</param>
-        public static void RegisterSingletonForScene<T>(Scene scene, bool lazyload = true) where T : new()
+        public static T RegisterSingletonForScene<T>(Scene scene) where T : new()
         {
-            RegisterSingletonForScene<T, T>(scene, lazyload);
+            return RegisterSingletonForScene<T, T>(scene);
         }
 
         /// <summary>
-        /// Registers a specific instance to be a singleton for its concrete type.
+        ///     Registers a scene-specific concrete singleton of the given type.
+        ///     The instance won't be created until the first time it is resolved.
+        /// </summary>
+        /// <typeparam name="T">The type of the singleton.</typeparam>
+        /// <param name="scene">The scene to register the transient type for.</param>
+        public static Lazy<T> RegisterLazySingletonForScene<T>(Scene scene) where T : new()
+        {
+            return RegisterLazySingletonForScene<T, T>(scene);
+        }
+
+        /// <summary>
+        ///     Registers a concrete singleton of the type <typeparamref name="TConcrete" /> for the abstract type
+        ///     <typeparamref name="TAbstract" />.
+        /// </summary>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
+        public static TConcrete RegisterSingleton<TAbstract, TConcrete>() where TConcrete : TAbstract, new()
+        {
+            var instance = CreateInstance<TConcrete>();
+            Func<object> resolver = () => instance;
+
+            GlobalResolvers[typeof(TAbstract)] = resolver;
+
+            return instance;
+        }
+
+        /// <summary>
+        ///     Registers a concrete singleton of the type <typeparamref name="TConcrete" /> for the abstract type
+        ///     <typeparamref name="TAbstract" />.
+        ///     The instance won't be created until the first time it is resolved.
+        /// </summary>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
+        public static Lazy<TConcrete> RegisterLazySingleton<TAbstract, TConcrete>() where TConcrete : TAbstract, new()
+        {
+            var lazyInstance = new Lazy<TConcrete>(CreateFactory<TConcrete>());
+            Func<object> resolver = () => lazyInstance.Value;
+
+            GlobalResolvers[typeof(TAbstract)] = resolver;
+
+            return lazyInstance;
+        }
+
+        /// <summary>
+        ///     Registers a scene-specific concrete singleton of the type <typeparamref name="TConcrete" /> for the abstract type
+        ///     <typeparamref name="TAbstract" />.
+        ///     <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()" />.</remarks>
+        /// </summary>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
+        public static TConcrete RegisterSingletonForScene<TAbstract, TConcrete>() where TConcrete : TAbstract, new()
+        {
+            return RegisterSingletonForScene<TAbstract, TConcrete>(_currentScene);
+        }
+
+        /// <summary>
+        ///     Registers a scene-specific concrete singleton of the type <typeparamref name="TConcrete" /> for the abstract type
+        ///     <typeparamref name="TAbstract" />.
+        ///     The instance won't be created until the first time it is resolved.
+        ///     <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()" />.</remarks>
+        /// </summary>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
+        public static Lazy<TConcrete> RegisterLazySingletonForScene<TAbstract, TConcrete>()
+            where TConcrete : TAbstract, new()
+        {
+            return RegisterLazySingletonForScene<TAbstract, TConcrete>(_currentScene);
+        }
+
+        /// <summary>
+        ///     Registers a scene-specific concrete singleton of the type <typeparamref name="TConcrete" /> for the abstract type
+        ///     <typeparamref name="TAbstract" />.
+        /// </summary>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
+        /// <param name="scene">The scene to register the transient type for.</param>
+        public static TConcrete RegisterSingletonForScene<TAbstract, TConcrete>(Scene scene)
+            where TConcrete : TAbstract, new()
+        {
+            var sceneData = GetOrCreateSceneData(scene);
+
+            var instance = CreateInstance<TConcrete>(scene);
+            Func<object> resolver = () => instance;
+
+            sceneData.Resolvers[typeof(TAbstract)] = resolver;
+
+            return instance;
+        }
+
+        /// <summary>
+        ///     Registers a scene-specific concrete singleton of the type <typeparamref name="TConcrete" /> for the abstract type
+        ///     <typeparamref name="TAbstract" />.
+        ///     The instance won't be created until the first time it is resolved.
+        /// </summary>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
+        /// <param name="scene">The scene to register the transient type for.</param>
+        public static Lazy<TConcrete> RegisterLazySingletonForScene<TAbstract, TConcrete>(Scene scene)
+            where TConcrete : TAbstract, new()
+        {
+            var sceneData = GetOrCreateSceneData(scene);
+
+            var lazyInstance = new Lazy<TConcrete>(CreateFactory<TConcrete>(scene));
+            Func<object> resolver = () => lazyInstance.Value;
+
+            sceneData.Resolvers[typeof(TAbstract)] = resolver;
+
+            return lazyInstance;
+        }
+
+        /// <summary>
+        ///     Registers a specific instance to be a singleton for its concrete type.
         /// </summary>
         /// <typeparam name="T">The type of the singleton.</typeparam>
         /// <param name="instance">The instance to register as a singleton.</param>
@@ -102,9 +216,8 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers a specific instance to be a scene-specific singleton for its concrete type.
-        /// 
-        /// <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()"/>.</remarks>
+        ///     Registers a specific instance to be a scene-specific singleton for its concrete type.
+        ///     <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()" />.</remarks>
         /// </summary>
         /// <typeparam name="T">The type of the singleton.</typeparam>
         /// <param name="instance">The instance to register as a singleton.</param>
@@ -114,7 +227,7 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers a specific instance to be a scene-specific singleton for its concrete type.
+        ///     Registers a specific instance to be a scene-specific singleton for its concrete type.
         /// </summary>
         /// <typeparam name="T">The type of the singleton.</typeparam>
         /// <param name="instance">The instance to register as a singleton.</param>
@@ -126,80 +239,8 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers a concrete singleton of the type <typeparamref name="TConcrete"/> for the abstract type <typeparamref name="TAbstract"/>.
-        /// 
-        /// The instance will be lazy loaded when resolved (if <paramref name="lazyload"/> is true).
-        /// </summary>
-        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
-        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
-        /// <param name="lazyload">Should the singleton be initialized on first resolve instead of instantly.</param>
-        public static void RegisterSingleton<TAbstract, TConcrete>(bool lazyload = true) where TConcrete : TAbstract, new()
-        {
-            Func<object> resolver;
-
-            if (lazyload)
-            {
-                var lazyInstance = new Lazy<TConcrete>(CreateFactory<TConcrete>());
-                resolver = () => lazyInstance.Value;
-            }
-            else
-            {
-                var instance = CreateInstance<TConcrete>();
-                resolver = () => instance;
-            }
-
-            GlobalResolvers[typeof(TAbstract)] = resolver;
-        }
-
-
-        /// <summary>
-        /// Registers a scene-specific concrete singleton of the type <typeparamref name="TConcrete"/> for the abstract type <typeparamref name="TAbstract"/>.
-        /// 
-        /// The instance will be lazy loaded when resolved (if <paramref name="lazyload"/> is true).
-        /// 
-        /// <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()"/>.</remarks>
-        /// </summary>
-        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
-        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
-        /// <param name="lazyload">Should the singleton be initialized on first resolve instead of instantly.</param>
-        public static void RegisterSingletonForScene<TAbstract, TConcrete>(bool lazyload = true) where TConcrete : TAbstract, new()
-        {
-            RegisterSingletonForScene<TAbstract, TConcrete>(_currentScene, lazyload);
-        }
-
-
-        /// <summary>
-        /// Registers a scene-specific concrete singleton of the type <typeparamref name="TConcrete"/> for the abstract type <typeparamref name="TAbstract"/>.
-        /// 
-        /// The instance will be lazy loaded when resolved (if <paramref name="lazyload"/> is true).
-        /// </summary>
-        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
-        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
-        /// <param name="scene">The scene to register the transient type for.</param>
-        /// <param name="lazyload">Should the singleton be initialized on first resolve instead of instantly.</param>
-        public static void RegisterSingletonForScene<TAbstract, TConcrete>(Scene scene, bool lazyload = true) where TConcrete : TAbstract, new()
-        {
-            Func<object> resolver;
-
-            var sceneData = GetOrCreateSceneData(scene);
-
-            if (lazyload)
-            {
-                var lazyInstance = new Lazy<TConcrete>(CreateFactory<TConcrete>(scene));
-                resolver = () => lazyInstance.Value;
-            }
-            else
-            {
-                var instance = CreateInstance<TConcrete>(scene);
-                resolver = () => instance;
-            }
-
-            sceneData.Resolvers[typeof(TAbstract)] = resolver;
-        }
-
-        /// <summary>
-        /// Registers a concrete transient type. 
-        /// A new instance of the given type will be returned each time it is resolved.
+        ///     Registers a concrete transient type.
+        ///     A new instance of the given type will be returned each time it is resolved.
         /// </summary>
         /// <typeparam name="T">The concrete transient type to register.</typeparam>
         public static void RegisterTransient<T>() where T : new()
@@ -208,10 +249,9 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers scene-specific a concrete transient type. 
-        /// A new instance of the given type will be returned each time it is resolved.
-        /// 
-        /// <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()"/>.</remarks>
+        ///     Registers scene-specific a concrete transient type.
+        ///     A new instance of the given type will be returned each time it is resolved.
+        ///     <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()" />.</remarks>
         /// </summary>
         /// <typeparam name="T">The concrete transient type to register.</typeparam>
         public static void RegisterTransientForScene<T>() where T : new()
@@ -220,8 +260,8 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers scene-specific a concrete transient type. 
-        /// A new instance of the given type will be returned each time it is resolved.
+        ///     Registers scene-specific a concrete transient type.
+        ///     A new instance of the given type will be returned each time it is resolved.
         /// </summary>
         /// <typeparam name="T">The concrete transient type to register.</typeparam>
         /// <param name="scene">The scene to register the transient type for.</param>
@@ -231,10 +271,11 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers a concrete transient type to return new instances of when the abstract type <typeparamref name="TAbstract"/> is resolved.
+        ///     Registers a concrete transient type to return new instances of when the abstract type
+        ///     <typeparamref name="TAbstract" /> is resolved.
         /// </summary>
-        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
-        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract"/> is resolved.</typeparam>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract" /> is resolved.</typeparam>
         public static void RegisterTransient<TAbstract, TConcrete>() where TConcrete : TAbstract, new()
         {
             var factory = CreateFactory<TConcrete>();
@@ -242,32 +283,34 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers a scene-specific concrete transient type to return new instances of when the abstract type <typeparamref name="TAbstract"/> is resolved.
-        /// 
-        /// <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()"/>.</remarks>
+        ///     Registers a scene-specific concrete transient type to return new instances of when the abstract type
+        ///     <typeparamref name="TAbstract" /> is resolved.
+        ///     <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()" />.</remarks>
         /// </summary>
-        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
-        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract"/> is resolved.</typeparam>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract" /> is resolved.</typeparam>
         public static void RegisterTransientForScene<TAbstract, TConcrete>() where TConcrete : TAbstract, new()
         {
             RegisterTransientForScene<TAbstract, TConcrete>(_currentScene);
         }
 
         /// <summary>
-        /// Registers a scene-specific concrete transient type to return new instances of when the abstract type <typeparamref name="TAbstract"/> is resolved.
+        ///     Registers a scene-specific concrete transient type to return new instances of when the abstract type
+        ///     <typeparamref name="TAbstract" /> is resolved.
         /// </summary>
-        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
-        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract"/> is resolved.</typeparam>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract" /> is resolved.</typeparam>
         /// <param name="scene">The scene to register the transient type for.</param>
-        public static void RegisterTransientForScene<TAbstract, TConcrete>(Scene scene) where TConcrete : TAbstract, new()
+        public static void RegisterTransientForScene<TAbstract, TConcrete>(Scene scene)
+            where TConcrete : TAbstract, new()
         {
             var factory = CreateFactory<TConcrete>(scene);
             RegisterTransientForScene<TAbstract, TConcrete>(factory, scene);
         }
 
         /// <summary>
-        /// Registers a concrete transient type to return new instances of when <typeparamref name="T"/> is resolved.
-        /// The specified resolver will be used for producing the instances.
+        ///     Registers a concrete transient type to return new instances of when <typeparamref name="T" /> is resolved.
+        ///     The specified resolver will be used for producing the instances.
         /// </summary>
         /// <typeparam name="T">The concrete transient type to register.</typeparam>
         /// <param name="factory">The factory that will be used for creating instances.</param>
@@ -277,10 +320,10 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers a scene-specific concrete transient type to return new instances of when <typeparamref name="T"/> is resolved.
-        /// The specified resolver will be used for producing the instances.
-        /// 
-        /// <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()"/>.</remarks>
+        ///     Registers a scene-specific concrete transient type to return new instances of when <typeparamref name="T" /> is
+        ///     resolved.
+        ///     The specified resolver will be used for producing the instances.
+        ///     <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()" />.</remarks>
         /// </summary>
         /// <typeparam name="T">The concrete transient type to register.</typeparam>
         /// <param name="factory">The factory that will be used for creating instances.</param>
@@ -290,8 +333,9 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers a scene-specific concrete transient type to return new instances of when <typeparamref name="T"/> is resolved.
-        /// The specified resolver will be used for producing the instances.
+        ///     Registers a scene-specific concrete transient type to return new instances of when <typeparamref name="T" /> is
+        ///     resolved.
+        ///     The specified resolver will be used for producing the instances.
         /// </summary>
         /// <typeparam name="T">The concrete transient type to register.</typeparam>
         /// <param name="factory">The factory that will be used for creating instances.</param>
@@ -302,11 +346,12 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers a concrete transient type to return new instances of when the abstract type <typeparamref name="TAbstract"/> is resolved.
-        /// The specified resolver will be used for producing the instances.
+        ///     Registers a concrete transient type to return new instances of when the abstract type
+        ///     <typeparamref name="TAbstract" /> is resolved.
+        ///     The specified resolver will be used for producing the instances.
         /// </summary>
-        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
-        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract"/> is resolved.</typeparam>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract" /> is resolved.</typeparam>
         /// <param name="factory">The factory that will be used for creating instances.</param>
         public static void RegisterTransient<TAbstract, TConcrete>(Func<TConcrete> factory) where TConcrete : TAbstract
         {
@@ -314,48 +359,49 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Registers a scene-specific concrete transient type to return new instances of when the abstract type <typeparamref name="TAbstract"/> is resolved.
-        /// The specified resolver will be used for producing the instances.
-        /// 
-        /// <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()"/>.</remarks>
+        ///     Registers a scene-specific concrete transient type to return new instances of when the abstract type
+        ///     <typeparamref name="TAbstract" /> is resolved.
+        ///     The specified resolver will be used for producing the instances.
+        ///     <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()" />.</remarks>
         /// </summary>
-        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
-        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract"/> is resolved.</typeparam>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract" /> is resolved.</typeparam>
         /// <param name="factory">The factory that will be used for creating instances.</param>
-        public static void RegisterTransientForScene<TAbstract, TConcrete>(Func<TConcrete> factory) where TConcrete : TAbstract
+        public static void RegisterTransientForScene<TAbstract, TConcrete>(Func<TConcrete> factory)
+            where TConcrete : TAbstract
         {
             RegisterTransientForScene<TAbstract, TConcrete>(factory, _currentScene);
         }
 
         /// <summary>
-        /// Registers a scene-specific concrete transient type to return new instances of when the abstract type <typeparamref name="TAbstract"/> is resolved.
-        /// The specified resolver will be used for producing the instances.
+        ///     Registers a scene-specific concrete transient type to return new instances of when the abstract type
+        ///     <typeparamref name="TAbstract" /> is resolved.
+        ///     The specified resolver will be used for producing the instances.
         /// </summary>
-        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
-        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract"/> is resolved.</typeparam>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete" />.</typeparam>
+        /// <typeparam name="TConcrete">The concrete transient type to return when <typeparamref name="TAbstract" /> is resolved.</typeparam>
         /// <param name="factory">The factory that will be used for creating instances.</param>
         /// <param name="scene">The scene to register the transient type for.</param>
-        public static void RegisterTransientForScene<TAbstract, TConcrete>(Func<TConcrete> factory, Scene scene) where TConcrete : TAbstract
+        public static void RegisterTransientForScene<TAbstract, TConcrete>(Func<TConcrete> factory, Scene scene)
+            where TConcrete : TAbstract
         {
             GetOrCreateSceneData(scene).Resolvers[typeof(TAbstract)] = () => factory();
         }
 
         /// <summary>
-        /// Locates and returns a transient object or singleton of the specified type.
-        /// 
-        /// Searches for a global object first, if nothing is found and <paramref name="includeActiveScene"/> is true then it searches for a scene specific resolver.
-        /// 
-        /// Make sure the type is registered first.
-        /// 
-        /// <seealso cref="RegisterSingleton{T}(T)"/>
-        /// <seealso cref="RegisterTransient{T}()"/>
-        /// <seealso cref="ResolveForScene{T}()"/>
+        ///     Locates and returns a transient object or singleton of the specified type.
+        ///     Searches for a global object first, if nothing is found and <paramref name="includeActiveScene" /> is true then it
+        ///     searches for a scene specific resolver.
+        ///     Make sure the type is registered first.
+        ///     <seealso cref="RegisterSingleton{T}(T)" />
+        ///     <seealso cref="RegisterTransient{T}()" />
+        ///     <seealso cref="ResolveForScene{T}()" />
         /// </summary>
         /// <typeparam name="T">The type to locate an implementation for.</typeparam>
         /// <param name="includeActiveScene">Whether to search for a scene specific resolver if a global one isn't found.</param>
         /// <returns>
-        /// The transient object or singleton that is mapped to the specified type. 
-        /// If nothing is registered for <typeparamref name="T"/> the default value for the type is returned.
+        ///     The transient object or singleton that is mapped to the specified type.
+        ///     If nothing is registered for <typeparamref name="T" /> the default value for the type is returned.
         /// </returns>
         public static T Resolve<T>(bool includeActiveScene = true)
         {
@@ -373,17 +419,15 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Locates and returns a transient object or singleton of the specified type for the currently active scene.
-        /// 
-        /// Make sure the type is registered first.
-        /// 
-        /// <seealso cref="RegisterSingletonForScene{T}(T)"/>
-        /// <seealso cref="RegisterTransientForScene{T}()"/>
+        ///     Locates and returns a transient object or singleton of the specified type for the currently active scene.
+        ///     Make sure the type is registered first.
+        ///     <seealso cref="RegisterSingletonForScene{T}(T)" />
+        ///     <seealso cref="RegisterTransientForScene{T}()" />
         /// </summary>
         /// <typeparam name="T">The type to locate an implementation for.</typeparam>
         /// <returns>
-        /// The transient object or singleton that is mapped to the specified type. 
-        /// If nothing is registered for <typeparamref name="T"/> the default value for the type is returned.
+        ///     The transient object or singleton that is mapped to the specified type.
+        ///     If nothing is registered for <typeparamref name="T" /> the default value for the type is returned.
         /// </returns>
         public static T ResolveForScene<T>()
         {
@@ -391,17 +435,15 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Locates and returns a transient object or singleton of the specified type for the given scene.
-        /// 
-        /// Make sure the type is registered first.
-        /// 
-        /// <seealso cref="RegisterSingletonForScene{T}(T)"/>
-        /// <seealso cref="RegisterTransientForScene{T}()"/>
+        ///     Locates and returns a transient object or singleton of the specified type for the given scene.
+        ///     Make sure the type is registered first.
+        ///     <seealso cref="RegisterSingletonForScene{T}(T)" />
+        ///     <seealso cref="RegisterTransientForScene{T}()" />
         /// </summary>
         /// <typeparam name="T">The type to locate an implementation for.</typeparam>
         /// <returns>
-        /// The transient object or singleton that is mapped to the specified type. 
-        /// If nothing is registered for <typeparamref name="T"/> the default value for the type is returned.
+        ///     The transient object or singleton that is mapped to the specified type.
+        ///     If nothing is registered for <typeparamref name="T" /> the default value for the type is returned.
         /// </returns>
         public static T ResolveForScene<T>(Scene scene)
         {
@@ -413,13 +455,13 @@ namespace Archon.SwissArmyLib.Utils
             sceneData.Resolvers.TryGetValue(typeof(T), out resolver);
 
             if (resolver != null)
-                return (T)resolver();
+                return (T) resolver();
 
             return default(T);
         }
 
         /// <summary>
-        /// Clears all resolvers.
+        ///     Clears all resolvers.
         /// </summary>
         public static void Reset()
         {
@@ -428,7 +470,7 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Clears global resolvers.
+        ///     Clears global resolvers.
         /// </summary>
         public static void ResetGlobal()
         {
@@ -439,7 +481,7 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Clears the currently active scene's resolvers.
+        ///     Clears the currently active scene's resolvers.
         /// </summary>
         public static void ResetScene()
         {
@@ -447,7 +489,7 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Clears a specific scene's resolvers.
+        ///     Clears a specific scene's resolvers.
         /// </summary>
         public static void ResetScene(Scene scene)
         {
@@ -461,7 +503,7 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
-        /// Clears all scene specific resolvers for all scenes.
+        ///     Clears all scene specific resolvers for all scenes.
         /// </summary>
         public static void ResetScenes()
         {
@@ -541,7 +583,7 @@ namespace Archon.SwissArmyLib.Utils
                 Object.DontDestroyOnLoad(_multiSceneGameObject);
             }
 
-            return (T)(object)_multiSceneGameObject.AddComponent(typeof(T));
+            return (T) (object) _multiSceneGameObject.AddComponent(typeof(T));
         }
 
         private static T CreateComponent<T>(Scene scene)
@@ -554,7 +596,13 @@ namespace Archon.SwissArmyLib.Utils
                 SceneManager.MoveGameObjectToScene(sceneData.GameObject, scene);
             }
 
-            return (T)(object)sceneData.GameObject.AddComponent(typeof(T));
+            return (T) (object) sceneData.GameObject.AddComponent(typeof(T));
+        }
+
+        private class SceneData
+        {
+            public readonly Dictionary<Type, Func<object>> Resolvers = new Dictionary<Type, Func<object>>();
+            public GameObject GameObject;
         }
     }
 }
