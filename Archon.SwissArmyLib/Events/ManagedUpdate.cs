@@ -12,7 +12,7 @@ namespace Archon.SwissArmyLib.Events
     /// 
     /// Also useful for non-MonoBehaviours that needs to be part of the update loop as well.
     /// 
-    /// <see cref="EventSystem"/> is used for managing the events. 
+    /// <see cref="EventSystem.Global"/> is used for managing the events. 
     /// See <see cref="ManagedEvents"/> for the events you can listen for.
     /// 
     /// You can either put this component on a GameObject in your scene 
@@ -47,19 +47,19 @@ namespace Archon.SwissArmyLib.Events
         [UsedImplicitly]
         private void Update()
         {
-            EventSystem.Invoke(ManagedEvents.Update);
+            EventSystem.Global.Invoke(ManagedEvents.Update);
         }
 
         [UsedImplicitly]
         private void LateUpdate()
         {
-            EventSystem.Invoke(ManagedEvents.LateUpdate);
+            EventSystem.Global.Invoke(ManagedEvents.LateUpdate);
         }
 
         [UsedImplicitly]
         private void FixedUpdate()
         {
-            EventSystem.Invoke(ManagedEvents.FixedUpdate);
+            EventSystem.Global.Invoke(ManagedEvents.FixedUpdate);
         }
     }
 

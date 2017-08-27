@@ -36,11 +36,11 @@ namespace Archon.SwissArmyLib.Events
         {
             ManagedUpdate.InitializeIfNeeded();
             if (UsesUpdate)
-                EventSystem.AddListener(ManagedEvents.Update, this, ExecutionOrder);
+                EventSystem.Global.AddListener(ManagedEvents.Update, this, ExecutionOrder);
             if (UsesLateUpdate)
-                EventSystem.AddListener(ManagedEvents.LateUpdate, this, ExecutionOrder);
+                EventSystem.Global.AddListener(ManagedEvents.LateUpdate, this, ExecutionOrder);
             if (UsesFixedUpdate)
-                EventSystem.AddListener(ManagedEvents.FixedUpdate, this, ExecutionOrder);
+                EventSystem.Global.AddListener(ManagedEvents.FixedUpdate, this, ExecutionOrder);
         }
 
         /// <summary>
@@ -49,11 +49,11 @@ namespace Archon.SwissArmyLib.Events
         protected virtual void OnDisable()
         {
             if (UsesUpdate)
-                EventSystem.RemoveListener(ManagedEvents.Update, this);
+                EventSystem.Global.RemoveListener(ManagedEvents.Update, this);
             if (UsesLateUpdate)
-                EventSystem.RemoveListener(ManagedEvents.LateUpdate, this);
+                EventSystem.Global.RemoveListener(ManagedEvents.LateUpdate, this);
             if (UsesFixedUpdate)
-                EventSystem.RemoveListener(ManagedEvents.FixedUpdate, this);
+                EventSystem.Global.RemoveListener(ManagedEvents.FixedUpdate, this);
         }
 
         /// <inheritdoc />

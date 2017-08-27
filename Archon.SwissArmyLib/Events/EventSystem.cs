@@ -13,18 +13,24 @@ namespace Archon.SwissArmyLib.Events
     /// 
     /// Events are differentiated by an integer. You are expected to create constants to define your events.
     /// </summary>
-    public static class EventSystem
+    public class EventSystem
     {
-        private static readonly Dictionary<int, PrioritizedList<IEventListener>> EventListeners = new Dictionary<int, PrioritizedList<IEventListener>>();
+        /// <summary>
+        /// The global EventSystem.
+        /// Useful for anything that doesn't require its own EventSystem.
+        /// </summary>
+        public static readonly EventSystem Global = new EventSystem();
+
+        private readonly Dictionary<int, PrioritizedList<IEventListener>> _eventListeners = new Dictionary<int, PrioritizedList<IEventListener>>();
 
         /// <summary>
         /// Invokes an event.
         /// </summary>
         /// <param name="eventId">The id of the event.</param>
-        public static void Invoke(int eventId)
+        public void Invoke(int eventId)
         {
             PrioritizedList<IEventListener> listeners;
-            if (EventListeners.TryGetValue(eventId, out listeners))
+            if (_eventListeners.TryGetValue(eventId, out listeners))
             {
                 for (var i = 0; i < listeners.Count; i++)
                 {
@@ -47,11 +53,11 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="eventId">The id of the event.</param>
         /// <param name="listener">The listener to be called.</param>
         /// <param name="priority">The priority of the listener which affects the order which listeners are called in.</param>
-        public static void AddListener(int eventId, IEventListener listener, int priority = 0)
+        public void AddListener(int eventId, IEventListener listener, int priority = 0)
         {
             PrioritizedList<IEventListener> listeners;
-            if (!EventListeners.TryGetValue(eventId, out listeners))
-                EventListeners[eventId] = listeners = new PrioritizedList<IEventListener>();
+            if (!_eventListeners.TryGetValue(eventId, out listeners))
+                _eventListeners[eventId] = listeners = new PrioritizedList<IEventListener>();
 
             listeners.Add(listener, priority);
         }
@@ -61,19 +67,19 @@ namespace Archon.SwissArmyLib.Events
         /// </summary>
         /// <param name="eventId">The id of the event.</param>
         /// <param name="listener">The listener to remove.</param>
-        public static void RemoveListener(int eventId, IEventListener listener)
+        public void RemoveListener(int eventId, IEventListener listener)
         {
             PrioritizedList<IEventListener> listeners;
-            if (EventListeners.TryGetValue(eventId, out listeners))
+            if (_eventListeners.TryGetValue(eventId, out listeners))
                 listeners.Remove(listener);
         }
 
         /// <summary>
         /// Clears all listeners for all events.
         /// </summary>
-        public static void Clear()
+        public void Clear()
         {
-            foreach (var listenerList in EventListeners.Values)
+            foreach (var listenerList in _eventListeners.Values)
                 listenerList.Clear();
         }
 
@@ -81,10 +87,10 @@ namespace Archon.SwissArmyLib.Events
         /// Clears all listeners for a single event.
         /// </summary>
         /// <param name="eventId">The id of the event.</param>
-        public static void Clear(int eventId)
+        public void Clear(int eventId)
         {
             PrioritizedList<IEventListener> listeners;
-            if (EventListeners.TryGetValue(eventId, out listeners))
+            if (_eventListeners.TryGetValue(eventId, out listeners))
                 listeners.Clear();
         }
     }
@@ -97,19 +103,25 @@ namespace Archon.SwissArmyLib.Events
     /// 
     /// Events are differentiated by an integer. You are expected to create constants to define your events.
     /// </summary>
-    public static class EventSystem<T>
+    public class EventSystem<T>
     {
-        private static readonly Dictionary<int, PrioritizedList<IEventListener<T>>> EventListeners = new Dictionary<int, PrioritizedList<IEventListener<T>>>();
+        /// <summary>
+        /// The global EventSystem.
+        /// Useful for anything that doesn't require its own EventSystem.
+        /// </summary>
+        public static readonly EventSystem<T> Global = new EventSystem<T>();
+
+        private readonly Dictionary<int, PrioritizedList<IEventListener<T>>> _eventListeners = new Dictionary<int, PrioritizedList<IEventListener<T>>>();
 
         /// <summary>
         /// Invokes an event.
         /// </summary>
         /// <param name="eventId">The id of the event.</param>
         /// <param name="args">The event args.</param>
-        public static void Invoke(int eventId, T args)
+        public void Invoke(int eventId, T args)
         {
             PrioritizedList<IEventListener<T>> listeners;
-            if (EventListeners.TryGetValue(eventId, out listeners))
+            if (_eventListeners.TryGetValue(eventId, out listeners))
             {
                 for (var i = 0; i < listeners.Count; i++)
                 {
@@ -132,11 +144,11 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="eventId">The id of the event.</param>
         /// <param name="listener">The listener to be called.</param>
         /// <param name="priority">The priority of the listener which affects the order which listeners are called in.</param>
-        public static void AddListener(int eventId, IEventListener<T> listener, int priority = 0)
+        public void AddListener(int eventId, IEventListener<T> listener, int priority = 0)
         {
             PrioritizedList<IEventListener<T>> listeners;
-            if (!EventListeners.TryGetValue(eventId, out listeners))
-                EventListeners[eventId] = listeners = new PrioritizedList<IEventListener<T>>();
+            if (!_eventListeners.TryGetValue(eventId, out listeners))
+                _eventListeners[eventId] = listeners = new PrioritizedList<IEventListener<T>>();
 
             listeners.Add(listener, priority);
         }
@@ -146,19 +158,19 @@ namespace Archon.SwissArmyLib.Events
         /// </summary>
         /// <param name="eventId">The id of the event.</param>
         /// <param name="listener">The listener to remove.</param>
-        public static void RemoveListener(int eventId, IEventListener<T> listener)
+        public void RemoveListener(int eventId, IEventListener<T> listener)
         {
             PrioritizedList<IEventListener<T>> listeners;
-            if (EventListeners.TryGetValue(eventId, out listeners))
+            if (_eventListeners.TryGetValue(eventId, out listeners))
                 listeners.Remove(listener);
         }
 
         /// <summary>
         /// Clears all listeners for all events.
         /// </summary>
-        public static void Clear()
+        public void Clear()
         {
-            foreach (var listenerList in EventListeners.Values)
+            foreach (var listenerList in _eventListeners.Values)
                 listenerList.Clear();
         }
 
@@ -166,10 +178,10 @@ namespace Archon.SwissArmyLib.Events
         /// Clears all listeners for a single event.
         /// </summary>
         /// <param name="eventId">The id of the event.</param>
-        public static void Clear(int eventId)
+        public void Clear(int eventId)
         {
             PrioritizedList<IEventListener<T>> listeners;
-            if (EventListeners.TryGetValue(eventId, out listeners))
+            if (_eventListeners.TryGetValue(eventId, out listeners))
                 listeners.Clear();
         }
     }

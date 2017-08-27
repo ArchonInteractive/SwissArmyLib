@@ -31,13 +31,13 @@ namespace Archon.SwissArmyLib.Gravity
         private GravitationalSystem()
         {
             ManagedUpdate.InitializeIfNeeded();
-            EventSystem.AddListener(ManagedEvents.FixedUpdate, this);
+            EventSystem.Global.AddListener(ManagedEvents.FixedUpdate, this);
         }
 
         /// <inheritdoc />
         ~GravitationalSystem()
         {
-            EventSystem.RemoveListener(ManagedEvents.FixedUpdate, this);
+            EventSystem.Global.RemoveListener(ManagedEvents.FixedUpdate, this);
         }
 
         /// <summary>

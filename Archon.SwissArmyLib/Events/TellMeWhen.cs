@@ -26,13 +26,13 @@ namespace Archon.SwissArmyLib.Events
         private TellMeWhen()
         {
             ManagedUpdate.InitializeIfNeeded();
-            EventSystem.AddListener(ManagedEvents.Update, this);
+            EventSystem.Global.AddListener(ManagedEvents.Update, this);
         }
 
         /// <inheritdoc />
         ~TellMeWhen()
         {
-            EventSystem.RemoveListener(ManagedEvents.Update, this);
+            EventSystem.Global.RemoveListener(ManagedEvents.Update, this);
         }
 
         /// <summary>
