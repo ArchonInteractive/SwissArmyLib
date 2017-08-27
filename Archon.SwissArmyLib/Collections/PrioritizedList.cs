@@ -43,6 +43,12 @@ namespace Archon.SwissArmyLib.Collections
                 return;
             }
 
+            if (priority >= _items[_items.Count - 1].Priority)
+            {
+                _items.Add(prioritizedItem);
+                return;
+            }
+
             for (var i = 0; i < _items.Count; i++)
             {
                 if (priority < _items[i].Priority)
@@ -51,8 +57,6 @@ namespace Archon.SwissArmyLib.Collections
                     return;
                 }
             }
-
-            _items.Add(prioritizedItem);
         }
 
         public void Clear()

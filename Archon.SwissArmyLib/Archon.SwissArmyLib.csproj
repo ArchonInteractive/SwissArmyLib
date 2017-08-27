@@ -53,6 +53,8 @@
     <Compile Include="Collections\PrioritizedList.cs" />
     <Compile Include="Collections\ShuffleBag.cs" />
     <Compile Include="Events\EventSystem.cs" />
+    <Compile Include="Events\ManagedUpdate.cs" />
+    <Compile Include="Events\ManagedUpdateBehaviour.cs" />
     <Compile Include="Gravity\GravitationalEntity.cs" />
     <Compile Include="Gravity\IGravitationalPoint.cs" />
     <Compile Include="Gravity\SphericalGravitationalPoint.cs" />

@@ -1,4 +1,5 @@
-﻿using UnityEngine;
+﻿using JetBrains.Annotations;
+using UnityEngine;
 
 namespace Archon.SwissArmyLib.Gravity
 {
@@ -13,16 +14,19 @@ namespace Archon.SwissArmyLib.Gravity
     {
         private Rigidbody _rigidbody;
 
+        [UsedImplicitly]
         private void Awake()
         {
             _rigidbody = GetComponent<Rigidbody>();
         }
 
+        [UsedImplicitly]
         private void OnEnable()
         {
             GravitationalSystem.Register(_rigidbody);
         }
 
+        [UsedImplicitly]
         private void OnDisable()
         {
             GravitationalSystem.Unregister(_rigidbody);

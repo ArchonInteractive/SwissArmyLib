@@ -461,6 +461,42 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
+        /// Checks whether there's registered a resolver for a specific type.
+        /// </summary>
+        /// <typeparam name="T">The type to check if registered.</typeparam>
+        /// <param name="includeActiveScene">Whether to search for a scene specific resolver if a global one isn't found.</param>
+        /// <returns>True if registered, false otherwise.</returns>
+        public static bool IsRegistered<T>(bool includeActiveScene = true)
+        {
+            return GlobalResolvers.ContainsKey(typeof(T)) 
+                || (includeActiveScene && IsRegisteredInScene<T>());
+        }
+
+        /// <summary>
+        /// Checks whether there's registered a scene-specific resolver for a specific type in the currently active scene.
+        /// </summary>
+        /// <typeparam name="T">The type to check if registered.</typeparam>
+        /// <returns>True if registered, false otherwise.</returns>
+        public static bool IsRegisteredInScene<T>()
+        {
+            return IsRegisteredInScene<T>(_currentScene);
+        }
+
+        /// <summary>
+        /// Checks whether there's registered a scene-specific resolver for a specific type in the specified scene.
+        /// </summary>
+        /// <typeparam name="T">The type to check if registered.</typeparam>
+        /// <returns>True if registered, false otherwise.</returns>
+        public static bool IsRegisteredInScene<T>(Scene scene)
+        {
+            SceneData sceneData;
+            if (!SceneResolvers.TryGetValue(scene, out sceneData))
+                return false;
+
+            return sceneData.Resolvers.ContainsKey(typeof(T));
+        }
+
+        /// <summary>
         ///     Clears all resolvers.
         /// </summary>
         public static void Reset()

@@ -1,6 +1,6 @@
 ﻿using System.Collections.Generic;
+using Archon.SwissArmyLib.Events;
 using Archon.SwissArmyLib.Utils;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Archon.SwissArmyLib.Gravity
@@ -17,13 +17,7 @@ namespace Archon.SwissArmyLib.Gravity
     /// 
     /// <remarks>You might want to set Unity's gravity to (0,0,0).</remarks>
     /// </summary>
-    [AddComponentMenu("")]
-    public class GravitationalSystem : MonoBehaviour {
-
-        /// <summary>
-        /// A reference to the GravitationalSystem singleton.
-        /// </summary>
-        public static GravitationalSystem Instance { get; private set; }
+    public class GravitationalSystem : IEventListener {
 
         private static readonly List<IGravitationalPoint> Points = new List<IGravitationalPoint>();
         private static readonly List<Rigidbody> Rigidbodies = new List<Rigidbody>();
@@ -31,7 +25,19 @@ namespace Archon.SwissArmyLib.Gravity
 
         static GravitationalSystem()
         {
-            Instance = ServiceLocator.RegisterSingleton<GravitationalSystem>();
+            ServiceLocator.RegisterSingleton(new GravitationalSystem());
+        }
+
+        private GravitationalSystem()
+        {
+            ManagedUpdate.InitializeIfNeeded();
+            EventSystem.AddListener(ManagedEvents.FixedUpdate, this);
+        }
+
+        /// <inheritdoc />
+        ~GravitationalSystem()
+        {
+            EventSystem.RemoveListener(ManagedEvents.FixedUpdate, this);
         }
 
         /// <summary>
@@ -88,19 +94,26 @@ namespace Archon.SwissArmyLib.Gravity
             Rigidbodies2D.Remove(rigidbody);
         }
 
-        [UsedImplicitly]
-        private void Awake()
+        /// <summary>
+        /// Gets the sum of all gravitational forces at a specific location.
+        /// </summary>
+        /// <param name="location">The location to test.</param>
+        /// <returns>A vector representing the sum of gravitational force at <paramref name="location"/>.</returns>
+        public Vector3 GetGravityAtPoint(Vector3 location)
         {
-            if (Instance != null && Instance != this)
-            {
-                Debug.LogWarning("You shouldn't add GravitationalSystem to a GameObject manually.");
-                Destroy(this);
-            }
+            var gravity = Vector3.zero;
+
+            for (var i = 0; i < Points.Count; i++)
+                gravity += Points[i].GetForceAt(location);
+
+            return gravity;
         }
 
-        [UsedImplicitly]
-        private void FixedUpdate()
+        void IEventListener.OnEvent(int eventId)
         {
+            if (eventId != ManagedEvents.FixedUpdate)
+                return;
+
             for (var i = 0; i < Rigidbodies.Count; i++)
             {
                 var body = Rigidbodies[i];
@@ -119,24 +132,9 @@ namespace Archon.SwissArmyLib.Gravity
                 if (body.simulated && body.gravityScale > 0 && body.IsAwake())
                 {
                     var gravity = GetGravityAtPoint(body.position);
-                    body.velocity += (Vector2) gravity * body.gravityScale * Time.deltaTime;
+                    body.velocity += (Vector2)gravity * body.gravityScale * Time.deltaTime;
                 }
             }
-        }
-
-        /// <summary>
-        /// Gets the sum of all gravitational forces at a specific location.
-        /// </summary>
-        /// <param name="location">The location to test.</param>
-        /// <returns>A vector representing the sum of gravitational force at <paramref name="location"/>.</returns>
-        public Vector3 GetGravityAtPoint(Vector3 location)
-        {
-            var gravity = Vector3.zero;
-
-            for (var i = 0; i < Points.Count; i++)
-                gravity += Points[i].GetForceAt(location);
-
-            return gravity;
         }
     }
 }

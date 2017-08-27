@@ -1,3 +1,4 @@
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Archon.SwissArmyLib.Gravity
@@ -49,27 +50,32 @@ namespace Archon.SwissArmyLib.Gravity
             set { _isGlobal = value; }
         }
 
+        [UsedImplicitly]
         private void Awake()
         {
             _radiusSqr = _radius * _radius;
         }
 
+        [UsedImplicitly]
         private void OnEnable()
         {
             GravitationalSystem.Register(this);
         }
 
+        [UsedImplicitly]
         private void OnDisable()
         {
             GravitationalSystem.Unregister(this);
         }
 
+        [UsedImplicitly]
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.magenta;
             Gizmos.DrawWireSphere(transform.position, Radius);
         }
 
+        /// <inheritdoc />
         public Vector3 GetForceAt(Vector3 location)
         {
             var deltaPos = transform.position - location;

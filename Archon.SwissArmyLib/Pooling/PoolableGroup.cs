@@ -28,5 +28,25 @@ namespace Archon.SwissArmyLib.Pooling
             for (var i = 0; i < _poolableComponents.Count; i++)
                 _poolableComponents[i].OnDespawned();
         }
+
+        /// <summary>
+        /// Manually add a poolable object to be notified when this component is spawned or despawned.
+        /// 
+        /// Useful if you dynamically add IPoolable components at runtime.
+        /// </summary>
+        /// <param name="poolable">The poolable object that should be notified.</param>
+        public void AddManually(IPoolable poolable)
+        {
+            _poolableComponents.Add(poolable);
+        }
+
+        /// <summary>
+        /// Manually removes a poolable object so that it no longer is notified when this component is spawned or despawned.
+        /// </summary>
+        /// <param name="poolable">The poolable object that should no longer be notified.</param>
+        public void RemoveManually(IPoolable poolable)
+        {
+            _poolableComponents.Remove(poolable);
+        }
     }
 }

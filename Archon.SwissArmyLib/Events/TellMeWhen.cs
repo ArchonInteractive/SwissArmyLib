@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections.Generic;
 using Archon.SwissArmyLib.Utils;
-using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Archon.SwissArmyLib.Events
@@ -9,8 +8,7 @@ namespace Archon.SwissArmyLib.Events
     /// <summary>
     /// A utility class for getting notified after a specific amount of time.
     /// </summary>
-    [AddComponentMenu("")]
-    public class TellMeWhen : MonoBehaviour
+    public class TellMeWhen : IEventListener
     {
         /// <summary>
         /// Default id, if none is supplied
@@ -20,11 +18,21 @@ namespace Archon.SwissArmyLib.Events
         private static readonly LinkedList<Entry> EntriesScaled = new LinkedList<Entry>();
         private static readonly LinkedList<Entry> EntriesUnscaled = new LinkedList<Entry>();
 
-        private static TellMeWhen Instance { get; set; }
-
         static TellMeWhen()
         {
-            Instance = ServiceLocator.RegisterSingleton<TellMeWhen>();
+            ServiceLocator.RegisterSingleton(new TellMeWhen());
+        }
+
+        private TellMeWhen()
+        {
+            ManagedUpdate.InitializeIfNeeded();
+            EventSystem.AddListener(ManagedEvents.Update, this);
+        }
+
+        /// <inheritdoc />
+        ~TellMeWhen()
+        {
+            EventSystem.RemoveListener(ManagedEvents.Update, this);
         }
 
         /// <summary>
@@ -235,23 +243,6 @@ namespace Archon.SwissArmyLib.Events
             EntriesUnscaled.Clear();
         }
 
-        [UsedImplicitly]
-        private void Awake()
-        {
-            if (Instance != null && Instance != this)
-            {
-                Debug.LogWarning("You shouldn't add TellMeWhen to a GameObject manually.");
-                Destroy(this);
-            }
-        }
-
-        [UsedImplicitly]
-        private void Update()
-        {
-            UpdateList(Time.time, EntriesScaled);
-            UpdateList(Time.unscaledTime, EntriesUnscaled);
-        }
-
         private static void UpdateList(float time, LinkedList<Entry> list)
         {
             LinkedListNode<Entry> current;
@@ -336,6 +327,14 @@ namespace Archon.SwissArmyLib.Events
             /// <param name="id">The id of the timer.</param>
             /// <param name="args">The supplied event args if supplied when the timer was scheduled.</param>
             void OnTimesUp(int id, object args);
+        }
+
+        void IEventListener.OnEvent(int eventId)
+        {
+            if (eventId != ManagedEvents.Update) return;
+
+            UpdateList(Time.deltaTime, EntriesScaled);
+            UpdateList(Time.unscaledDeltaTime, EntriesUnscaled);
         }
     }
 }

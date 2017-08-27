@@ -5,10 +5,10 @@ using UnityEditor;
 namespace Archon.SwissArmyLib.Editor
 {
     /// <summary>
-    /// Makes fields marked with <see cref="ReadonlyAttribute"/> uninteractable via the inspector.
+    /// Makes fields marked with <see cref="ReadOnlyAttribute"/> uninteractable via the inspector.
     /// </summary>
-    [CustomPropertyDrawer(typeof(ReadonlyAttribute))]
-    public class ReadonlyDrawer : PropertyDrawer
+    [CustomPropertyDrawer(typeof(ReadOnlyAttribute))]
+    public class ReadOnlyDrawer : PropertyDrawer
     {
         /// <inheritdoc />
         public override void OnGUI(Rect position,
