@@ -29,10 +29,37 @@ namespace Archon.SwissArmyLib.Events
         /// </summary>
         protected abstract bool UsesFixedUpdate { get; }
 
+        private bool _startWasCalled;
+
+        /// <summary>
+        /// Start is called on the frame when a script is enabled just before any of the Update methods is called the first time.
+        /// </summary>
+        protected virtual void Start()
+        {
+            _startWasCalled = true;
+            StartListening();
+        }
+
         /// <summary>
         /// Called when the component is enabled.
         /// </summary>
         protected virtual void OnEnable()
+        {
+            // We don't want Update calls before Start has been called.
+            if (_startWasCalled)
+                StartListening();
+        }
+
+        /// <summary>
+        /// Called when the component is disabled.
+        /// </summary>
+        protected virtual void OnDisable()
+        {
+            if (_startWasCalled)
+                StopListening();
+        }
+
+        private void StartListening()
         {
             ManagedUpdate.InitializeIfNeeded();
             if (UsesUpdate)
@@ -43,10 +70,7 @@ namespace Archon.SwissArmyLib.Events
                 EventSystem.Global.AddListener(ManagedEvents.FixedUpdate, this, ExecutionOrder);
         }
 
-        /// <summary>
-        /// Called when the component is disabled.
-        /// </summary>
-        protected virtual void OnDisable()
+        private void StopListening()
         {
             if (UsesUpdate)
                 EventSystem.Global.RemoveListener(ManagedEvents.Update, this);
