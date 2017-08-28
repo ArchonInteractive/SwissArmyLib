@@ -333,8 +333,8 @@ namespace Archon.SwissArmyLib.Events
         {
             if (eventId != ManagedEvents.Update) return;
 
-            UpdateList(Time.deltaTime, EntriesScaled);
-            UpdateList(Time.unscaledDeltaTime, EntriesUnscaled);
+            UpdateList(Time.time, EntriesScaled);
+            UpdateList(Time.unscaledTime, EntriesUnscaled);
         }
     }
 }
