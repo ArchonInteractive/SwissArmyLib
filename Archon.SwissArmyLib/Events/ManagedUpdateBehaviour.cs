@@ -57,7 +57,7 @@ namespace Archon.SwissArmyLib.Events
         }
 
         /// <inheritdoc />
-        public void OnEvent(int eventId)
+        public virtual void OnEvent(int eventId)
         {
             switch (eventId)
             {

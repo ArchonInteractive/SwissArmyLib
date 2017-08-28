@@ -3,84 +3,133 @@ using System.Collections.Generic;
 
 namespace Archon.SwissArmyLib.Collections
 {
-    public class PrioritizedList<T> : IList<T>
+    /// <summary>
+    /// Represents an item and its priority.
+    /// </summary>
+    /// <typeparam name="T">The type of the item.</typeparam>
+    public struct PrioritizedItem<T>
     {
-        private readonly List<PrioritizedItem> _items = new List<PrioritizedItem>();
+        /// <summary>
+        /// The item that is prioritized.
+        /// </summary>
+        public T Item;
 
-        public struct PrioritizedItem
+        /// <summary>
+        /// The priority of the item.
+        /// </summary>
+        public int Priority;
+
+        /// <summary>
+        /// Creates a new prioritized item.
+        /// </summary>
+        public PrioritizedItem(T item, int priority)
         {
-            public T Item;
-            public int Priority;
+            Item = item;
+            Priority = priority;
+        }
+    }
+
+    /// <summary>
+    /// A list of items sorted by their priority.
+    /// 
+    /// <remarks>
+    ///     Currently it's unintuitively only sorted ascendingly. Sorry.
+    /// </remarks>
+    /// </summary>
+    /// <typeparam name="T">The type of the prioritized items.</typeparam>
+    public class PrioritizedList<T> : IList<PrioritizedItem<T>>
+    {
+        private readonly List<PrioritizedItem<T>> _items = new List<PrioritizedItem<T>>();
+
+        /// <summary>
+        /// Gets the amount of items in the list.
+        /// </summary>
+        public int Count { get { return _items.Count; }}
+
+        bool ICollection<PrioritizedItem<T>>.IsReadOnly { get { return false; } }
+
+        /// <summary>
+        /// Gets the item at the specified index.
+        /// </summary>
+        /// <param name="index">The index for the item to retrieve.</param>
+        /// <returns>The item at the specified index.</returns>
+        public PrioritizedItem<T> this[int index]
+        {
+            get { return _items[index]; }
         }
 
-        public IEnumerator<T> GetEnumerator()
+        PrioritizedItem<T> IList<PrioritizedItem<T>>.this[int index]
         {
-            for (var i = 0; i < _items.Count; i++)
-                yield return _items[i].Item;
-        }
-
-        IEnumerator IEnumerable.GetEnumerator()
-        {
-            return GetEnumerator();
-        }
-
-        public void Add(T item)
-        {
-            Add(item, 0);
-        }
-
-        public void Add(T item, int priority)
-        {
-            var prioritizedItem = new PrioritizedItem
+            get { return _items[index]; }
+            set
             {
-                Item = item,
-                Priority = priority
-            };
+                throw new System.NotImplementedException("Setting a specific index is not supported.");
+            }
+        }
 
+        /// <summary>
+        /// Adds a prioritized item to the list.
+        /// </summary>
+        /// <param name="item">The prioritized item to add.</param>
+        public void Add(PrioritizedItem<T> item)
+        {
             if (_items.Count == 0)
             {
-                _items.Add(prioritizedItem);
+                _items.Add(item);
                 return;
             }
 
-            if (priority >= _items[_items.Count - 1].Priority)
+            if (item.Priority >= _items[_items.Count - 1].Priority)
             {
-                _items.Add(prioritizedItem);
+                _items.Add(item);
                 return;
             }
 
             for (var i = 0; i < _items.Count; i++)
             {
-                if (priority < _items[i].Priority)
+                if (item.Priority < _items[i].Priority)
                 {
-                    _items.Insert(i, prioritizedItem);
+                    _items.Insert(i, item);
                     return;
                 }
             }
         }
 
-        public void Clear()
+        /// <summary>
+        /// Adds an item to the list with priority 0.
+        /// </summary>
+        /// <param name="item">The item to add.</param>
+        public void Add(T item)
         {
-            _items.Clear();
+            Add(item, 0);
         }
 
-        public bool Contains(T item)
+        /// <summary>
+        /// Adds an item to the list with the specified priority.
+        /// </summary>
+        /// <param name="item">The item to add.</param>
+        /// <param name="priority">The priority to give the item.</param>
+        public void Add(T item, int priority)
         {
-            for (var i = 0; i < _items.Count; i++)
-            {
-                if (_items[i].Equals(item))
-                    return true;
-            }
-
-            return false;
+            var prioritizedItem = new PrioritizedItem<T>(item, priority);
+            Add(prioritizedItem);
         }
 
-        public void CopyTo(T[] array, int arrayIndex)
+        /// <summary>
+        /// Removes a prioritized item from the list.
+        /// </summary>
+        /// <param name="item">The item to remove.</param>
+        /// <returns>True if found and removed, false otherwise.</returns>
+        public bool Remove(PrioritizedItem<T> item)
         {
-            for (var i = arrayIndex; i < array.Length && i < _items.Count; i++)
-                array[i] = _items[i].Item;
+            return _items.Remove(item);
         }
 
+        /// <summary>
+        /// Removes an item from the list.
+        /// </summary>
+        /// <param name="item">The item to remove.</param>
+        /// <returns>True if found and removed, false otherwise.</returns>
         public bool Remove(T item)
         {
             for (var i = 0; i < _items.Count; i++)
@@ -95,9 +144,85 @@ namespace Archon.SwissArmyLib.Collections
             return false;
         }
 
-        public int Count { get { return _items.Count; }}
-        public bool IsReadOnly { get { return false; }}
+        /// <summary>
+        /// Removes the item found at the specified index.
+        /// </summary>
+        /// <param name="index">The index of the item to remove.</param>
+        public void RemoveAt(int index)
+        {
+            _items.RemoveAt(index);
+        }
 
+        /// <summary>
+        /// Clears all items from the list.
+        /// </summary>
+        public void Clear()
+        {
+            _items.Clear();
+        }
+
+        /// <summary>
+        /// Checks whether the list contains the specified prioritized item.
+        /// </summary>
+        /// <param name="item">The item to check if the list contains.</param>
+        /// <returns>True if found, false otherwise.</returns>
+        public bool Contains(PrioritizedItem<T> item)
+        {
+            return _items.Contains(item);
+        }
+
+        /// <summary>
+        /// Checks whether the list contains the specified item.
+        /// </summary>
+        /// <param name="item">The item to check if the list contains.</param>
+        /// <returns>True if found, false otherwise.</returns>
+        public bool Contains(T item)
+        {
+            for (var i = 0; i < _items.Count; i++)
+            {
+                if (_items[i].Equals(item))
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
+        /// Copies the list prioritized items to an array starting at the specified index.
+        /// </summary>
+        /// <param name="array">The array to copy to.</param>
+        /// <param name="arrayIndex">The index to start at.</param>
+        public void CopyTo(PrioritizedItem<T>[] array, int arrayIndex)
+        {
+            _items.CopyTo(array, arrayIndex);
+        }
+
+        /// <summary>
+        /// Copies the list items to an array starting at the specified index.
+        /// </summary>
+        /// <param name="array">The array to copy to.</param>
+        /// <param name="arrayIndex">The index to start at.</param>
+        public void CopyTo(T[] array, int arrayIndex)
+        {
+            for (var i = arrayIndex; i < array.Length && i < _items.Count; i++)
+                array[i] = _items[i].Item;
+        }
+
+        /// <summary>
+        /// Gets the index of a prioritized item in the list.
+        /// </summary>
+        /// <param name="item">The item to get the index for.</param>
+        /// <returns>The index of the item in the list or -1 if not found.</returns>
+        public int IndexOf(PrioritizedItem<T> item)
+        {
+            return _items.IndexOf(item);
+        }
+
+        /// <summary>
+        /// Gets the index of a item in the list.
+        /// </summary>
+        /// <param name="item">The item to get the index for.</param>
+        /// <returns>The index of the item in the list or -1 if not found.</returns>
         public int IndexOf(T item)
         {
             for (var i = 0; i < _items.Count; i++)
@@ -109,25 +234,23 @@ namespace Archon.SwissArmyLib.Collections
             return -1;
         }
 
-        public void Insert(int index, T item)
+        void IList<PrioritizedItem<T>>.Insert(int index, PrioritizedItem<T> item)
         {
-            throw new System.NotImplementedException("Inserting at a specific index is not supported by PrioritizedList since it wouldn't make sense.");
+            throw new System.NotImplementedException("Inserting at a specific index is not supported.");
         }
 
-        public void RemoveAt(int index)
+        /// <summary>
+        /// Gets an enumerator for the list items.
+        /// </summary>
+        /// <returns>The enumerator.</returns>
+        public IEnumerator<PrioritizedItem<T>> GetEnumerator()
         {
-            _items.RemoveAt(index);
+            return _items.GetEnumerator();
         }
 
-        public T this[int index]
+        IEnumerator IEnumerable.GetEnumerator()
         {
-            get { return _items[index].Item; }
-            set
-            {
-                var item = _items[index];
-                item.Item = value;
-                _items[index] = item;
-            }
+            return GetEnumerator();
         }
     }
 }
