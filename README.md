@@ -14,7 +14,7 @@ This project is under the very permissive MIT license and we honestly do not car
     * Can be prioritized to control call order
 * Timers
     * Supports both scaled and unscaled time
-    * Optional args to pass in
+    * Optional arbitrary args to pass in
     * Also uses interfaces for callbacks to avoid garbage
 * Automata
     * Finite State Machine
@@ -22,19 +22,37 @@ This project is under the very permissive MIT license and we honestly do not car
 * Pooling
     * Support for both arbitrary classes and GameObjects
     * IPoolable interface for callbacks
+        * PoolableGroup component in case multiple IPoolable components needs to be notified
     * Timed despawns
 * Service Locator
-	* A simple implementation of the Service Locator pattern
+    * An implementation of the Service Locator pattern
+    * Aware of MonoBehaviours and how to work with them
+    * Supports scene-specific resolvers
+    * Supports both singletons and short-lived objects
+        * Singletons can be lazy loaded
+* Managed Update Loop
+    * An update loop maintained in managed space to avoid the [overhead of Native C++ --> Managed C#](https://blogs.unity3d.com/2015/12/23/1k-update-calls/)
+    * Useful for non-MonoBehaviours that needs to be part of the update loop
+    * Optional **ManagedUpdateBehaviour** class for easy usage
 * Gravity
     * Flexible gravitational system
     * Useful for planet gravity, black holes, magnets and all that sort of stuff.
 * Misc
     * Shake
         * Useful for creating proper screen shake
-	* Lazy&lt;T&gt;
-		* A backport of System.Lazy&lt;T&gt; from .NET 4.0+
+    * Lazy&lt;T&gt;
+        * A backport of System.Lazy&lt;T&gt; from .NET 4.0+
     * Some niche collection types
-	* A few other tiny utilities
+        * DelayedList&lt;T&gt;
+            * A list wrapper that delays adding or removing item from the list until *ProcessPending()* is called.
+        * DictionaryWithDefault&lt;T&gt;
+        * ShuffleBag&lt;T&gt;
+    * Some useful attributes
+        * ExecutionOrder
+            * Sets a default (or forces) an execution order for a **MonoBehaviour**
+        * ReadOnly
+            * Makes fields uninteractable in the inspector
+    * A few other tiny utilities
 
 ### Download
 There's currently no downloadable binary, but you can either build it yourself or just copy the files into your Unity project.
