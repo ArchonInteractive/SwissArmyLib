@@ -1,4 +1,4 @@
-﻿using Archon.SwissArmyLib.Utils.Inspector;
+﻿using Archon.SwissArmyLib.Utils.Editor;
 using UnityEngine;
 using UnityEditor;
 

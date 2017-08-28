@@ -1,6 +1,6 @@
 ﻿using UnityEngine;
 
-namespace Archon.SwissArmyLib.Utils.Inspector
+namespace Archon.SwissArmyLib.Utils.Editor
 {
     /// <summary>
     /// Marks the field to be unchangable via the inspector.
