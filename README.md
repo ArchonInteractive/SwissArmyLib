@@ -5,14 +5,14 @@ SwissArmyLib is an attempt to create a collection of useful utilities primarily 
 
 A very important part in the design decisions of this library was to keep the garbage generation low. This means you will probably frown a little upon the use of interfaces for callbacks, instead of just using delicious delegates. It also means using the trusty old *for* loops for iterating through collections where possible.
 
-There's a lot of libraries with some of the same features, but they're often walled off behind a restrictive or ambiguous license. 
+There's a lot of libraries with some of the same features, but they're often walled off behind a restrictive or ambiguous license.
 This project is under the very permissive MIT license and we honestly do not care what you use it for.
 
 ### Features
-* Events
+* [Events](https://github.com/ArchonInteractive/SwissArmyLib/wiki/EventSystem)
     * Uses interfaces instead of delegates to reduce garbage
     * Can be prioritized to control call order
-* Timers
+* [Timers](https://github.com/ArchonInteractive/SwissArmyLib/wiki/TellMeWhen)
     * Supports both scaled and unscaled time
     * Optional arbitrary args to pass in
     * Also uses interfaces for callbacks to avoid garbage
