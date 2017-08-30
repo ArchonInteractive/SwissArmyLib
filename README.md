@@ -1,7 +1,7 @@
 # ![Logo](https://gitlab.com/archoninteractive/SwissArmyLib/raw/master/logo.png) &nbsp; SwissArmyLib
 ## Please note this library is under construction, and the API is definitely not stable. Also some things might currently be untested and broken.
 
-SwissArmyLib is an attempt to create a collection of useful utilities primarily intended for Unity projects, but feel free to rip parts out and use them for whatever you want.
+**SwissArmyLib** is an attempt to create a collection of useful utilities primarily intended for Unity projects, but feel free to rip parts out and use them for whatever you want.
 
 A very important part in the design decisions of this library was to keep the garbage generation low. This means you will probably frown a little upon the use of interfaces for callbacks, instead of just using delicious delegates. It also means using the trusty old *for* loops for iterating through collections where possible.
 
@@ -17,40 +17,40 @@ This project is under the very permissive MIT license and we honestly do not car
     * Optional arbitrary args to pass in
     * Also uses interfaces for callbacks to avoid garbage
 * Automata
-    * Finite State Machine
-    * Pushdown Automaton
-* Pooling
+    * [Finite State Machine](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Finite-State-Machine)
+    * [Pushdown Automaton](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Pushdown-Automaton)
+* [Pooling](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Object-Pooling)
     * Support for both arbitrary classes and GameObjects
     * IPoolable interface for callbacks
         * PoolableGroup component in case multiple IPoolable components needs to be notified
     * Timed despawns
-* Service Locator
+* [Service Locator](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Service-Locator)
     * An implementation of the Service Locator pattern
     * Aware of MonoBehaviours and how to work with them
     * Supports scene-specific resolvers
     * Supports both singletons and short-lived objects
         * Singletons can be lazy loaded
-* Managed Update Loop
+* [Managed Update Loop](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ManagedUpdate)
     * An update loop maintained in managed space to avoid the [overhead of Native C++ --> Managed C#](https://blogs.unity3d.com/2015/12/23/1k-update-calls/)
     * Useful for non-MonoBehaviours that needs to be part of the update loop
-    * Optional **ManagedUpdateBehaviour** class for easy usage
-* Gravity
+    * Optional **[ManagedUpdateBehaviour](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ManagedUpdateBehaviour)** class for easy usage
+* [Gravity](https://github.com/ArchonInteractive/SwissArmyLib/wiki/GravitationalSystem)
     * Flexible gravitational system
     * Useful for planet gravity, black holes, magnets and all that sort of stuff.
 * Misc
-    * Shake
+    * [Shake](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Shake)
         * Useful for creating proper screen shake
-    * Lazy&lt;T&gt;
+    * [Lazy&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Lazy)
         * A backport of System.Lazy&lt;T&gt; from .NET 4.0+
-    * Some niche collection types
-        * DelayedList&lt;T&gt;
+    * [Some niche collection types](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Collections)
+        * [DelayedList&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/DelayedList)
             * A list wrapper that delays adding or removing item from the list until *ProcessPending()* is called.
-        * DictionaryWithDefault&lt;T&gt;
-        * ShuffleBag&lt;T&gt;
-    * Some useful attributes
-        * ExecutionOrder
+        * [DictionaryWithDefault&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/DictionaryWithDefault)
+        * [ShuffleBag&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ShuffleBag)
+    * [Some useful attributes](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes)
+        * [ExecutionOrder](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#execution-order)
             * Sets a default (or forces) an execution order for a **MonoBehaviour**
-        * ReadOnly
+        * [ReadOnly](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#readonly)
             * Makes fields uninteractable in the inspector
     * A few other tiny utilities
 
