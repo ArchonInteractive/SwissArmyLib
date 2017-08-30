@@ -28,13 +28,27 @@ namespace Archon.SwissArmyLib.Automata
         /// <summary>
         /// Creates a new Finite State Machine.
         /// 
-        /// If you need control over how the states are created, you can register them manually using <see cref="RegisterState{TState}"/>.
+        /// If you need control over how the states are created, you can register them manually using <see cref="RegisterState"/>.
         /// If not, then you can freely use <see cref="ChangeStateAuto{TState}"/> which will create the states using their default constructor.
         /// </summary>
-        /// <param name="context"></param>
+        /// <param name="context">A shared context for the states.</param>
         public FiniteStateMachine(T context)
         {
             Context = context;
+        }
+
+        /// <summary>
+        /// Creates a new Finite State Machine and changes the state to <paramref name="startState"/>.
+        /// 
+        /// If you need control over how the states are created, you can register them manually using <see cref="RegisterState"/>.
+        /// If not, then you can freely use <see cref="ChangeStateAuto{TState}"/> which will create the states using their default constructor.
+        /// </summary>
+        /// <param name="context"></param>
+        /// <param name="startState"></param>
+        public FiniteStateMachine(T context, IFsmState<T> startState) : this(context)
+        {
+            RegisterState(startState);
+            ChangeState(startState);
         }
 
         /// <summary>
@@ -44,13 +58,13 @@ namespace Archon.SwissArmyLib.Automata
         {
             var currentState = CurrentState;
 
-            if (currentState!= null)
+            if (currentState != null)
             {
                 currentState.Reason();
 
                 // we only want to update the state if it's still the current one
                 if (currentState == CurrentState)
-                    CurrentState.Think(deltaTime);
+                    CurrentState.Act(deltaTime);
             }
         }
 

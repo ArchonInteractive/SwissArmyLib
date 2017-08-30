@@ -48,7 +48,7 @@ namespace Archon.SwissArmyLib.Automata
 
                 // we only want to update the state if it's still the current one
                 if (currentState == CurrentState)
-                    currentState.Think(deltaTime);
+                    currentState.Act(deltaTime);
             }
         }
 

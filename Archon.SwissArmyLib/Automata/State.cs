@@ -19,7 +19,7 @@ namespace Archon.SwissArmyLib.Automata
         }
 
         /// <summary>
-        /// Called every frame just before <see cref="Think"/>. 
+        /// Called every frame just before <see cref="Act"/>. 
         /// Use this to check whether you should change state.
         /// </summary>
         public virtual void Reason() { }
@@ -27,7 +27,7 @@ namespace Archon.SwissArmyLib.Automata
         /// <summary>
         /// Called every frame after <see cref="Reason"/>, if the state hasn't been changed.
         /// </summary>
-        public virtual void Think(float deltaTime)
+        public virtual void Act(float deltaTime)
         {
             TimeInState += deltaTime;
         }
