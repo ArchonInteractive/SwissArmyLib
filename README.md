@@ -48,7 +48,7 @@ This project is under the very permissive MIT license and we honestly do not car
         * [DictionaryWithDefault&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/DictionaryWithDefault)
         * [ShuffleBag&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ShuffleBag)
     * [Some useful attributes](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes)
-        * [ExecutionOrder](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#execution-order)
+        * [ExecutionOrder](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#executionorder)
             * Sets a default (or forces) an execution order for a **MonoBehaviour**
         * [ReadOnly](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#readonly)
             * Makes fields uninteractable in the inspector
