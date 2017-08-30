@@ -1,6 +1,11 @@
 # ![Logo](https://gitlab.com/archoninteractive/SwissArmyLib/raw/master/logo.png) &nbsp; SwissArmyLib
-## Please note this library is under construction, and the API is definitely not stable. Also some things might currently be untested and broken.
+**Please note this library is under construction and the API is definitely not stable. Also some things might currently be untested and broken.**
 
+[Documentation](https://github.com/ArchonInteractive/SwissArmyLib/wiki)
+
+---
+
+### About
 **SwissArmyLib** is an attempt to create a collection of useful utilities primarily intended for Unity projects, but feel free to rip parts out and use them for whatever you want.
 
 A very important part in the design decisions of this library was to keep the garbage generation low. This means you will probably frown a little upon the use of interfaces for callbacks, instead of just using delicious delegates. It also means using the trusty old *for* loops for iterating through collections where possible.
@@ -33,7 +38,7 @@ This project is under the very permissive MIT license and we honestly do not car
 * [Managed Update Loop](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ManagedUpdate)
     * An update loop maintained in managed space to avoid the [overhead of Native C++ --> Managed C#](https://blogs.unity3d.com/2015/12/23/1k-update-calls/)
     * Useful for non-MonoBehaviours that needs to be part of the update loop
-    * Optional **[ManagedUpdateBehaviour](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ManagedUpdateBehaviour)** class for easy usage
+    * Optional [ManagedUpdateBehaviour](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ManagedUpdateBehaviour) class for easy usage
 * [Gravity](https://github.com/ArchonInteractive/SwissArmyLib/wiki/GravitationalSystem)
     * Flexible gravitational system
     * Useful for planet gravity, black holes, magnets and all that sort of stuff.
@@ -45,11 +50,11 @@ This project is under the very permissive MIT license and we honestly do not car
     * [Some niche collection types](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Collections)
         * [DelayedList&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/DelayedList)
             * A list wrapper that delays adding or removing item from the list until *ProcessPending()* is called.
-        * [DictionaryWithDefault&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/DictionaryWithDefault)
+        * [DictionaryWithDefault&lt;TKey, TValue&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/DictionaryWithDefault)
         * [ShuffleBag&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ShuffleBag)
     * [Some useful attributes](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes)
         * [ExecutionOrder](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#executionorder)
-            * Sets a default (or forces) an execution order for a **MonoBehaviour**
+            * Sets a default (or forces) an execution order for a MonoBehaviour
         * [ReadOnly](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#readonly)
             * Makes fields uninteractable in the inspector
     * A few other tiny utilities
