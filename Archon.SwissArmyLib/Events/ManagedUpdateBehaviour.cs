@@ -1,4 +1,5 @@
 ﻿using UnityEngine;
+using EventIds = Archon.SwissArmyLib.Events.ManagedUpdate.EventIds;
 
 namespace Archon.SwissArmyLib.Events
 {
@@ -61,23 +62,22 @@ namespace Archon.SwissArmyLib.Events
 
         private void StartListening()
         {
-            ManagedUpdate.InitializeIfNeeded();
             if (UsesUpdate)
-                EventSystem.Global.AddListener(ManagedEvents.Update, this, ExecutionOrder);
+                ManagedUpdate.OnUpdate.AddListener(this, ExecutionOrder);
             if (UsesLateUpdate)
-                EventSystem.Global.AddListener(ManagedEvents.LateUpdate, this, ExecutionOrder);
+                ManagedUpdate.OnLateUpdate.AddListener(this, ExecutionOrder);
             if (UsesFixedUpdate)
-                EventSystem.Global.AddListener(ManagedEvents.FixedUpdate, this, ExecutionOrder);
+                ManagedUpdate.OnFixedUpdate.AddListener(this, ExecutionOrder);
         }
 
         private void StopListening()
         {
             if (UsesUpdate)
-                EventSystem.Global.RemoveListener(ManagedEvents.Update, this);
+                ManagedUpdate.OnUpdate.RemoveListener(this);
             if (UsesLateUpdate)
-                EventSystem.Global.RemoveListener(ManagedEvents.LateUpdate, this);
+                ManagedUpdate.OnLateUpdate.RemoveListener(this);
             if (UsesFixedUpdate)
-                EventSystem.Global.RemoveListener(ManagedEvents.FixedUpdate, this);
+                ManagedUpdate.OnFixedUpdate.RemoveListener(this);
         }
 
         /// <inheritdoc />
@@ -85,13 +85,13 @@ namespace Archon.SwissArmyLib.Events
         {
             switch (eventId)
             {
-                case ManagedEvents.Update:
+                case EventIds.Update:
                     OnUpdate();
                     return;
-                case ManagedEvents.LateUpdate:
+                case EventIds.LateUpdate:
                     OnLateUpdate();
                     return;
-                case ManagedEvents.FixedUpdate:
+                case EventIds.FixedUpdate:
                     OnFixedUpdate();
                     return;
             }

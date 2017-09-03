@@ -1,8 +1,8 @@
 ﻿using Archon.SwissArmyLib.Utils.Editor;
-using UnityEngine;
 using UnityEditor;
+using UnityEngine;
 
-namespace Archon.SwissArmyLib.Editor
+namespace Archon.SwissArmyLib.Editor.Utils
 {
     /// <summary>
     /// Makes fields marked with <see cref="ReadOnlyAttribute"/> uninteractable via the inspector.
@@ -15,9 +15,16 @@ namespace Archon.SwissArmyLib.Editor
             SerializedProperty property,
             GUIContent label)
         {
-            GUI.enabled = false;
-            EditorGUI.PropertyField(position, property, label, true);
-            GUI.enabled = true;
+            var readOnly = (ReadOnlyAttribute) attribute;
+
+            if (readOnly.OnlyWhilePlaying && !Application.isPlaying)
+                EditorGUI.PropertyField(position, property, label, true);
+            else
+            {
+                GUI.enabled = false;
+                EditorGUI.PropertyField(position, property, label, true);
+                GUI.enabled = true;
+            }
         }
     }
 }

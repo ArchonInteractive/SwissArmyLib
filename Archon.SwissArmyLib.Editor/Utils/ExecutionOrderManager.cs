@@ -2,7 +2,7 @@
 using Archon.SwissArmyLib.Utils.Editor;
 using UnityEditor;
 
-namespace Archon.SwissArmyLib.Editor
+namespace Archon.SwissArmyLib.Editor.Utils
 {
     /// <summary>
     /// Looks for classes using the <see cref="ExecutionOrderAttribute"/> and sets their execution order.

@@ -25,14 +25,13 @@ namespace Archon.SwissArmyLib.Events
 
         private TellMeWhen()
         {
-            ManagedUpdate.InitializeIfNeeded();
-            EventSystem.Global.AddListener(ManagedEvents.Update, this);
+            ManagedUpdate.OnUpdate.AddListener(this);
         }
 
         /// <inheritdoc />
         ~TellMeWhen()
         {
-            EventSystem.Global.RemoveListener(ManagedEvents.Update, this);
+            ManagedUpdate.OnUpdate.RemoveListener(this);
         }
 
         /// <summary>
@@ -331,7 +330,7 @@ namespace Archon.SwissArmyLib.Events
 
         void IEventListener.OnEvent(int eventId)
         {
-            if (eventId != ManagedEvents.Update) return;
+            if (eventId != ManagedUpdate.EventIds.Update) return;
 
             UpdateList(Time.time, EntriesScaled);
             UpdateList(Time.unscaledTime, EntriesUnscaled);

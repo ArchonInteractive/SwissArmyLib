@@ -48,9 +48,10 @@
     </Reference>
   </ItemGroup>
   <ItemGroup>
-    <Compile Include="ExecutionOrderManager.cs" />
+    <Compile Include="Utils\ExecutionOrderManager.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
-    <Compile Include="ReadOnlyDrawer.cs" />
+    <Compile Include="Utils\ReadOnlyDrawer.cs" />
+    <Compile Include="ResourceSystem\ResourcePoolEditor.cs" />
   </ItemGroup>
   <ItemGroup>
     <ProjectReference Include="..\Archon.SwissArmyLib\Archon.SwissArmyLib.csproj">

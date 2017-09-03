@@ -12,34 +12,58 @@ namespace Archon.SwissArmyLib.Events
     /// 
     /// Also useful for non-MonoBehaviours that needs to be part of the update loop as well.
     /// 
-    /// <see cref="EventSystem.Global"/> is used for managing the events. 
-    /// See <see cref="ManagedEvents"/> for the events you can listen for.
-    /// 
-    /// You can either put this component on a GameObject in your scene 
-    /// or call <see cref="InitializeIfNeeded"/> to create the instance.
+    /// Events your can subscribe to:
+    ///     <see cref="OnUpdate"/>
+    ///     <see cref="OnLateUpdate"/>
+    ///     <see cref="OnFixedUpdate"/>
     /// 
     /// <seealso cref="ManagedUpdateBehaviour"/>
     /// </summary>
-    [AddComponentMenu("Archon/ManagedUpdate")]
+    [AddComponentMenu("")]
     public sealed class ManagedUpdate : MonoBehaviour
     {
-        private static ManagedUpdate _instance;
+        /// <summary>
+        /// Event handler that is called every update.
+        /// </summary>
+        public static readonly Event OnUpdate = new Event(EventIds.Update);
 
         /// <summary>
-        /// Creates the ManagedUpdate instance if it doesn't already exist.
+        /// Event handler that is called every update but after the regular Update.
+        /// <seealso cref="OnUpdate"/>
         /// </summary>
-        public static void InitializeIfNeeded()
+        public static readonly Event OnLateUpdate = new Event(EventIds.LateUpdate);
+
+        /// <summary>
+        /// Event handler that is called every fixed update.
+        /// </summary>
+        public static readonly Event OnFixedUpdate = new Event(EventIds.FixedUpdate);
+
+        /// <summary>
+        /// Relayed event ids.
+        /// </summary>
+        public static class EventIds
         {
-            if (_instance == null)
-                _instance = ServiceLocator.RegisterSingleton<ManagedUpdate>();
+#pragma warning disable 1591
+            public const int
+                Update = -1000,
+                LateUpdate = -1001,
+                FixedUpdate = -1002;
+#pragma warning restore 1591
         }
+
+        static ManagedUpdate()
+        {
+            Instance = ServiceLocator.RegisterSingleton<ManagedUpdate>();
+        }
+
+        private static readonly ManagedUpdate Instance;
 
         [UsedImplicitly]
         private void Start()
         {
-            if (_instance == null || _instance != this)
+            if (Instance != null && Instance != this)
             {
-                InitializeIfNeeded();
+                Debug.LogWarning("You should not create the ManagedUpdate component yourself, this component will be removed.");
                 Destroy(this);
             }
         }
@@ -47,34 +71,19 @@ namespace Archon.SwissArmyLib.Events
         [UsedImplicitly]
         private void Update()
         {
-            EventSystem.Global.Invoke(ManagedEvents.Update);
+            OnUpdate.Invoke();
         }
 
         [UsedImplicitly]
         private void LateUpdate()
         {
-            EventSystem.Global.Invoke(ManagedEvents.LateUpdate);
+            OnLateUpdate.Invoke();
         }
 
         [UsedImplicitly]
         private void FixedUpdate()
         {
-            EventSystem.Global.Invoke(ManagedEvents.FixedUpdate);
+            OnFixedUpdate.Invoke();
         }
-    }
-
-    /// <summary>
-    /// Relayed event ids.
-    /// 
-    /// <seealso cref="ManagedUpdate"/>
-    /// </summary>
-    public static class ManagedEvents
-    {
-#pragma warning disable 1591
-        public const int
-            Update = -1000,
-            LateUpdate = -1001,
-            FixedUpdate = -1002;
-#pragma warning restore 1591
     }
 }

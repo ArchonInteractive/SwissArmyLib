@@ -30,14 +30,13 @@ namespace Archon.SwissArmyLib.Gravity
 
         private GravitationalSystem()
         {
-            ManagedUpdate.InitializeIfNeeded();
-            EventSystem.Global.AddListener(ManagedEvents.FixedUpdate, this);
+            ManagedUpdate.OnFixedUpdate.AddListener(this);
         }
 
         /// <inheritdoc />
         ~GravitationalSystem()
         {
-            EventSystem.Global.RemoveListener(ManagedEvents.FixedUpdate, this);
+            ManagedUpdate.OnFixedUpdate.RemoveListener(this);
         }
 
         /// <summary>
@@ -101,7 +100,7 @@ namespace Archon.SwissArmyLib.Gravity
         /// <returns>A vector representing the sum of gravitational force at <paramref name="location"/>.</returns>
         public Vector3 GetGravityAtPoint(Vector3 location)
         {
-            var gravity = Vector3.zero;
+            var gravity = new Vector3();
 
             for (var i = 0; i < Points.Count; i++)
                 gravity += Points[i].GetForceAt(location);
@@ -111,7 +110,7 @@ namespace Archon.SwissArmyLib.Gravity
 
         void IEventListener.OnEvent(int eventId)
         {
-            if (eventId != ManagedEvents.FixedUpdate)
+            if (eventId != ManagedUpdate.EventIds.FixedUpdate)
                 return;
 
             for (var i = 0; i < Rigidbodies.Count; i++)
