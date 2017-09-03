@@ -14,9 +14,10 @@ There's a lot of libraries with some of the same features, but they're often wal
 This project is under the very permissive MIT license and we honestly do not care what you use it for.
 
 ### Features
-* [Events](https://github.com/ArchonInteractive/SwissArmyLib/wiki/EventSystem)
+* [Events](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Event)
     * Uses interfaces instead of delegates to reduce garbage
     * Can be prioritized to control call order
+    * Check out [GlobalEvents](https://github.com/ArchonInteractive/SwissArmyLib/wiki/GlobalEvents) if you need.. well.. global events.
 * [Timers](https://github.com/ArchonInteractive/SwissArmyLib/wiki/TellMeWhen)
     * Supports both scaled and unscaled time
     * Optional arbitrary args to pass in
@@ -45,13 +46,7 @@ This project is under the very permissive MIT license and we honestly do not car
 * Misc
     * [Shake](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Shake)
         * Useful for creating proper screen shake
-    * [Lazy&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Lazy)
-        * A backport of System.Lazy&lt;T&gt; from .NET 4.0+
     * [Some niche collection types](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Collections)
-        * [DelayedList&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/DelayedList)
-            * A list wrapper that delays adding or removing item from the list until *ProcessPending()* is called.
-        * [DictionaryWithDefault&lt;TKey, TValue&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/DictionaryWithDefault)
-        * [ShuffleBag&lt;T&gt;](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ShuffleBag)
     * [Some useful attributes](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes)
         * [ExecutionOrder](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#executionorder)
             * Sets a default (or forces) an execution order for a MonoBehaviour
