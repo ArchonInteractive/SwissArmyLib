@@ -2,7 +2,8 @@
 **Please note this library is under construction and the API is definitely not stable. Also some things might currently be untested and broken.**
 
 ---
-
+[Download (bleeding edge)](https://archoninteractive.com/swissarmylib/downloads/Release.zip)
+&#8226;
 [Documentation](https://github.com/ArchonInteractive/SwissArmyLib/wiki)
 &#8226;
 [API Reference](https://archoninteractive.com/swissarmylib/)
