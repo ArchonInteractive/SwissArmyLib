@@ -60,7 +60,7 @@
     <Compile Include="Events\ManagedUpdate.cs" />
     <Compile Include="Events\ManagedUpdateBehaviour.cs" />
     <Compile Include="Gravity\GravitationalEntity.cs" />
-    <Compile Include="Gravity\IGravitationalPoint.cs" />
+    <Compile Include="Gravity\IGravitationalAffecter.cs" />
     <Compile Include="Gravity\SphericalGravitationalPoint.cs" />
     <Compile Include="Gravity\GravitationalEntity2D.cs" />
     <Compile Include="Gravity\GravitationalSystem.cs" />

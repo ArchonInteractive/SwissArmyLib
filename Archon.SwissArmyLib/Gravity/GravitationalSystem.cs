@@ -12,14 +12,14 @@ namespace Archon.SwissArmyLib.Gravity
     /// 
     /// Rigidbodies that should be affected should have the <see cref="GravitationalEntity"/> component (or <see cref="GravitationalEntity2D"/> if using 2d physics).
     /// 
-    /// Add gravitational forces by implementing the <see cref="IGravitationalPoint"/> interface and registering it in the system.
+    /// Add gravitational forces by implementing the <see cref="IGravitationalAffecter"/> interface and registering it in the system.
     /// See <see cref="SphericalGravitationalPoint"/> for a simple example implementation.
     /// 
     /// <remarks>You might want to set Unity's gravity to (0,0,0).</remarks>
     /// </summary>
     public class GravitationalSystem : IEventListener {
 
-        private static readonly List<IGravitationalPoint> Points = new List<IGravitationalPoint>();
+        private static readonly List<IGravitationalAffecter> Affecters = new List<IGravitationalAffecter>();
         private static readonly List<Rigidbody> Rigidbodies = new List<Rigidbody>();
         private static readonly List<Rigidbody2D> Rigidbodies2D = new List<Rigidbody2D>();
 
@@ -40,12 +40,12 @@ namespace Archon.SwissArmyLib.Gravity
         }
 
         /// <summary>
-        /// Registers a gravitational point to be part of the system.
+        /// Registers a gravitational affecter to be part of the system.
         /// </summary>
-        /// <param name="point">The point to register.</param>
-        public static void Register(IGravitationalPoint point)
+        /// <param name="affecter">The affecter to register.</param>
+        public static void Register(IGravitationalAffecter affecter)
         {
-            Points.Add(point);
+            Affecters.Add(affecter);
         }
 
         /// <summary>
@@ -67,12 +67,12 @@ namespace Archon.SwissArmyLib.Gravity
         }
 
         /// <summary>
-        /// Unregisters a gravitational point from the system, so it no longer affects entities.
+        /// Unregisters a gravitational affecter from the system, so it no longer affects entities.
         /// </summary>
-        /// <param name="point">The point to unregister.</param>
-        public static void Unregister(IGravitationalPoint point)
+        /// <param name="affecter">The affecter to unregister.</param>
+        public static void Unregister(IGravitationalAffecter affecter)
         {
-            Points.Remove(point);
+            Affecters.Remove(affecter);
         }
 
         /// <summary>
@@ -102,8 +102,8 @@ namespace Archon.SwissArmyLib.Gravity
         {
             var gravity = new Vector3();
 
-            for (var i = 0; i < Points.Count; i++)
-                gravity += Points[i].GetForceAt(location);
+            for (var i = 0; i < Affecters.Count; i++)
+                gravity += Affecters[i].GetForceAt(location);
 
             return gravity;
         }

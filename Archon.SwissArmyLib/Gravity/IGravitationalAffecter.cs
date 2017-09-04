@@ -3,12 +3,12 @@
 namespace Archon.SwissArmyLib.Gravity
 {
     /// <summary>
-    /// Represents a point with a gravitational pull on entities.
+    /// Represents a gravitational pull on entities.
     /// </summary>
-    public interface IGravitationalPoint
+    public interface IGravitationalAffecter
     {
         /// <summary>
-        /// Calculates how much gravitational pull is at a specific location caused by this point.
+        /// Calculates how much gravitational pull is at a specific location caused by this affecter.
         /// </summary>
         /// <param name="location">The location to test.</param>
         /// <returns>A vector representing the force at <paramref name="location"/>.</returns>

@@ -9,7 +9,7 @@ namespace Archon.SwissArmyLib.Gravity
     /// <remarks>The force is currently constant and not dependent on how close the entities are.</remarks>
     /// </summary>
     [AddComponentMenu("Archon/Gravity/SphericalGravitationalPoint")]
-    public class SphericalGravitationalPoint : MonoBehaviour, IGravitationalPoint
+    public class SphericalGravitationalPoint : MonoBehaviour, IGravitationalAffecter
     {
         [SerializeField] private float _strength = 9.82f;
         [SerializeField] private float _radius = 1;
