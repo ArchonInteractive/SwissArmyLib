@@ -89,6 +89,7 @@ namespace Archon.SwissArmyLib.Events
         }
     }
 
+    /// <summary>
     /// A manager of events that do not belong to any specific object but instead can be listened to by anyone and invoked by anyone.
     /// 
     /// Useful for GameLoaded, MatchEnded and similar events.
@@ -101,6 +102,7 @@ namespace Archon.SwissArmyLib.Events
     /// Events are differentiated by an integer. You are expected to create constants to define your events.
     /// 
     /// <seealso cref="IEventListener{T}"/>
+    /// </summary>
     public static class GlobalEvents<T>
     {
         private static readonly Dictionary<int, Event<T>> Events = new Dictionary<int, Event<T>>();

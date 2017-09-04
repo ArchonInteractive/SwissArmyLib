@@ -6,17 +6,27 @@ using UnityEngine;
 
 namespace Archon.SwissArmyLib.ResourceSystem
 {
+    /// <summary>
+    /// Adds resource to a pool at a constant rate or in intervals.
+    /// 
+    /// If the <see cref="Target"/> is not set, it will try to find a resource pool on the same GameObject.
+    /// </summary>
     [RequireComponent(typeof(ResourcePool))]
     public class ResourceRegen : MonoBehaviour, IEventListener<IResourceChangeEvent>
     {
+        [Tooltip("The target resource pool that should regen.")]
         [SerializeField, ReadOnly(OnlyWhilePlaying = true)]
         private ResourcePool _target;
 
+        [Tooltip("Time in seconds that regen should be paused when the target loses resource.")]
         [SerializeField] private float _downTimeOnResourceLoss;
 
+        [Tooltip("Amount of resource that should be gained per second.")]
         [SerializeField] private float _constantAmountPerSecond;
 
+        [Tooltip("Amount of resource that should be gained every interval.")]
         [SerializeField] private float _amountPerInterval;
+        [Tooltip("How often in seconds that resource should be gained.")]
         [SerializeField] private float _interval;
 
         private float _lastInterval;

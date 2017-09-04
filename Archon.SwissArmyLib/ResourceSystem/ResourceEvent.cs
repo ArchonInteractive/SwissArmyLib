@@ -20,6 +20,9 @@ namespace Archon.SwissArmyLib.ResourceSystem
         public object Args { get; set; }
     }
 
+    /// <summary>
+    /// Defines an event for after a resource pool has been changed.
+    /// </summary>
     public interface IResourceChangeEvent : IResourceEvent
     {
         /// <summary>
@@ -39,6 +42,9 @@ namespace Archon.SwissArmyLib.ResourceSystem
         float AppliedDelta { get; }
     }
 
+    /// <summary>
+    /// Defines a change event that has not yet happened, and can be altered.
+    /// </summary>
     public interface IResourcePreChangeEvent : IResourceEvent
     {
         /// <summary>
@@ -52,6 +58,9 @@ namespace Archon.SwissArmyLib.ResourceSystem
         float ModifiedDelta { get; set; }
     }
 
+    /// <summary>
+    /// Defines a barebones resource event.
+    /// </summary>
     public interface IResourceEvent
     {
         /// <summary>

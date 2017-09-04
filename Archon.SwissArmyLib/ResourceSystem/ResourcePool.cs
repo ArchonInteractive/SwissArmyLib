@@ -5,6 +5,12 @@ using UnityEngine;
 
 namespace Archon.SwissArmyLib.ResourceSystem
 {
+    /// <summary>
+    /// A generic resource pool (eg. health, mana, energy).
+    /// 
+    /// <seealso cref="ResourceRegen"/>
+    /// <seealso cref="Shield"/>
+    /// </summary>
     public class ResourcePool : MonoBehaviour
     {
         /// <summary>
@@ -48,8 +54,11 @@ namespace Archon.SwissArmyLib.ResourceSystem
         /// </summary>
         public readonly Event<IResourceEvent> OnRenew = new Event<IResourceEvent>(EventIds.Renew);
 
+        [Tooltip("Current amount of resource in the pool.")]
         [SerializeField, ReadOnly] private float _current;
+        [Tooltip("Max amount of resource that can be in the pool.")]
         [SerializeField] private float _max = 100;
+        [Tooltip("Whether the pool should remain empty until it is renewed using Renew().")]
         [SerializeField] private bool _emptyTillRenewed = true;
 
         private bool _isEmpty, _isFull;

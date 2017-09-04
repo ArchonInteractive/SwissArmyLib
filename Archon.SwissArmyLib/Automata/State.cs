@@ -2,7 +2,10 @@ namespace Archon.SwissArmyLib.Automata
 {
     public class State<TMachine, TContext> : IState<TMachine, TContext>
     {
+        /// <inheritdoc />
         public TMachine Machine { get; set; }
+
+        /// <inheritdoc />
         public TContext Context { get; set; }
 
         /// <summary>
