@@ -30,13 +30,6 @@ namespace Archon.SwissArmyLib.Pooling
             return obj as T;
         }
 
-        public static void Despawn(Object target)
-        {
-            var prefab = GetPrefab(target);
-            var pool = GetPool(prefab);
-            pool.Despawn(target);
-        }
-
         public static void Despawn(IPoolable target)
         {
             var unityObject = target as Object;
@@ -44,7 +37,9 @@ namespace Archon.SwissArmyLib.Pooling
             if (unityObject == null)
                 throw new InvalidOperationException("Cannot despawn target because it is not a UnityEngine.Object!");
 
-            Despawn(unityObject);
+            var prefab = GetPrefab(unityObject);
+            var pool = GetPool(prefab);
+            pool.Despawn(unityObject);
         }
 
         public static Object GetPrefab(Object instance)
