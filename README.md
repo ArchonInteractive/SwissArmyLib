@@ -1,7 +1,11 @@
 # ![Logo](https://gitlab.com/archoninteractive/SwissArmyLib/raw/master/logo.png) &nbsp; SwissArmyLib
 **Please note this library is under construction and the API is definitely not stable. Also some things might currently be untested and broken.**
 
+---
+
 [Documentation](https://github.com/ArchonInteractive/SwissArmyLib/wiki)
+&#8226;
+[API Reference](https://archoninteractive.com/swissarmylib/)
 
 ---
 
