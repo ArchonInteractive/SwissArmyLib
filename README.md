@@ -44,6 +44,8 @@ This project is under the very permissive MIT license and we honestly do not car
     * An update loop maintained in managed space to avoid the [overhead of Native C++ --> Managed C#](https://blogs.unity3d.com/2015/12/23/1k-update-calls/)
     * Useful for non-MonoBehaviours that needs to be part of the update loop
     * Optional [ManagedUpdateBehaviour](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ManagedUpdateBehaviour) class for easy usage
+* [Resource Pool](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ResourcePool)
+    * Generic and flexible resource pool (health, mana, energy etc.)
 * [Gravity](https://github.com/ArchonInteractive/SwissArmyLib/wiki/GravitationalSystem)
     * Flexible gravitational system
     * Useful for planet gravity, black holes, magnets and all that sort of stuff.
@@ -59,7 +61,8 @@ This project is under the very permissive MIT license and we honestly do not car
     * A few other tiny utilities
 
 ### Download
-There's currently no downloadable binary, but you can either build it yourself or just copy the files into your Unity project.
+Binaries for the bleeding edge can be found [here](https://archoninteractive.com/swissarmylib/downloads/Release.zip).
+Alternatively you can either [build it yourself](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Home#building-the-source) (very easily) or simply [copy the source code into your Unity project](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Home#method-2-copy-source) and call it a day.
 
 ### License
 MIT
