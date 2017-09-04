@@ -1,0 +1,42 @@
+<?xml version="1.0" encoding="utf-8"?>
+<topic id="636edb0e-09ef-4523-9c5b-375b66e1d358" revisionNumber="1">
+	<developerConceptualDocument xmlns="http://ddue.schemas.microsoft.com/authoring/2003/5" xmlns:xlink="http://www.w3.org/1999/xlink">
+		<introduction>
+      <para>
+        <legacyBold>
+          <externalLink>
+		        <linkText>Repository</linkText>
+		        <linkUri>https://github.com/ArchonInteractive/SwissArmyLib</linkUri>
+		      </externalLink>
+        </legacyBold>
+        &#9679;
+        <legacyBold>
+          <externalLink>
+		        <linkText>Wiki</linkText>
+		        <linkUri>https://github.com/ArchonInteractive/SwissArmyLib/wiki</linkUri>
+		      </externalLink>
+        </legacyBold>
+      </para>
+      
+			<para>Welcome to the API reference for SwissArmyLib.</para>
+		</introduction>
+
+		<section>
+			<title>About</title>
+			<content>
+				<para>
+          <legacyBold>SwissArmyLib</legacyBold> is an attempt to create a collection of useful utilities primarily intended for Unity projects, but feel free to rip parts out and use them for whatever you want.
+        </para>
+
+        <para>
+				  A very important part in the design decisions of this library was to keep the garbage generation low. This means you will probably frown a little upon the use of interfaces for callbacks, instead of just using delicious delegates. It also means using the trusty old <legacyItalic>for</legacyItalic> loops for iterating through collections where possible.
+        </para>
+        
+        <para>
+				  There's a lot of libraries with some of the same features, but they're often walled off behind a restrictive or ambiguous license.
+				  This project is under the very permissive MIT license and we honestly do not care what you use it for.
+        </para>
+			</content>
+		</section>
+	</developerConceptualDocument>
+</topic>

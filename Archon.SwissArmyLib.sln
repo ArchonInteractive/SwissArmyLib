@@ -1,11 +1,13 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
 # Visual Studio 15
-VisualStudioVersion = 15.0.26730.8
+VisualStudioVersion = 15.0.26430.16
 MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archon.SwissArmyLib", "Archon.SwissArmyLib\Archon.SwissArmyLib.csproj", "{4E6E4ED1-096A-4DD2-B88F-0704BC769F22}"
 EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archon.SwissArmyLib.Editor", "Archon.SwissArmyLib.Editor\Archon.SwissArmyLib.Editor.csproj", "{86576CEB-98C2-4234-9577-1335777CFB7D}"
+EndProject
+Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Documentation", "Documentation\Documentation.shfbproj", "{0C59110B-107A-4B22-9783-8CC0737A033F}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -21,6 +23,10 @@ Global
 		{86576CEB-98C2-4234-9577-1335777CFB7D}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{86576CEB-98C2-4234-9577-1335777CFB7D}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{86576CEB-98C2-4234-9577-1335777CFB7D}.Release|Any CPU.Build.0 = Release|Any CPU
+		{0C59110B-107A-4B22-9783-8CC0737A033F}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{0C59110B-107A-4B22-9783-8CC0737A033F}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{0C59110B-107A-4B22-9783-8CC0737A033F}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{0C59110B-107A-4B22-9783-8CC0737A033F}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
