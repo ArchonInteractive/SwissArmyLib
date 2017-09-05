@@ -53,7 +53,6 @@
     <Compile Include="Collections\DelayedList.cs" />
     <Compile Include="Collections\DictionaryWithDefault.cs" />
     <Compile Include="Collections\PrioritizedList.cs" />
-    <Compile Include="Collections\ShuffleBag.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\GlobalEvents.cs" />
     <Compile Include="Events\IEventListener.cs" />
