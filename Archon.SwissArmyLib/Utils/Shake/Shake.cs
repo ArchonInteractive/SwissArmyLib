@@ -4,10 +4,14 @@ using Random = UnityEngine.Random;
 
 namespace Archon.SwissArmyLib.Utils.Shake
 {
+    /// <summary>
+    /// An object that can shake a float over time.
+    /// </summary>
     public class Shake : BaseShake<float>
     {
         private readonly List<float> _samples = new List<float>();
 
+        /// <inheritdoc />
         public override void Start(float amplitude, int frequency, float duration)
         {
             base.Start(amplitude, frequency, duration);
@@ -20,6 +24,7 @@ namespace Archon.SwissArmyLib.Utils.Shake
                 _samples.Add(Random.value * 2 - 1);
         }
 
+        /// <inheritdoc />
         public override float GetAmplitude(float t)
         {
             var sampleIndex = Mathf.FloorToInt(_samples.Count*t);

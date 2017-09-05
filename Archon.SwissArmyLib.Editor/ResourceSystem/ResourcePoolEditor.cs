@@ -4,6 +4,11 @@ using UnityEngine;
 
 namespace Archon.SwissArmyLib.Editor.ResourceSystem
 {
+    /// <summary>
+    /// Custom editor for <see cref="ResourcePool"/> components.
+    /// 
+    /// Shows a health bar and debugging buttons.
+    /// </summary>
     [CanEditMultipleObjects]
     [CustomEditor(typeof(ResourcePool), true)]
     public class ResourcePoolEditor : UnityEditor.Editor
@@ -49,30 +54,47 @@ namespace Archon.SwissArmyLib.Editor.ResourceSystem
             }
         }
 
+        /// <summary>
+        /// Adds a resource amount to all targeted components.
+        /// </summary>
+        /// <param name="amount">Amount to add</param>
         protected void Add(float amount)
         {
             for (var i = 0; i < targets.Length; i++)
                 ((ResourcePool)targets[i]).Add(amount);
         }
 
+        /// <summary>
+        /// Removes a resource amount from all targeted components.
+        /// </summary>
+        /// <param name="amount">Amount to remove</param>
         protected void Remove(float amount)
         {
             for (var i = 0; i < targets.Length; i++)
                 ((ResourcePool)targets[i]).Remove(amount);
         }
 
+        /// <summary>
+        /// Empties all targeted components.
+        /// </summary>
         protected void Empty()
         {
             for (var i = 0; i < targets.Length; i++)
                 ((ResourcePool)targets[i]).Empty();
         }
 
+        /// <summary>
+        /// Fills all targeted components.
+        /// </summary>
         protected void Fill()
         {
             for (var i = 0; i < targets.Length; i++)
                 ((ResourcePool) targets[i]).Fill();
         }
 
+        /// <summary>
+        /// Renews all targeted components.
+        /// </summary>
         protected void Renew()
         {
             for (var i = 0; i < targets.Length; i++)
