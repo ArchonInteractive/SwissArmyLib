@@ -1,6 +1,13 @@
 namespace Archon.SwissArmyLib.Automata
 {
-    public class State<TMachine, TContext> : IState<TMachine, TContext>
+    /// <summary>
+    /// A simple abstract class that implements <see cref="IState{T, T}"/>.
+    /// 
+    /// You might be looking for <see cref="FsmState{T}"/> or <see cref="PdaState{T}"/>.
+    /// </summary>
+    /// <typeparam name="TMachine">The type of the machine.</typeparam>
+    /// <typeparam name="TContext">The type of the context.</typeparam>
+    public abstract class BaseState<TMachine, TContext> : IState<TMachine, TContext>
     {
         /// <inheritdoc />
         public TMachine Machine { get; set; }

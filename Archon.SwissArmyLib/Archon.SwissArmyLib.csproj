@@ -49,7 +49,7 @@
     <Compile Include="Automata\PdaState.cs" />
     <Compile Include="Automata\PushdownAutomaton.cs" />
     <Compile Include="Automata\FiniteStateMachine.cs" />
-    <Compile Include="Automata\State.cs" />
+    <Compile Include="Automata\BaseState.cs" />
     <Compile Include="Collections\DelayedList.cs" />
     <Compile Include="Collections\DictionaryWithDefault.cs" />
     <Compile Include="Collections\PrioritizedList.cs" />

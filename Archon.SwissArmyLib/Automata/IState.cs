@@ -1,5 +1,12 @@
 namespace Archon.SwissArmyLib.Automata
 {
+    /// <summary>
+    /// Represents a state to be used in a state machine.
+    /// 
+    /// You might be looking for <see cref="IFsmState{T}"/> or <see cref="IPdaState{T}"/>.
+    /// </summary>
+    /// <typeparam name="TMachine">The type of the machine.</typeparam>
+    /// <typeparam name="TContext">The type of the context.</typeparam>
     public interface IState<TMachine, TContext>
     {
         /// <summary>

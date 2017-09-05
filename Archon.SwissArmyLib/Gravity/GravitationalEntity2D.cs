@@ -5,6 +5,8 @@ namespace Archon.SwissArmyLib.Gravity
 {
     /// <summary>
     /// Makes this <see cref="GameObject"/>'s <see cref="Rigidbody2D"/> part of the gravitational system.
+    /// 
+    /// For 3D physics see <see cref="GravitationalEntity"/>.
     /// </summary>
     [AddComponentMenu("Archon/Gravity/GravitationalEntity2D")]
     [RequireComponent(typeof(Rigidbody2D))]

@@ -17,13 +17,13 @@ namespace Archon.SwissArmyLib.Pooling
             _poolableComponents.Remove(this);
         }
 
-        public void OnSpawned()
+        void IPoolable.OnSpawned()
         {
             for (var i = 0; i < _poolableComponents.Count; i++)
                 _poolableComponents[i].OnSpawned();
         }
 
-        public void OnDespawned()
+        void IPoolable.OnDespawned()
         {
             for (var i = 0; i < _poolableComponents.Count; i++)
                 _poolableComponents[i].OnDespawned();

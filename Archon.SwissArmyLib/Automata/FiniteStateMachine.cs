@@ -3,9 +3,32 @@ using System.Collections.Generic;
 
 namespace Archon.SwissArmyLib.Automata
 {
+    /// <summary>
+    /// Represents a state to be used in a <see cref="FiniteStateMachine{T}"/>.
+    /// </summary>
+    /// <typeparam name="T">The type of the context.</typeparam>
     public interface IFsmState<T> : IState<FiniteStateMachine<T>, T> { }
-    public class FsmState<T> : State<FiniteStateMachine<T>, T>, IFsmState<T> { }
 
+    /// <summary>
+    /// A simple abstract class that implements <see cref="IFsmState{T}"/> and can be used in a <see cref="FiniteStateMachine{T}"/>
+    /// 
+    /// You're not required to use this, but it's easier.
+    /// </summary>
+    /// <typeparam name="T">The type of the context.</typeparam>
+    public abstract class FsmState<T> : BaseState<FiniteStateMachine<T>, T>, IFsmState<T> { }
+
+    /// <summary>
+    /// A simple <see href="https://en.wikipedia.org/wiki/Finite-state_machine">Finite State Machine</see> with states as objects inspired by Prime31's excellent <see href="https://github.com/prime31/StateKit">StateKit</see>.
+    ///
+    /// If your state classes have an empty constructor, the state machine can create the states automatically when needed (using <see cref="ChangeStateAuto{TState}"/>).
+    /// If not you should create the state instance yourself and register the state in the machine.
+    ///
+    /// Whether or not a null state is valid is up to your design.
+    /// 
+    /// <seealso cref="IFsmState{T}"/>
+    /// <seealso cref="FsmState{T}"/>
+    /// </summary>
+    /// <typeparam name="T">The type of the context.</typeparam>
     public class FiniteStateMachine<T>
     {
         /// <summary>
