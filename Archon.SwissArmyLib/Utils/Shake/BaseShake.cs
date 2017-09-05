@@ -9,6 +9,11 @@ namespace Archon.SwissArmyLib.Utils.Shake
     public abstract class BaseShake<T>
     {
         /// <summary>
+        /// Gets or sets whether the shake should use <see cref="Time.time"/> or <see cref="Time.unscaledTime"/>.
+        /// </summary>
+        public bool UnscaledTime { get; set; }
+
+        /// <summary>
         /// Gets how long the shake last.
         /// </summary>
         public float Duration { get; private set; }
@@ -22,11 +27,6 @@ namespace Archon.SwissArmyLib.Utils.Shake
         /// Gets the amplitude of the shake.
         /// </summary>
         public float Amplitude { get; private set; }
-        
-        /// <summary>
-        /// Gets or sets the time that the shake started.
-        /// </summary>
-        protected float StartTime { get; set; }
 
         /// <summary>
         /// Gets the shake's current progress in the range 0 to 1.
@@ -35,7 +35,7 @@ namespace Archon.SwissArmyLib.Utils.Shake
         {
             get
             {
-                return Mathf.InverseLerp(StartTime, StartTime + Duration, Time.time);
+                return Mathf.InverseLerp(StartTime, StartTime + Duration, CurrentTime);
             }
         }
 
@@ -45,6 +45,19 @@ namespace Archon.SwissArmyLib.Utils.Shake
         public bool IsDone
         {
             get { return NormalizedTime >= 1f; }
+        }
+
+        /// <summary>
+        /// Gets or sets the time that the shake started.
+        /// </summary>
+        protected float StartTime { get; set; }
+
+        /// <summary>
+        /// Gets the current scaled or unscaled time.
+        /// </summary>
+        protected float CurrentTime
+        {
+            get { return UnscaledTime ? Time.unscaledTime : Time.time; }
         }
 
         /// <summary>
@@ -59,7 +72,7 @@ namespace Archon.SwissArmyLib.Utils.Shake
             Duration = duration;
             Frequency = frequency;
 
-            StartTime = Time.time;
+            StartTime = CurrentTime;
         }
 
         /// <summary>
