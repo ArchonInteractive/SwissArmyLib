@@ -8,6 +8,10 @@ EndProject
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archon.SwissArmyLib.Editor", "Archon.SwissArmyLib.Editor\Archon.SwissArmyLib.Editor.csproj", "{86576CEB-98C2-4234-9577-1335777CFB7D}"
 EndProject
 Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Documentation", "Documentation\Documentation.shfbproj", "{0C59110B-107A-4B22-9783-8CC0737A033F}"
+	ProjectSection(ProjectDependencies) = postProject
+		{4E6E4ED1-096A-4DD2-B88F-0704BC769F22} = {4E6E4ED1-096A-4DD2-B88F-0704BC769F22}
+		{86576CEB-98C2-4234-9577-1335777CFB7D} = {86576CEB-98C2-4234-9577-1335777CFB7D}
+	EndProjectSection
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution

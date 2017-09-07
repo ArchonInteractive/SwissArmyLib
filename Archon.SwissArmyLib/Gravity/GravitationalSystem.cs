@@ -33,7 +33,9 @@ namespace Archon.SwissArmyLib.Gravity
             ManagedUpdate.OnFixedUpdate.AddListener(this);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Destructor
+        /// </summary>
         ~GravitationalSystem()
         {
             ManagedUpdate.OnFixedUpdate.RemoveListener(this);
@@ -120,7 +122,7 @@ namespace Archon.SwissArmyLib.Gravity
                 if (body.useGravity && !body.IsSleeping())
                 {
                     var gravity = GetGravityAtPoint(body.position);
-                    body.velocity += gravity * Time.deltaTime;
+                    body.AddForce(gravity);
                 }
             }
 
@@ -131,7 +133,7 @@ namespace Archon.SwissArmyLib.Gravity
                 if (body.simulated && body.gravityScale > 0 && body.IsAwake())
                 {
                     var gravity = GetGravityAtPoint(body.position);
-                    body.velocity += (Vector2)gravity * body.gravityScale * Time.deltaTime;
+                    body.AddForce((Vector2)gravity * body.gravityScale);
                 }
             }
         }

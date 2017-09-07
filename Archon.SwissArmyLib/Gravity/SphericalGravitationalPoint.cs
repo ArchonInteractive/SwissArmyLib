@@ -13,6 +13,7 @@ namespace Archon.SwissArmyLib.Gravity
     {
         [SerializeField] private float _strength = 9.82f;
         [SerializeField] private float _radius = 1;
+        [SerializeField] private AnimationCurve _dropoffCurve = AnimationCurve.Linear(0, 1, 1, 0);
         [SerializeField] private bool _isGlobal;
 
         private float _radiusSqr;
@@ -39,6 +40,15 @@ namespace Archon.SwissArmyLib.Gravity
                 _radius = value;
                 _radiusSqr = value * value;
             }
+        }
+
+        /// <summary>
+        /// Gets or sets the dropoff curve of the gravitational force.
+        /// </summary>
+        public AnimationCurve DropoffCurve
+        {
+            get { return _dropoffCurve; }
+            set { _dropoffCurve = value; }
         }
 
         /// <summary>
@@ -80,8 +90,10 @@ namespace Archon.SwissArmyLib.Gravity
         {
             var deltaPos = transform.position - location;
 
-            if (IsGlobal || deltaPos.sqrMagnitude < _radiusSqr)
-                return deltaPos.normalized * _strength;
+            var sqrDist = deltaPos.sqrMagnitude;
+
+            if (IsGlobal || sqrDist < _radiusSqr)
+                return deltaPos.normalized * DropoffCurve.Evaluate(sqrDist / _radiusSqr) * _strength;
 
             return Vector3.zero;
         }

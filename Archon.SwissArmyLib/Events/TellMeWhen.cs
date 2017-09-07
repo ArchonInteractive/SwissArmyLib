@@ -28,7 +28,9 @@ namespace Archon.SwissArmyLib.Events
             ManagedUpdate.OnUpdate.AddListener(this);
         }
 
-        /// <inheritdoc />
+        /// <summary>
+        /// Destructor
+        /// </summary>
         ~TellMeWhen()
         {
             ManagedUpdate.OnUpdate.RemoveListener(this);

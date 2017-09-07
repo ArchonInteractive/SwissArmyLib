@@ -63,6 +63,7 @@
     <Compile Include="Gravity\SphericalGravitationalPoint.cs" />
     <Compile Include="Gravity\GravitationalEntity2D.cs" />
     <Compile Include="Gravity\GravitationalSystem.cs" />
+    <Compile Include="Partitioning\Quadtree.cs" />
     <Compile Include="Pooling\PoolableGroup.cs" />
     <Compile Include="ResourceSystem\ResourceEvent.cs" />
     <Compile Include="ResourceSystem\ResourcePool.cs" />
