@@ -52,6 +52,7 @@
     <Compile Include="Automata\BaseState.cs" />
     <Compile Include="Collections\DelayedList.cs" />
     <Compile Include="Collections\DictionaryWithDefault.cs" />
+    <Compile Include="Collections\Grid3D.cs" />
     <Compile Include="Collections\PrioritizedList.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\GlobalEvents.cs" />
@@ -63,6 +64,9 @@
     <Compile Include="Gravity\SphericalGravitationalPoint.cs" />
     <Compile Include="Gravity\GravitationalEntity2D.cs" />
     <Compile Include="Gravity\GravitationalSystem.cs" />
+    <Compile Include="Partitioning\Bin2D.cs" />
+    <Compile Include="Collections\Grid2D.cs" />
+    <Compile Include="Partitioning\Bin3D.cs" />
     <Compile Include="Partitioning\Octree.cs" />
     <Compile Include="Partitioning\Quadtree.cs" />
     <Compile Include="Pooling\PoolableGroup.cs" />
