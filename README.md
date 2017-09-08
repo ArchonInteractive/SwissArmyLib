@@ -45,6 +45,8 @@ This project is under the very permissive MIT license and we honestly do not car
     * An update loop maintained in managed space to avoid the [overhead of Native C++ --> Managed C#](https://blogs.unity3d.com/2015/12/23/1k-update-calls/)
     * Useful for non-MonoBehaviours that needs to be part of the update loop
     * Optional [ManagedUpdateBehaviour](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ManagedUpdateBehaviour) class for easy usage
+* [Spatial Partitioning](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Spacial-Partitioning)
+    * GC-friendly implementations of common space-partitioning systems
 * [Resource Pool](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ResourcePool)
     * Generic and flexible resource pool (health, mana, energy etc.)
 * [Gravity](https://github.com/ArchonInteractive/SwissArmyLib/wiki/GravitationalSystem)
