@@ -74,6 +74,7 @@
     <Compile Include="ResourceSystem\ResourcePool.cs" />
     <Compile Include="ResourceSystem\ResourceRegen.cs" />
     <Compile Include="ResourceSystem\Shield.cs" />
+    <Compile Include="Utils\BetterTime.cs" />
     <Compile Include="Utils\Editor\ExecutionOrderAttribute.cs" />
     <Compile Include="Utils\Lazy.cs" />
     <Compile Include="Pooling\GameObjectPool.cs" />
