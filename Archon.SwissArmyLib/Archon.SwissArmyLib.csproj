@@ -54,6 +54,16 @@
     <Compile Include="Collections\DictionaryWithDefault.cs" />
     <Compile Include="Collections\Grid3D.cs" />
     <Compile Include="Collections\PrioritizedList.cs" />
+    <Compile Include="Coroutines\BetterCoroutines.cs" />
+    <Compile Include="Coroutines\BetterCoroutine.cs" />
+    <Compile Include="Coroutines\IPoolableYieldInstruction.cs" />
+    <Compile Include="Coroutines\UpdateLoop.cs" />
+    <Compile Include="Coroutines\WaitForAsyncOperation.cs" />
+    <Compile Include="Coroutines\WaitForSecondsLite.cs" />
+    <Compile Include="Coroutines\WaitForSecondsRealtimeLite.cs" />
+    <Compile Include="Coroutines\WaitForWWW.cs" />
+    <Compile Include="Coroutines\WaitUntilLite.cs" />
+    <Compile Include="Coroutines\WaitWhileLite.cs" />
     <Compile Include="Events\Event.cs" />
     <Compile Include="Events\GlobalEvents.cs" />
     <Compile Include="Events\IEventListener.cs" />

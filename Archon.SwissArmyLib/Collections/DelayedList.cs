@@ -101,12 +101,8 @@ namespace Archon.SwissArmyLib.Collections
         /// <param name="item">The item to add.</param>
         public bool Remove(T item)
         {
-            if (Contains(item))
-            {
-                _itemsToRemove.Add(item);
-                return true;
-            }
-            return false;
+            _itemsToRemove.Add(item);
+            return true;
         }
 
         /// <summary>
