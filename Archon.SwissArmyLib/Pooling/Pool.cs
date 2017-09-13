@@ -13,7 +13,10 @@ namespace Archon.SwissArmyLib.Pooling
     /// <typeparam name="T">The type of objects this object pool should contain.</typeparam>
     public class Pool<T> : IPool<T>, TellMeWhen.ITimerCallback where T : class
     {
-        private readonly Stack<T> _free = new Stack<T>();
+        /// <summary>
+        /// Contains the items ready to be reused.
+        /// </summary>
+        protected readonly List<T> Free = new List<T>();
 
         private readonly Func<T> _factory;
 
@@ -37,8 +40,8 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="targetCount"></param>
         public void Prewarm(int targetCount)
         {
-            for (var i = 0; i < targetCount && _free.Count < targetCount; i++)
-                _free.Push(_factory());
+            for (var i = 0; i < targetCount && Free.Count < targetCount; i++)
+                Free.Add(_factory());
         }
 
         /// <summary>
@@ -47,9 +50,14 @@ namespace Archon.SwissArmyLib.Pooling
         /// <returns>The spawned object.</returns>
         public virtual T Spawn()
         {
-            var obj = _free.Count > 0
-                ? _free.Pop()
-                : _factory();
+            T obj;
+            if (Free.Count > 0)
+            {
+                obj = Free[Free.Count - 1];
+                Free.RemoveAt(Free.Count - 1);
+            }
+            else
+                obj = _factory();
 
             OnSpawned(obj);
 
@@ -64,7 +72,7 @@ namespace Archon.SwissArmyLib.Pooling
         {
             _instanceToTimerId.Remove(target);
             OnDespawned(target);
-            _free.Push(target);
+            Free.Add(target);
         }
 
         /// <summary>

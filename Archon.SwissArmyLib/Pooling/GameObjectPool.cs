@@ -1,5 +1,6 @@
 ﻿using System;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Archon.SwissArmyLib.Pooling
@@ -16,12 +17,14 @@ namespace Archon.SwissArmyLib.Pooling
         public T Prefab { get; private set; }
 
         private readonly Transform _root;
+        private readonly bool _multiScene;
 
         /// <summary>
         /// Creates a new GameObject pool for the specified prefab.
         /// </summary>
         /// <param name="prefab">The prefab used for instantiating instances.</param>
-        public GameObjectPool(T prefab) : this(prefab.name, () => Object.Instantiate(prefab))
+        /// <param name="multiScene">Should the pool and its contents survive a scene change?</param>
+        public GameObjectPool(T prefab, bool multiScene) : this(prefab.name, () => Object.Instantiate(prefab), multiScene)
         {
             Prefab = prefab;
         }
@@ -31,10 +34,35 @@ namespace Archon.SwissArmyLib.Pooling
         /// </summary>
         /// <param name="name">The name of the pool.</param>
         /// <param name="create">The factory method used to instantiating instances.</param>
-        public GameObjectPool(string name, Func<T> create) : base(create)
+        /// <param name="multiScene">Should the pool and its contents survive a scene change?</param>
+        public GameObjectPool(string name, Func<T> create, bool multiScene) : base(create)
         {
             var rootGO = new GameObject(string.Format("'{0}' Pool", name));
             _root = rootGO.transform;
+
+            _multiScene = multiScene;
+            if (multiScene)
+                Object.DontDestroyOnLoad(rootGO);
+
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
+        }
+
+        /// <summary>
+        /// Destructor.
+        /// </summary>
+        ~GameObjectPool()
+        {
+            SceneManager.sceneUnloaded -= OnSceneUnloaded;
+        }
+
+        private void OnSceneUnloaded(Scene unloadedScene)
+        {
+            // clean up any instances that might've been destroyed
+            for (var i = Free.Count - 1; i >= 0; i--)
+            {
+                if (!Free[i])
+                    Free.RemoveAt(i);
+            }
         }
 
         /// <inheritdoc />
@@ -43,6 +71,9 @@ namespace Archon.SwissArmyLib.Pooling
             var obj = base.Spawn();
 
             var gameObject = GetGameObject(obj);
+            gameObject.transform.SetParent(null, false);
+            if (_multiScene)
+                SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetActiveScene());
             gameObject.SetActive(true);
 
             return obj;
@@ -69,9 +100,10 @@ namespace Archon.SwissArmyLib.Pooling
         /// <inheritdoc />
         public override void Despawn(T target)
         {
-            base.Despawn(target);
+            if (target == null)
+                throw new NullReferenceException("Target is null.");
 
-            CancelDespawn(target);
+            base.Despawn(target);
 
             var gameObject = GetGameObject(target);
             gameObject.SetActive(false);

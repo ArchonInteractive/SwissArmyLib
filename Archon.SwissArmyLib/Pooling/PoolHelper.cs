@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using UnityEngine;
+using UnityEngine.SceneManagement;
 using Object = UnityEngine.Object;
 
 namespace Archon.SwissArmyLib.Pooling
@@ -14,8 +15,29 @@ namespace Archon.SwissArmyLib.Pooling
     /// </summary>
     public static class PoolHelper
     {
-        private static readonly Dictionary<Object, GameObjectPool<Object>> Pools = new Dictionary<Object, GameObjectPool<Object>>();
-        private static readonly Dictionary<Object, Object> Prefabs = new Dictionary<Object, Object>();
+        private static readonly Dictionary<Object, GameObjectPool<Object>> PrefabToPool = new Dictionary<Object, GameObjectPool<Object>>();
+        private static readonly Dictionary<Object, Object> InstanceToPrefab = new Dictionary<Object, Object>();
+
+        private static readonly List<Object> DestroyedInstances = new List<Object>();
+
+        static PoolHelper()
+        {
+            SceneManager.sceneUnloaded += OnSceneUnloaded;
+        }
+
+        private static void OnSceneUnloaded(Scene unloadedScene)
+        {
+            foreach (var instance in InstanceToPrefab.Keys)
+            {
+                if (!instance)
+                    DestroyedInstances.Add(instance);
+            }
+
+            for (var i = 0; i < DestroyedInstances.Count; i++)
+                InstanceToPrefab.Remove(DestroyedInstances[i]);
+
+            DestroyedInstances.Clear();
+        }
 
         /// <summary>
         /// Spawns a recycled object if there's one available, otherwise creates a new instance.
@@ -26,7 +48,7 @@ namespace Archon.SwissArmyLib.Pooling
         {
             var pool = GetPool(prefab);
             var obj = pool.Spawn();
-            Prefabs[obj] = prefab;
+            InstanceToPrefab[obj] = prefab;
 
             return obj as T;
         }
@@ -40,7 +62,7 @@ namespace Archon.SwissArmyLib.Pooling
         {
             var pool = GetPool(prefab);
             var obj = pool.Spawn(position, rotation, parent);
-            Prefabs[obj] = prefab;
+            InstanceToPrefab[obj] = prefab;
 
             return obj as T;
         }
@@ -51,6 +73,9 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="target">The instance to despawn.</param>
         public static void Despawn(IPoolable target)
         {
+            if (target == null)
+                throw new NullReferenceException("Target is null.");
+
             var unityObject = target as Object;
 
             if (unityObject == null)
@@ -61,6 +86,28 @@ namespace Archon.SwissArmyLib.Pooling
             pool.Despawn(unityObject);
         }
 
+
+        /// <summary>
+        /// Despawns an instance after a delay.
+        /// </summary>
+        /// <param name="target">The instance to despawn.</param>
+        /// <param name="delay">Time in seconds to wait before despawning the target.</param>
+        /// <param name="unscaledTime">Should the delay be according to <see cref="Time.time"/> or <see cref="Time.unscaledTime"/>?</param>
+        public static void Despawn(IPoolable target, float delay, bool unscaledTime = false)
+        {
+            if (target == null)
+                throw new NullReferenceException("Target is null.");
+
+            var unityObject = target as Object;
+
+            if (unityObject == null)
+                throw new InvalidOperationException("Cannot despawn target because it is not a UnityEngine.Object!");
+
+            var prefab = GetPrefab(unityObject);
+            var pool = GetPool(prefab);
+            pool.Despawn(unityObject, delay, unscaledTime);
+        }
+
         /// <summary>
         /// Gets the prefab that was used to spawn <paramref name="instance"/>.
         /// </summary>
@@ -69,7 +116,7 @@ namespace Archon.SwissArmyLib.Pooling
         public static Object GetPrefab(Object instance)
         {
             Object prefab;
-            Prefabs.TryGetValue(instance, out prefab);
+            InstanceToPrefab.TryGetValue(instance, out prefab);
             return prefab;
         }
 
@@ -83,7 +130,7 @@ namespace Archon.SwissArmyLib.Pooling
             where T : Object
         {
             Object prefab;
-            Prefabs.TryGetValue(instance, out prefab);
+            InstanceToPrefab.TryGetValue(instance, out prefab);
             return prefab as T;
         }
 
@@ -95,12 +142,12 @@ namespace Archon.SwissArmyLib.Pooling
         public static GameObjectPool<Object> GetPool(Object prefab)
         {
             GameObjectPool<Object> pool;
-            Pools.TryGetValue(prefab, out pool);
+            PrefabToPool.TryGetValue(prefab, out pool);
 
             if (pool == null)
             {
-                pool = new GameObjectPool<Object>(prefab);
-                Pools[prefab] = pool;
+                pool = new GameObjectPool<Object>(prefab, true);
+                PrefabToPool[prefab] = pool;
             }
 
             return pool;
@@ -135,6 +182,17 @@ namespace Archon.SwissArmyLib.Pooling
         public static void Despawn(T target)
         {
             Pool.Despawn(target);
+        }
+
+        /// <summary>
+        /// Despawns an object after a delay.
+        /// </summary>
+        /// <param name="target">The target to despawn.</param>
+        /// <param name="delay">Time in seconds to wait before despawning the target.</param>
+        /// <param name="unscaledTime">Should the delay be according to <see cref="Time.time"/> or <see cref="Time.unscaledTime"/>?</param>
+        public static void Despawn(T target, float delay, bool unscaledTime = false)
+        {
+            Pool.Despawn(target, delay, unscaledTime);
         }
     }
 }
