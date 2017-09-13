@@ -1,5 +1,6 @@
 ﻿using System;
 using Archon.SwissArmyLib.Events;
+using Archon.SwissArmyLib.Utils;
 using Archon.SwissArmyLib.Utils.Editor;
 using JetBrains.Annotations;
 using UnityEngine;
@@ -125,23 +126,25 @@ namespace Archon.SwissArmyLib.ResourceSystem
             if (_target == null)
                 return;
 
-            if (Time.time < _lastLossTime + DownTimeOnResourceLoss)
+            var time = BetterTime.Time;
+
+            if (time < _lastLossTime + DownTimeOnResourceLoss)
                 return;
 
             if (Math.Abs(ConstantAmountPerSecond) > 0.001f)
-                _target.Add(ConstantAmountPerSecond * Time.deltaTime, this);
+                _target.Add(ConstantAmountPerSecond * BetterTime.DeltaTime, this);
 
-            if (Interval > 0 && Time.time > _lastInterval + Interval)
+            if (Interval > 0 && time > _lastInterval + Interval)
             {
                 _target.Add(AmountPerInterval, this);
-                _lastInterval = Time.time;
+                _lastInterval = time;
             }
         }
 
         void IEventListener<IResourceChangeEvent>.OnEvent(int eventId, IResourceChangeEvent args)
         {
             if (args.AppliedDelta < 0)
-                _lastLossTime = Time.time;
+                _lastLossTime = BetterTime.Time;
         }
     }
 }

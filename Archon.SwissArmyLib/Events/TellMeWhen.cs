@@ -79,9 +79,9 @@ namespace Archon.SwissArmyLib.Events
         public static void Seconds(float seconds, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             if (repeating)
-                Exact(Time.time + seconds, seconds, callback, id, args);
+                Exact(BetterTime.Time + seconds, seconds, callback, id, args);
             else
-                Exact(Time.time + seconds, callback, id, args);
+                Exact(BetterTime.Time + seconds, callback, id, args);
         }
 
         /// <summary>
@@ -140,9 +140,9 @@ namespace Archon.SwissArmyLib.Events
         public static void SecondsUnscaled(float seconds, ITimerCallback callback, int id = NoId, object args = null, bool repeating = false)
         {
             if (repeating)
-                ExactUnscaled(Time.unscaledTime + seconds, seconds, callback, id, args);
+                ExactUnscaled(BetterTime.UnscaledTime + seconds, seconds, callback, id, args);
             else
-                ExactUnscaled(Time.unscaledTime + seconds, callback, id, args);
+                ExactUnscaled(BetterTime.UnscaledTime + seconds, callback, id, args);
         }
 
         /// <summary>
@@ -334,8 +334,8 @@ namespace Archon.SwissArmyLib.Events
         {
             if (eventId != ManagedUpdate.EventIds.Update) return;
 
-            UpdateList(Time.time, EntriesScaled);
-            UpdateList(Time.unscaledTime, EntriesUnscaled);
+            UpdateList(BetterTime.Time, EntriesScaled);
+            UpdateList(BetterTime.UnscaledTime, EntriesUnscaled);
         }
     }
 }

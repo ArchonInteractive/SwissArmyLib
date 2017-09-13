@@ -57,7 +57,7 @@ namespace Archon.SwissArmyLib.Utils.Shake
         /// </summary>
         protected float CurrentTime
         {
-            get { return UnscaledTime ? Time.unscaledTime : Time.time; }
+            get { return UnscaledTime ? BetterTime.UnscaledTime : BetterTime.Time; }
         }
 
         /// <summary>

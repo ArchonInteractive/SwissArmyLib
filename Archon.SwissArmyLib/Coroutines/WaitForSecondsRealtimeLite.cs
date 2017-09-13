@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Archon.SwissArmyLib.Coroutines
 {
-    public sealed class WaitForSecondsRealtimeLite : CustomYieldInstruction, IPoolableYieldInstruction
+    internal sealed class WaitForSecondsRealtimeLite : CustomYieldInstruction, IPoolableYieldInstruction
     {
         private static readonly Pool<WaitForSecondsRealtimeLite> Pool = new Pool<WaitForSecondsRealtimeLite>(() => new WaitForSecondsRealtimeLite());
 

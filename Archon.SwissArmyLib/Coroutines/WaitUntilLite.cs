@@ -5,7 +5,7 @@ using UnityEngine;
 
 namespace Archon.SwissArmyLib.Coroutines
 {
-    public sealed class WaitUntilLite : CustomYieldInstruction, IPoolableYieldInstruction
+    internal sealed class WaitUntilLite : CustomYieldInstruction, IPoolableYieldInstruction
     {
         private static readonly Pool<WaitUntilLite> Pool = new Pool<WaitUntilLite>(() => new WaitUntilLite());
 

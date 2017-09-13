@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Archon.SwissArmyLib.Coroutines
 {
-    public sealed class WaitForWWW : CustomYieldInstruction, IPoolableYieldInstruction
+    internal sealed class WaitForWWW : CustomYieldInstruction, IPoolableYieldInstruction
     {
         private static readonly Pool<WaitForWWW> Pool = new Pool<WaitForWWW>(() => new WaitForWWW());
 

@@ -1,6 +1,6 @@
 ﻿namespace Archon.SwissArmyLib.Coroutines
 {
-    public sealed class WaitForSecondsLite
+    internal sealed class WaitForSecondsLite
     {
         internal static readonly WaitForSecondsLite Instance = new WaitForSecondsLite();
 

@@ -3,8 +3,16 @@ using Archon.SwissArmyLib.Pooling;
 
 namespace Archon.SwissArmyLib.Coroutines
 {
+    /// <summary>
+    /// Represents a coroutine. 
+    /// 
+    /// After the coroutine is stopped, you should not use it anymore as it might be recycled and point to a completely different coroutine.
+    /// </summary>
     public interface IBetterCoroutine
     {
+        /// <summary>
+        /// Stops the coroutine prematurely.
+        /// </summary>
         void Stop();
     }
 

@@ -113,6 +113,9 @@ namespace Archon.SwissArmyLib.Coroutines
 
         private static void StopInternal(BetterCoroutine coroutine)
         {
+            if (coroutine.IsDone)
+                return;
+
             if (coroutine.Parent != null)
                 coroutine.Parent.Child = null;
 
@@ -124,12 +127,48 @@ namespace Archon.SwissArmyLib.Coroutines
         }
 
         /// <summary>
+        /// Stops all coroutines.
+        /// </summary>
+        public static void StopAll()
+        {
+            StopAll(UpdateLoop.Update);
+            StopAll(UpdateLoop.LateUpdate);
+            StopAll(UpdateLoop.FixedUpdate);
+        }
+
+        /// <summary>
+        /// Stops all coroutines that are running in the specified update loop.
+        /// </summary>
+        public static void StopAll(UpdateLoop updateLoop)
+        {
+            var coroutines = GetList(updateLoop);
+            var isInUpdate = _current != null && _current.List == coroutines;
+
+            var current = coroutines.First;
+            while (current != null)
+            {
+                var next = current.Next;
+                var routine = current.Value;
+
+                StopInternal(routine);
+
+                if (!isInUpdate)
+                {
+                    PoolHelper<BetterCoroutine>.Despawn(routine);
+                    coroutines.Remove(current);
+                }
+
+                current = next;
+            }
+        }
+
+        /// <summary>
         /// Waits for the specified amount of seconds, either in scaled time (just as Unity's <see cref="UnityEngine.WaitForSeconds"/>) or in unscaled time.
         /// </summary>
         /// <param name="seconds">Duration in seconds to wait before continuing.</param>
         /// <param name="unscaled">Should the wait time ignore <see cref="Time.timeScale"/>?</param>
         /// <returns></returns>
-        public static WaitForSecondsLite WaitForSeconds(float seconds, bool unscaled = false)
+        public static object WaitForSeconds(float seconds, bool unscaled = false)
         {
             var waitForSeconds = WaitForSecondsLite.Instance;
             waitForSeconds.Unscaled = unscaled;
@@ -220,7 +259,7 @@ namespace Archon.SwissArmyLib.Coroutines
                 {
                     var next = _current.Next;
 
-                    Stop(routine);
+                    StopInternal(routine);
                     coroutines.Remove(_current);
                     PoolHelper<BetterCoroutine>.Despawn(routine);
 

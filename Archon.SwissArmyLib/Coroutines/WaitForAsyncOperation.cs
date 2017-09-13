@@ -4,7 +4,7 @@ using UnityEngine;
 
 namespace Archon.SwissArmyLib.Coroutines
 {
-    public sealed class WaitForAsyncOperation : CustomYieldInstruction, IPoolableYieldInstruction
+    internal sealed class WaitForAsyncOperation : CustomYieldInstruction, IPoolableYieldInstruction
     {
         private static readonly Pool<WaitForAsyncOperation> Pool = new Pool<WaitForAsyncOperation>(() => new WaitForAsyncOperation());
 
