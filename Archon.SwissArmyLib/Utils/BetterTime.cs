@@ -159,6 +159,7 @@ namespace Archon.SwissArmyLib.Utils
         static BetterTime()
         {
             ServiceLocator.RegisterSingleton<BetterTimeUpdater>();
+            ServiceLocator.GlobalReset += () => ServiceLocator.RegisterSingleton<BetterTimeUpdater>();
         }
 
         internal static void Update()

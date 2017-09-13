@@ -20,7 +20,10 @@ namespace Archon.SwissArmyLib.Events
 
         static TellMeWhen()
         {
-            ServiceLocator.RegisterSingleton(new TellMeWhen());
+            var instance = new TellMeWhen();
+
+            ServiceLocator.RegisterSingleton(instance);
+            ServiceLocator.GlobalReset += () => ServiceLocator.RegisterSingleton(instance);
         }
 
         private TellMeWhen()

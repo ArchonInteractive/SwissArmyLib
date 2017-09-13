@@ -38,7 +38,9 @@ namespace Archon.SwissArmyLib.Coroutines
 
         static BetterCoroutines()
         {
-            ServiceLocator.RegisterSingleton(new BetterCoroutines());
+            var instance = new BetterCoroutines();
+            ServiceLocator.RegisterSingleton(instance);
+            ServiceLocator.GlobalReset += () => ServiceLocator.RegisterSingleton(instance);
         }
 
         private BetterCoroutines()

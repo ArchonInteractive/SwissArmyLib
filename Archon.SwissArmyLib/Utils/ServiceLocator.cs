@@ -19,6 +19,16 @@ namespace Archon.SwissArmyLib.Utils
     /// </summary>
     public static class ServiceLocator
     {
+        /// <summary>
+        ///     Called when the global resolvers are reset.
+        /// </summary>
+        public static event Action GlobalReset;
+
+        /// <summary>
+        ///     Called when a scene's resolvers are reset.
+        /// </summary>
+        public static event Action<Scene> SceneReset;
+
         private static readonly Dictionary<Type, Func<object>> GlobalResolvers = new Dictionary<Type, Func<object>>();
         private static readonly Dictionary<Scene, SceneData> SceneResolvers = new Dictionary<Scene, SceneData>();
 
@@ -513,7 +523,13 @@ namespace Archon.SwissArmyLib.Utils
             GlobalResolvers.Clear();
 
             if (_multiSceneGameObject != null)
+            {
                 Object.Destroy(_multiSceneGameObject);
+                _multiSceneGameObject = null;
+            }
+
+            if (GlobalReset != null)
+                GlobalReset();
         }
 
         /// <summary>
@@ -535,6 +551,9 @@ namespace Archon.SwissArmyLib.Utils
                 if (sceneData.GameObject != null)
                     Object.Destroy(sceneData.GameObject);
                 SceneResolvers.Remove(scene);
+
+                if (SceneReset != null)
+                    SceneReset(scene);
             }
         }
 

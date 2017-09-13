@@ -25,7 +25,9 @@ namespace Archon.SwissArmyLib.Gravity
 
         static GravitationalSystem()
         {
-            ServiceLocator.RegisterSingleton(new GravitationalSystem());
+            var instance = new GravitationalSystem();
+            ServiceLocator.RegisterSingleton(instance);
+            ServiceLocator.GlobalReset += () => ServiceLocator.RegisterSingleton(instance);
         }
 
         private GravitationalSystem()

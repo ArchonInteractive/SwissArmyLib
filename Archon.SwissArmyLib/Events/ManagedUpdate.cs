@@ -53,15 +53,19 @@ namespace Archon.SwissArmyLib.Events
 
         static ManagedUpdate()
         {
-            Instance = ServiceLocator.RegisterSingleton<ManagedUpdate>();
+            _instance = ServiceLocator.RegisterSingleton<ManagedUpdate>();
+            ServiceLocator.GlobalReset += () =>
+            {
+                _instance = ServiceLocator.RegisterSingleton<ManagedUpdate>();
+            };
         }
 
-        private static readonly ManagedUpdate Instance;
+        private static ManagedUpdate _instance;
 
         [UsedImplicitly]
         private void Start()
         {
-            if (Instance != null && Instance != this)
+            if (_instance != null && _instance != this)
             {
                 Debug.LogWarning("You should not create the ManagedUpdate component yourself, this component will be removed.");
                 Destroy(this);
