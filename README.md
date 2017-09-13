@@ -27,6 +27,8 @@ This project is under the very permissive MIT license and we honestly do not car
     * Supports both scaled and unscaled time
     * Optional arbitrary args to pass in
     * Also uses interfaces for callbacks to avoid garbage
+* [Coroutines](https://github.com/ArchonInteractive/SwissArmyLib/wiki/BetterCoroutines)
+    * More performant alternative to Unity's coroutines with a very similar API.
 * Automata
     * [Finite State Machine](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Finite-State-Machine)
     * [Pushdown Automaton](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Pushdown-Automaton)
