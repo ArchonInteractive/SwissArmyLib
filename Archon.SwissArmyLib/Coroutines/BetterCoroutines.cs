@@ -330,14 +330,16 @@ namespace Archon.SwissArmyLib.Coroutines
             var www = current as WWW;
             if (www != null)
             {
-                StartChild(Coroutines.WaitForWWW.Create(www), coroutine);
+                if (!www.isDone)
+                    StartChild(Coroutines.WaitForWWW.Create(www), coroutine);
                 return true;
             }
 
             var asyncOperation = current as AsyncOperation;
             if (asyncOperation != null)
             {
-                StartChild(Coroutines.WaitForAsyncOperation.Create(asyncOperation), coroutine);
+                if (!asyncOperation.isDone)
+                    StartChild(Coroutines.WaitForAsyncOperation.Create(asyncOperation), coroutine);
                 return true;
             }
 

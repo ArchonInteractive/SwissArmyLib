@@ -28,7 +28,7 @@ namespace Archon.SwissArmyLib.Coroutines
 
         public void Stop()
         {
-            IsDone = true;
+            BetterCoroutines.Stop(this);
         }
 
         void IPoolable.OnSpawned()
