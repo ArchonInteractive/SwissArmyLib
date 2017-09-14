@@ -71,19 +71,14 @@ namespace Archon.SwissArmyLib.Pooling
         /// Despawns an instance and marks it for reuse.
         /// </summary>
         /// <param name="target">The instance to despawn.</param>
-        public static void Despawn(IPoolable target)
+        public static void Despawn(Object target)
         {
             if (target == null)
                 throw new NullReferenceException("Target is null.");
 
-            var unityObject = target as Object;
-
-            if (unityObject == null)
-                throw new InvalidOperationException("Cannot despawn target because it is not a UnityEngine.Object!");
-
-            var prefab = GetPrefab(unityObject);
+            var prefab = GetPrefab(target);
             var pool = GetPool(prefab);
-            pool.Despawn(unityObject);
+            pool.Despawn(target);
         }
 
 
