@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using Archon.SwissArmyLib.Collections;
 using Archon.SwissArmyLib.Events;
 using Archon.SwissArmyLib.Pooling;
 using Archon.SwissArmyLib.Utils;
@@ -36,6 +37,9 @@ namespace Archon.SwissArmyLib.Coroutines
 
         private static LinkedListNode<BetterCoroutine> _current;
 
+        private static readonly DictionaryWithDefault<int, BetterCoroutine> IdToCoroutine = new DictionaryWithDefault<int, BetterCoroutine>();
+        private static int _nextId;
+
         static BetterCoroutines()
         {
             var instance = new BetterCoroutines();
@@ -65,10 +69,13 @@ namespace Archon.SwissArmyLib.Coroutines
         /// </summary>
         /// <param name="enumerator"></param>
         /// <param name="updateLoop">Which update loop should the coroutine be part of?</param>
-        /// <returns>The coroutine.</returns>
-        public static IBetterCoroutine Start(IEnumerator enumerator, UpdateLoop updateLoop = UpdateLoop.Update)
+        /// <returns>The id of the coroutine.</returns>
+        public static int Start(IEnumerator enumerator, UpdateLoop updateLoop = UpdateLoop.Update)
         {
+            var id = _nextId++;
+
             var routine = PoolHelper<BetterCoroutine>.Spawn();
+            routine.Id = id;
             routine.Enumerator = enumerator;
             routine.UpdateLoop = updateLoop;
 
@@ -79,8 +86,10 @@ namespace Archon.SwissArmyLib.Coroutines
             if (!continueRunning)
             {
                 PoolHelper<BetterCoroutine>.Despawn(routine);
-                return null;
+                return id;
             }
+
+            IdToCoroutine[id] = routine;
 
             if (_current != null)
                 _current.List.AddBefore(_current, routine);
@@ -90,12 +99,13 @@ namespace Archon.SwissArmyLib.Coroutines
                 list.AddFirst(routine);
             }
 
-            return routine;
+            return id;
         }
 
         private static void StartChild(IEnumerator enumerator, BetterCoroutine parent)
         {
-            var subroutine = (BetterCoroutine) Start(enumerator, parent.UpdateLoop);
+            var subroutineId = Start(enumerator, parent.UpdateLoop);
+            var subroutine = IdToCoroutine[subroutineId];
             subroutine.Parent = parent;
             parent.Child = subroutine;
         }
@@ -105,15 +115,22 @@ namespace Archon.SwissArmyLib.Coroutines
         /// 
         /// This will stop any child coroutines as well.
         /// </summary>
-        /// <param name="coroutine">The coroutine to stop.</param>
-        public static void Stop(IBetterCoroutine coroutine)
+        /// <param name="id">The id of the coroutine to stop.</param>
+        /// <returns>True if the coroutine was found and stopped, otherwise false.</returns>
+        public static bool Stop(int id)
         {
-            var routine = coroutine as BetterCoroutine;
+            var routine = IdToCoroutine[id];
+
             if (routine != null)
-                StopInternal(routine);
+            {
+                Stop(routine);
+                return true;
+            }
+
+            return false;
         }
 
-        private static void StopInternal(BetterCoroutine coroutine)
+        internal static void Stop(BetterCoroutine coroutine)
         {
             if (coroutine.IsDone)
                 return;
@@ -152,10 +169,11 @@ namespace Archon.SwissArmyLib.Coroutines
                 var next = current.Next;
                 var routine = current.Value;
 
-                StopInternal(routine);
+                Stop(routine);
 
                 if (!isInUpdate)
                 {
+                    IdToCoroutine.Remove(routine.Id);
                     PoolHelper<BetterCoroutine>.Despawn(routine);
                     coroutines.Remove(current);
                 }
@@ -261,8 +279,9 @@ namespace Archon.SwissArmyLib.Coroutines
                 {
                     var next = _current.Next;
 
-                    StopInternal(routine);
+                    Stop(routine);
                     coroutines.Remove(_current);
+                    IdToCoroutine.Remove(routine.Id);
                     PoolHelper<BetterCoroutine>.Despawn(routine);
 
                     _current = next;

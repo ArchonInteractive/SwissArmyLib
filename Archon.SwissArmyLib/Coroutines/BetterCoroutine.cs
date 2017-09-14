@@ -3,21 +3,9 @@ using Archon.SwissArmyLib.Pooling;
 
 namespace Archon.SwissArmyLib.Coroutines
 {
-    /// <summary>
-    /// Represents a coroutine. 
-    /// 
-    /// After the coroutine is stopped, you should not use it anymore as it might be recycled and point to a completely different coroutine.
-    /// </summary>
-    public interface IBetterCoroutine
+    internal sealed class BetterCoroutine : IPoolable
     {
-        /// <summary>
-        /// Stops the coroutine prematurely.
-        /// </summary>
-        void Stop();
-    }
-
-    internal sealed class BetterCoroutine : IBetterCoroutine, IPoolable
-    {
+        internal int Id;
         internal bool IsDone;
         internal UpdateLoop UpdateLoop;
         internal IEnumerator Enumerator;
@@ -25,11 +13,6 @@ namespace Archon.SwissArmyLib.Coroutines
         internal BetterCoroutine Child;
         internal float WaitTillTime = float.MinValue;
         internal bool WaitTimeIsUnscaled;
-
-        public void Stop()
-        {
-            BetterCoroutines.Stop(this);
-        }
 
         void IPoolable.OnSpawned()
         {
@@ -42,6 +25,7 @@ namespace Archon.SwissArmyLib.Coroutines
             if (poolableYieldInstruction != null)
                 poolableYieldInstruction.Despawn();
 
+            Id = -1;
             IsDone = false;
             UpdateLoop = UpdateLoop.Update;
             Enumerator = null;
