@@ -117,7 +117,7 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns>True if running, otherwise false.</returns>
         public static bool IsRunning(int id)
         {
-            return IdToCoroutine.ContainsKey(id);
+            return id > 0 && IdToCoroutine.ContainsKey(id);
         }
 
         /// <summary>
