@@ -38,7 +38,7 @@ namespace Archon.SwissArmyLib.Coroutines
         private static LinkedListNode<BetterCoroutine> _current;
 
         private static readonly DictionaryWithDefault<int, BetterCoroutine> IdToCoroutine = new DictionaryWithDefault<int, BetterCoroutine>();
-        private static int _nextId;
+        private static int _nextId = 1;
 
         static BetterCoroutines()
         {
@@ -72,7 +72,7 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns>The id of the coroutine.</returns>
         public static int Start(IEnumerator enumerator, UpdateLoop updateLoop = UpdateLoop.Update)
         {
-            var id = _nextId++;
+            var id = GetNextId();
 
             var routine = PoolHelper<BetterCoroutine>.Spawn();
             routine.Id = id;
@@ -108,6 +108,16 @@ namespace Archon.SwissArmyLib.Coroutines
             var subroutine = IdToCoroutine[subroutineId];
             subroutine.Parent = parent;
             parent.Child = subroutine;
+        }
+
+        /// <summary>
+        /// Checks whether a coroutine with the given ID is running.
+        /// </summary>
+        /// <param name="id">The id of the coroutine to check.</param>
+        /// <returns>True if running, otherwise false.</returns>
+        public static bool IsRunning(int id)
+        {
+            return IdToCoroutine.ContainsKey(id);
         }
 
         /// <summary>
@@ -246,6 +256,14 @@ namespace Archon.SwissArmyLib.Coroutines
         public static IEnumerator WaitWhile(Func<bool> predicate)
         {
             return WaitWhileLite.Create(predicate);
+        }
+
+        private static int GetNextId()
+        {
+            if (_nextId < 1)
+                _nextId = 1;
+
+            return _nextId++;
         }
 
         private static LinkedList<BetterCoroutine> GetList(UpdateLoop updateLoop)
