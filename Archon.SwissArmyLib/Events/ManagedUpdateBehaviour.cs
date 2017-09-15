@@ -4,6 +4,39 @@ using EventIds = Archon.SwissArmyLib.Events.ManagedUpdate.EventIds;
 namespace Archon.SwissArmyLib.Events
 {
     /// <summary>
+    /// Makes a <see cref="ManagedUpdateBehaviour"/> subclass get notified on an update.
+    /// </summary>
+    public interface IUpdateable
+    {
+        /// <summary>
+        /// Called every frame.
+        /// </summary>
+        void OnUpdate();
+    }
+
+    /// <summary>
+    /// Makes a <see cref="ManagedUpdateBehaviour"/> subclass get notified on a late update.
+    /// </summary>
+    public interface ILateUpdateable
+    {
+        /// <summary>
+        /// Called every frame, after the regular update loop.
+        /// </summary>
+        void OnLateUpdate();
+    }
+
+    /// <summary>
+    /// Makes a <see cref="ManagedUpdateBehaviour"/> subclass get notified on a fixed update.
+    /// </summary>
+    public interface IFixedUpdateable
+    {
+        /// <summary>
+        /// Called every fixed update.
+        /// </summary>
+        void OnFixedUpdate();
+    }
+
+    /// <summary>
     /// A subclass of MonoBehaviour that uses <see cref="ManagedUpdate"/> for update events.
     /// </summary>
     public abstract class ManagedUpdateBehaviour : MonoBehaviour, IEventListener
@@ -15,28 +48,30 @@ namespace Archon.SwissArmyLib.Events
         /// </summary>
         protected virtual int ExecutionOrder { get { return 0; } }
 
-        /// <summary>
-        /// Whether you want to use <see cref="OnUpdate"/>.
-        /// </summary>
-        protected abstract bool UsesUpdate { get; }
-
-        /// <summary>
-        /// Whether you want to use <see cref="OnLateUpdate"/>.
-        /// </summary>
-        protected abstract bool UsesLateUpdate { get; }
-
-        /// <summary>
-        /// Whether you want to use <see cref="OnFixedUpdate"/>.
-        /// </summary>
-        protected abstract bool UsesFixedUpdate { get; }
-
         private bool _startWasCalled;
+        private bool _isListening;
+        private IUpdateable _updateable;
+        private ILateUpdateable _lateUpdateable;
+        private IFixedUpdateable _fixedUpdateable;
 
         /// <summary>
         /// Start is called on the frame when a script is enabled just before any of the Update methods is called the first time.
         /// </summary>
         protected virtual void Start()
         {
+            // ReSharper disable SuspiciousTypeConversion.Global
+            _updateable = this as IUpdateable;
+            _lateUpdateable = this as ILateUpdateable;
+            _fixedUpdateable = this as IFixedUpdateable;
+            // ReSharper restore SuspiciousTypeConversion.Global
+
+            if (_updateable == null
+                && _lateUpdateable == null
+                && _fixedUpdateable == null)
+            {
+                Debug.LogWarning("This component doesn't implement any update interfaces.");
+            }
+
             _startWasCalled = true;
             StartListening();
         }
@@ -62,22 +97,38 @@ namespace Archon.SwissArmyLib.Events
 
         private void StartListening()
         {
-            if (UsesUpdate)
+            if (_isListening)
+            {
+                Debug.LogError("Attempt at starting to listen for updates, while already listening. Did you forget to call base.OnDisable()?");
+                return;
+            }
+
+            if (_updateable != null)
                 ManagedUpdate.OnUpdate.AddListener(this, ExecutionOrder);
-            if (UsesLateUpdate)
+            if (_lateUpdateable != null)
                 ManagedUpdate.OnLateUpdate.AddListener(this, ExecutionOrder);
-            if (UsesFixedUpdate)
+            if (_fixedUpdateable != null)
                 ManagedUpdate.OnFixedUpdate.AddListener(this, ExecutionOrder);
+
+            _isListening = true;
         }
 
         private void StopListening()
         {
-            if (UsesUpdate)
+            if (!_isListening)
+            {
+                Debug.LogError("Attempted to stop listening for updates while not listening. Did you forget to call base.Start() or base.OnEnable()?");
+                return;
+            }
+
+            if (_updateable != null)
                 ManagedUpdate.OnUpdate.RemoveListener(this);
-            if (UsesLateUpdate)
+            if (_lateUpdateable != null)
                 ManagedUpdate.OnLateUpdate.RemoveListener(this);
-            if (UsesFixedUpdate)
+            if (_fixedUpdateable != null)
                 ManagedUpdate.OnFixedUpdate.RemoveListener(this);
+
+            _isListening = false;
         }
 
         /// <inheritdoc />
@@ -86,30 +137,15 @@ namespace Archon.SwissArmyLib.Events
             switch (eventId)
             {
                 case EventIds.Update:
-                    OnUpdate();
+                    _updateable.OnUpdate();
                     return;
                 case EventIds.LateUpdate:
-                    OnLateUpdate();
+                    _lateUpdateable.OnLateUpdate();
                     return;
                 case EventIds.FixedUpdate:
-                    OnFixedUpdate();
+                    _fixedUpdateable.OnFixedUpdate();
                     return;
             }
         }
-
-        /// <summary>
-        /// Called every frame if <see cref="UsesUpdate"/> is true and the component is enabled.
-        /// </summary>
-        protected virtual void OnUpdate() { }
-
-        /// <summary>
-        /// Called every frame just after <see cref="OnUpdate"/> if <see cref="UsesLateUpdate"/> is true and the component is enabled.
-        /// </summary>
-        protected virtual void OnLateUpdate() { }
-
-        /// <summary>
-        /// This function is called every fixed framerate frame if <see cref="OnFixedUpdate"/> is true and the component is enabled.
-        /// </summary>
-        protected virtual void OnFixedUpdate() { }
     }
 }
