@@ -1,4 +1,5 @@
-﻿using System.Collections;
+﻿using System;
+using System.Collections;
 using System.Collections.Generic;
 
 namespace Archon.SwissArmyLib.Collections
@@ -7,7 +8,7 @@ namespace Archon.SwissArmyLib.Collections
     /// Represents an item and its priority.
     /// </summary>
     /// <typeparam name="T">The type of the item.</typeparam>
-    public struct PrioritizedItem<T>
+    public struct PrioritizedItem<T> : IEquatable<PrioritizedItem<T>>
     {
         /// <summary>
         /// The item that is prioritized.
@@ -26,6 +27,32 @@ namespace Archon.SwissArmyLib.Collections
         {
             Item = item;
             Priority = priority;
+        }
+
+        public bool Equals(PrioritizedItem<T> other)
+        {
+            return EqualityComparer<T>.Default.Equals(Item, other.Item);
+        }
+
+        public override bool Equals(object obj)
+        {
+            if (ReferenceEquals(null, obj)) return false;
+            return obj is PrioritizedItem<T> && Equals((PrioritizedItem<T>) obj);
+        }
+
+        public override int GetHashCode()
+        {
+            return EqualityComparer<T>.Default.GetHashCode(Item);
+        }
+
+        public static bool operator ==(PrioritizedItem<T> left, PrioritizedItem<T> right)
+        {
+            return left.Equals(right);
+        }
+
+        public static bool operator !=(PrioritizedItem<T> left, PrioritizedItem<T> right)
+        {
+            return !left.Equals(right);
         }
     }
 

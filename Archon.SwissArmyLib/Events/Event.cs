@@ -49,14 +49,7 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="listener">The listener to remove</param>
         public void RemoveListener(IEventListener listener)
         {
-            var backingList = _listeners.BackingList;
-            for (var i = 0; i < backingList.Count; i++)
-            {
-                if (backingList[i].Item != listener) continue;
-
-                _listeners.RemoveAt(i);
-                return;
-            }
+            _listeners.Remove(new PrioritizedItem<IEventListener>(listener, 0));
         }
 
         /// <summary>
@@ -75,7 +68,7 @@ namespace Archon.SwissArmyLib.Events
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e.Message);
+                    Debug.LogError(e);
                 }
             }
         }
@@ -134,14 +127,7 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="listener">The listener to remove</param>
         public void RemoveListener(IEventListener<T> listener)
         {
-            var backingList = _listeners.BackingList;
-            for (var i = 0; i < backingList.Count; i++)
-            {
-                if (backingList[i].Item != listener) continue;
-
-                _listeners.RemoveAt(i);
-                return;
-            }
+            _listeners.Remove(new PrioritizedItem<IEventListener<T>>(listener, 0));
         }
 
         /// <summary>
@@ -160,7 +146,7 @@ namespace Archon.SwissArmyLib.Events
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e.Message);
+                    Debug.LogError(e);
                 }
             }
         }
