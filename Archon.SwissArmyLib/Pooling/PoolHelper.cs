@@ -88,19 +88,14 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="target">The instance to despawn.</param>
         /// <param name="delay">Time in seconds to wait before despawning the target.</param>
         /// <param name="unscaledTime">Should the delay be according to <see cref="Time.time"/> or <see cref="Time.unscaledTime"/>?</param>
-        public static void Despawn(IPoolable target, float delay, bool unscaledTime = false)
+        public static void Despawn(Object target, float delay, bool unscaledTime = false)
         {
             if (target == null)
                 throw new NullReferenceException("Target is null.");
 
-            var unityObject = target as Object;
-
-            if (unityObject == null)
-                throw new InvalidOperationException("Cannot despawn target because it is not a UnityEngine.Object!");
-
-            var prefab = GetPrefab(unityObject);
+            var prefab = GetPrefab(target);
             var pool = GetPool(prefab);
-            pool.Despawn(unityObject, delay, unscaledTime);
+            pool.Despawn(target, delay, unscaledTime);
         }
 
         /// <summary>
