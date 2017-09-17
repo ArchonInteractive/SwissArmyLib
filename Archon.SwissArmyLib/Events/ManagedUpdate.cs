@@ -13,9 +13,11 @@ namespace Archon.SwissArmyLib.Events
     /// Also useful for non-MonoBehaviours that needs to be part of the update loop as well.
     /// 
     /// Events your can subscribe to:
-    ///     <see cref="OnUpdate"/>
-    ///     <see cref="OnLateUpdate"/>
-    ///     <see cref="OnFixedUpdate"/>
+    /// <list type="bullet">
+    ///     <item><description><see cref="OnUpdate"/></description></item>
+    ///     <item><description><see cref="OnLateUpdate"/></description></item>
+    ///     <item><description><see cref="OnFixedUpdate"/></description></item>
+    /// </list>
     /// 
     /// <seealso cref="ManagedUpdateBehaviour"/>
     /// </summary>

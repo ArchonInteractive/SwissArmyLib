@@ -13,6 +13,7 @@ namespace Archon.SwissArmyLib.Coroutines
         internal BetterCoroutine Child;
         internal float WaitTillTime = float.MinValue;
         internal bool WaitTimeIsUnscaled;
+        internal bool WaitingForEndOfFrame;
 
         void IPoolable.OnSpawned()
         {
@@ -33,6 +34,7 @@ namespace Archon.SwissArmyLib.Coroutines
             Child = null;
             WaitTillTime = float.MinValue;
             WaitTimeIsUnscaled = false;
+            WaitingForEndOfFrame = false;
         }
     }
 }

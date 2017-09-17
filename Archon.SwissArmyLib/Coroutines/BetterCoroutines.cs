@@ -5,6 +5,7 @@ using Archon.SwissArmyLib.Collections;
 using Archon.SwissArmyLib.Events;
 using Archon.SwissArmyLib.Pooling;
 using Archon.SwissArmyLib.Utils;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Archon.SwissArmyLib.Coroutines
@@ -15,14 +16,16 @@ namespace Archon.SwissArmyLib.Coroutines
     /// A coroutine do not belong to any gameobject and therefore doesn't depend on their life cycle. 
     /// Which update loop they're part of can be specified when they're started.
     /// 
-    /// They also allocate less garbage (especially with <see cref="WaitForSeconds"/> and <see cref="WaitForSecondsRealtime"/>).
+    /// They also allocate less garbage (especially with the yield instructions).
     /// 
     /// Just as with Unity's coroutines you can yield a <see cref="WWW"/> and <see cref="AsyncOperation"/> to wait for them to finish.
     /// 
     /// Instead of using Unity's YieldInstructions you should use the pooled replacements:
     /// <list type="bullet">
+    ///     <item><description><see cref="WaitForOneFrame"/></description></item>
     ///     <item><description><see cref="WaitForSeconds"/></description></item>
     ///     <item><description><see cref="WaitForSecondsRealtime"/></description></item>
+    ///     <item><description><see cref="WaitForEndOfFrame"/></description></item>
     ///     <item><description><see cref="WaitUntil"/></description></item>
     ///     <item><description><see cref="WaitWhile"/></description></item>
     ///     <item><description><see cref="WaitForWWW"/></description></item>
@@ -31,9 +34,20 @@ namespace Archon.SwissArmyLib.Coroutines
     /// </summary>
     public class BetterCoroutines : IEventListener
     {
+        /// <summary>
+        /// Suspends a coroutine for one frame.
+        /// </summary>
+        public const object WaitForOneFrame = null;
+
+        /// <summary>
+        /// Suspends a coroutine until the very end of the current frame.
+        /// </summary>
+        public static readonly WaitForEndOfFrame WaitForEndOfFrame = new WaitForEndOfFrame();
+
         private static readonly LinkedList<BetterCoroutine> CoroutinesUpdate = new LinkedList<BetterCoroutine>();
         private static readonly LinkedList<BetterCoroutine> CoroutinesLateUpdate = new LinkedList<BetterCoroutine>();
         private static readonly LinkedList<BetterCoroutine> CoroutinesFixedUpdate = new LinkedList<BetterCoroutine>();
+        private static readonly LinkedList<BetterCoroutine> CoroutinesWaitingForEndOfFrame = new LinkedList<BetterCoroutine>();
 
         private static LinkedListNode<BetterCoroutine> _current;
 
@@ -44,7 +58,13 @@ namespace Archon.SwissArmyLib.Coroutines
         {
             var instance = new BetterCoroutines();
             ServiceLocator.RegisterSingleton(instance);
-            ServiceLocator.GlobalReset += () => ServiceLocator.RegisterSingleton(instance);
+            ServiceLocator.RegisterSingleton<BetterCoroutinesEndOfFrame>();
+
+            ServiceLocator.GlobalReset += () =>
+            {
+                ServiceLocator.RegisterSingleton(instance);
+                ServiceLocator.RegisterSingleton<BetterCoroutinesEndOfFrame>();
+            };
         }
 
         private BetterCoroutines()
@@ -318,6 +338,9 @@ namespace Archon.SwissArmyLib.Coroutines
             if (coroutine.Child != null)
                 return true;
 
+            if (coroutine.WaitingForEndOfFrame)
+                return true;
+
             var time = coroutine.WaitTimeIsUnscaled ? unscaledTime : scaledTime;
 
             if (coroutine.WaitTillTime > time)
@@ -363,6 +386,13 @@ namespace Archon.SwissArmyLib.Coroutines
                 time = waitForSeconds.Unscaled ? unscaledTime : scaledTime;
                 coroutine.WaitTimeIsUnscaled = waitForSeconds.Unscaled;
                 coroutine.WaitTillTime = time + waitForSeconds.Duration;
+                return true;
+            }
+
+            if (current is WaitForEndOfFrame)
+            {
+                coroutine.WaitingForEndOfFrame = true;
+                CoroutinesWaitingForEndOfFrame.AddFirst(coroutine);
                 return true;
             }
 
@@ -423,6 +453,61 @@ namespace Archon.SwissArmyLib.Coroutines
             }
 
             return currentTime;
+        }
+
+        internal static void ProcessEndOfFrame()
+        {
+            var current = CoroutinesWaitingForEndOfFrame.First;
+            while (current != null)
+            {
+                var next = current.Next;
+                var routine = current.Value;
+
+                routine.WaitingForEndOfFrame = false;
+
+                var scaledTime = GetTime(routine.UpdateLoop, false);
+                var unscaledTime = GetTime(routine.UpdateLoop, true);
+
+                var shouldContinue = UpdateCoroutine(scaledTime, unscaledTime, routine);
+
+                if (!shouldContinue)
+                    Stop(routine);
+
+                CoroutinesWaitingForEndOfFrame.Remove(current);
+
+                current = next;
+            }
+        }
+    }
+
+    [AddComponentMenu("")]
+    internal class BetterCoroutinesEndOfFrame : MonoBehaviour
+    {
+        private Coroutine _endOfFrameCoroutine;
+
+        [UsedImplicitly]
+        private void OnEnable()
+        {
+            _endOfFrameCoroutine = StartCoroutine(EndOfFrameCoroutine());
+        }
+
+        [UsedImplicitly]
+        private void OnDisable()
+        {
+            StopCoroutine(_endOfFrameCoroutine);
+            _endOfFrameCoroutine = null;
+        }
+
+        private static IEnumerator EndOfFrameCoroutine()
+        {
+            while (true)
+            {
+                yield return BetterCoroutines.WaitForEndOfFrame;
+
+                BetterCoroutines.ProcessEndOfFrame();
+            }
+
+            // ReSharper disable once IteratorNeverReturns
         }
     }
 }
