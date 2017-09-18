@@ -14,6 +14,8 @@ namespace Archon.SwissArmyLib.Coroutines
     /// A very similar but more performant alternative to Unity's coroutines.
     /// 
     /// A coroutine do not belong to any gameobject and therefore doesn't depend on their life cycle. 
+    /// You can however optionally link the coroutines to a gameobject or component.
+    /// 
     /// Which update loop they're part of can be specified when they're started.
     /// 
     /// They also allocate less garbage (especially with the yield instructions).
@@ -92,42 +94,80 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns>The id of the coroutine.</returns>
         public static int Start(IEnumerator enumerator, UpdateLoop updateLoop = UpdateLoop.Update)
         {
-            var id = GetNextId();
+            var coroutine = SpawnCoroutine(enumerator, updateLoop);
 
-            var routine = PoolHelper<BetterCoroutine>.Spawn();
-            routine.Id = id;
-            routine.Enumerator = enumerator;
-            routine.UpdateLoop = updateLoop;
+            Start(coroutine);
 
-            var scaledTime = GetTime(updateLoop, false);
-            var unscaledTime = GetTime(updateLoop, true);
+            return coroutine.Id;
+        }
 
-            var continueRunning = UpdateCoroutine(scaledTime, unscaledTime, routine);
+        /// <summary>
+        /// Starts a new coroutine and links its lifetime to a gameobject.
+        /// The coroutine will be stopped when the linked gameobject is disabled or destroyed.
+        /// </summary>
+        /// <param name="enumerator"></param>
+        /// <param name="linkedObject">Which gameobject to link the coroutine's lifetime with.</param>
+        /// <param name="updateLoop">Which update loop should the coroutine be part of?</param>
+        /// <returns>The id of the coroutine.</returns>
+        public static int Start(IEnumerator enumerator, GameObject linkedObject, UpdateLoop updateLoop = UpdateLoop.Update)
+        {
+            var coroutine = SpawnCoroutine(enumerator, updateLoop);
+            coroutine.LinkedObject = linkedObject;
+            coroutine.IsLinkedToObject = true;
+
+            Start(coroutine);
+
+            return coroutine.Id;
+        }
+
+        /// <summary>
+        /// Starts a new coroutine and links its lifetime to a component.
+        /// The coroutine will be stopped when the linked component is disabled or destroyed.
+        /// </summary>
+        /// <param name="enumerator"></param>
+        /// <param name="linkedComponent">Which component to link the coroutine's lifetime with.</param>
+        /// <param name="updateLoop">Which update loop should the coroutine be part of?</param>
+        /// <returns>The id of the coroutine.</returns>
+        public static int Start(IEnumerator enumerator, MonoBehaviour linkedComponent, UpdateLoop updateLoop = UpdateLoop.Update)
+        {
+            var coroutine = SpawnCoroutine(enumerator, updateLoop);
+            coroutine.LinkedComponent = linkedComponent;
+            coroutine.IsLinkedToComponent = true;
+
+            Start(coroutine);
+
+            return coroutine.Id;
+        }
+
+        private static void Start(BetterCoroutine coroutine)
+        {
+            var scaledTime = GetTime(coroutine.UpdateLoop, false);
+            var unscaledTime = GetTime(coroutine.UpdateLoop, true);
+
+            var continueRunning = UpdateCoroutine(scaledTime, unscaledTime, coroutine);
             if (!continueRunning)
             {
-                PoolHelper<BetterCoroutine>.Despawn(routine);
-                return id;
+                PoolHelper<BetterCoroutine>.Despawn(coroutine);
+                return;
             }
 
-            IdToCoroutine[id] = routine;
+            IdToCoroutine[coroutine.Id] = coroutine;
 
             if (_current != null)
-                _current.List.AddBefore(_current, routine);
+                _current.List.AddBefore(_current, coroutine);
             else
             {
-                var list = GetList(updateLoop);
-                list.AddFirst(routine);
+                var list = GetList(coroutine.UpdateLoop);
+                list.AddFirst(coroutine);
             }
-
-            return id;
         }
 
         private static void StartChild(IEnumerator enumerator, BetterCoroutine parent)
         {
-            var subroutineId = Start(enumerator, parent.UpdateLoop);
-            var subroutine = IdToCoroutine[subroutineId];
-            subroutine.Parent = parent;
-            parent.Child = subroutine;
+            var child = SpawnCoroutine(enumerator, parent.UpdateLoop);
+            child.Parent = parent;
+            parent.Child = child;
+            Start(child);
         }
 
         /// <summary>
@@ -160,7 +200,7 @@ namespace Archon.SwissArmyLib.Coroutines
             return false;
         }
 
-        internal static void Stop(BetterCoroutine coroutine)
+        private static void Stop(BetterCoroutine coroutine)
         {
             if (coroutine.IsDone)
                 return;
@@ -278,6 +318,15 @@ namespace Archon.SwissArmyLib.Coroutines
             return WaitWhileLite.Create(predicate);
         }
 
+        private static BetterCoroutine SpawnCoroutine(IEnumerator enumerator, UpdateLoop updateLoop)
+        {
+            var coroutine = PoolHelper<BetterCoroutine>.Spawn();
+            coroutine.Id = GetNextId();
+            coroutine.Enumerator = enumerator;
+            coroutine.UpdateLoop = updateLoop;
+            return coroutine;
+        }
+
         private static int GetNextId()
         {
             if (_nextId < 1)
@@ -335,6 +384,12 @@ namespace Archon.SwissArmyLib.Coroutines
             if (coroutine.IsDone)
                 return false;
 
+            if (coroutine.IsLinkedToObject && (!coroutine.LinkedObject || !coroutine.LinkedObject.activeInHierarchy))
+                return false;
+
+            if (coroutine.IsLinkedToComponent && (!coroutine.LinkedComponent || !coroutine.LinkedComponent.isActiveAndEnabled))
+                return false;
+
             if (coroutine.Child != null)
                 return true;
 
@@ -365,11 +420,16 @@ namespace Archon.SwissArmyLib.Coroutines
 
             if (current == null) return true;
 
-            var subroutine = current as BetterCoroutine;
-            if (subroutine != null)
+            var subroutineId = current as int?;
+            if (subroutineId != null)
             {
-                coroutine.Child = subroutine;
-                subroutine.Parent = coroutine;
+                var subroutine = IdToCoroutine[subroutineId.Value];
+
+                if (subroutine != null)
+                {
+                    coroutine.Child = subroutine;
+                    subroutine.Parent = coroutine;
+                }
                 return true;
             }
 
