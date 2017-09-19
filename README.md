@@ -34,8 +34,8 @@ This project is under the very permissive MIT license and we honestly do not car
     * [Pushdown Automaton](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Pushdown-Automaton)
 * [Pooling](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Object-Pooling)
     * Support for both arbitrary classes and GameObjects
-    * IPoolable interface for callbacks
-        * PoolableGroup component in case multiple IPoolable components needs to be notified
+    * [IPoolable](https://github.com/ArchonInteractive/SwissArmyLib/wiki/IPoolable) interface for callbacks
+        * [PoolableGroup](https://github.com/ArchonInteractive/SwissArmyLib/wiki/PoolableGroup) component in case multiple IPoolable components needs to be notified
     * Timed despawns
 * [Service Locator](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Service-Locator)
     * An implementation of the Service Locator pattern
