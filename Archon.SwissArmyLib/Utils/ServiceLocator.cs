@@ -222,7 +222,18 @@ namespace Archon.SwissArmyLib.Utils
         /// <param name="instance">The instance to register as a singleton.</param>
         public static void RegisterSingleton<T>(T instance)
         {
-            GlobalResolvers[typeof(T)] = () => instance;
+            RegisterSingleton<T, T>(instance);
+        }
+
+        /// <summary>
+        ///     Registers a specific instance to be a singleton for the abstract type.
+        /// </summary>
+        /// <typeparam name="TAbstract">The abstract ype that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
+        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
+        /// <param name="instance">The instance to register as a singleton.</param>
+        public static void RegisterSingleton<TAbstract, TConcrete>(TConcrete instance)
+        {
+            GlobalResolvers[typeof(TAbstract)] = () => instance;
         }
 
         /// <summary>
@@ -237,15 +248,39 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         /// <summary>
+        ///     Registers a specific instance to be a scene-specific singleton for the abstract type.
+        ///     <remarks>The resolver is registered for the active scene according to <see cref="SceneManager.GetActiveScene()" />.</remarks>
+        /// </summary>
+        /// <typeparam name="TAbstract">The abstract type that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
+        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
+        /// <param name="instance">The instance to register as a singleton.</param>
+        public static void RegisterSingletonForScene<TAbstract, TConcrete>(TConcrete instance)
+        {
+            RegisterSingletonForScene<TAbstract, TConcrete>(instance, _currentScene);
+        }
+
+        /// <summary>
         ///     Registers a specific instance to be a scene-specific singleton for its concrete type.
         /// </summary>
         /// <typeparam name="T">The type of the singleton.</typeparam>
         /// <param name="instance">The instance to register as a singleton.</param>
-        /// <param name="scene">The scene to register the transient type for.</param>
+        /// <param name="scene">The scene to register the singleton type for.</param>
         public static void RegisterSingletonForScene<T>(T instance, Scene scene)
         {
+            RegisterSingletonForScene<T, T>(instance, scene);
+        }
+
+        /// <summary>
+        ///     Registers a specific instance to be a scene-specific singleton for the abstract type.
+        /// </summary>
+        /// <typeparam name="TAbstract">The abstract ype that will be mapped to <typeparamref name="TConcrete"/>.</typeparam>
+        /// <typeparam name="TConcrete">The concrete singleton implementation.</typeparam>
+        /// <param name="instance">The instance to register as a singleton.</param>
+        /// <param name="scene">The scene to register the singleton type for.</param>
+        public static void RegisterSingletonForScene<TAbstract, TConcrete>(TConcrete instance, Scene scene)
+        {
             var resolverMap = GetOrCreateSceneData(scene).Resolvers;
-            resolverMap[typeof(T)] = () => instance;
+            resolverMap[typeof(TAbstract)] = () => instance;
         }
 
         /// <summary>
