@@ -138,7 +138,9 @@
 
             _data = CreateArrays(width, height);
             CopyArraysContents(oldData, _data);
-            Fill(DefaultValue, oldWidth, oldHeight, width, height);
+
+            Fill(DefaultValue, oldWidth, 0, width, height);
+            Fill(DefaultValue, 0, oldHeight, oldWidth, height);
         }
 
         private static T[][] CreateArrays(int width, int height)
