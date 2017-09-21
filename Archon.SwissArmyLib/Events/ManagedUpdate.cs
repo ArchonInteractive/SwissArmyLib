@@ -22,7 +22,7 @@ namespace Archon.SwissArmyLib.Events
     /// <seealso cref="ManagedUpdateBehaviour"/>
     /// </summary>
     [AddComponentMenu("")]
-    public sealed class ManagedUpdate : MonoBehaviour
+    public static class ManagedUpdate
     {
         /// <summary>
         /// Event handler that is called every update.
@@ -55,41 +55,43 @@ namespace Archon.SwissArmyLib.Events
 
         static ManagedUpdate()
         {
-            _instance = ServiceLocator.RegisterSingleton<ManagedUpdate>();
-            ServiceLocator.GlobalReset += () =>
-            {
-                _instance = ServiceLocator.RegisterSingleton<ManagedUpdate>();
-            };
+            if (!ServiceLocator.IsRegistered<ManagedUpdateTicker>())
+                ServiceLocator.RegisterSingleton<ManagedUpdateTicker>();
+
+            ServiceLocator.GlobalReset += () => ServiceLocator.RegisterSingleton<ManagedUpdateTicker>();
         }
+    }
 
-        private static ManagedUpdate _instance;
-
+    [AddComponentMenu("")]
+    internal sealed class ManagedUpdateTicker : MonoBehaviour
+    {
         [UsedImplicitly]
-        private void Start()
+        private void OnEnable()
         {
-            if (_instance != null && _instance != this)
-            {
-                Debug.LogWarning("You should not create the ManagedUpdate component yourself, this component will be removed.");
+            var instance = ServiceLocator.Resolve<ManagedUpdateTicker>();
+
+            if (instance == null)
+                ServiceLocator.RegisterSingleton(this);
+            else if (instance != this)
                 Destroy(this);
-            }
         }
 
         [UsedImplicitly]
         private void Update()
         {
-            OnUpdate.Invoke();
+            ManagedUpdate.OnUpdate.Invoke();
         }
 
         [UsedImplicitly]
         private void LateUpdate()
         {
-            OnLateUpdate.Invoke();
+            ManagedUpdate.OnLateUpdate.Invoke();
         }
 
         [UsedImplicitly]
         private void FixedUpdate()
         {
-            OnFixedUpdate.Invoke();
+            ManagedUpdate.OnFixedUpdate.Invoke();
         }
     }
 }

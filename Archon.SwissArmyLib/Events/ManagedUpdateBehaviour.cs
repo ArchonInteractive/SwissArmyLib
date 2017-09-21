@@ -81,6 +81,16 @@ namespace Archon.SwissArmyLib.Events
         /// </summary>
         protected virtual void OnEnable()
         {
+            // interface references aren't serialized when unity hot-reloads
+            if (Application.isEditor)
+            {
+                // ReSharper disable SuspiciousTypeConversion.Global
+                if (_updateable == null) _updateable = this as IUpdateable;
+                if (_lateUpdateable == null) _lateUpdateable = this as ILateUpdateable;
+                if (_fixedUpdateable == null) _fixedUpdateable = this as IFixedUpdateable;
+                // ReSharper restore SuspiciousTypeConversion.Global
+            }
+
             // We don't want Update calls before Start has been called.
             if (_startWasCalled)
                 StartListening();

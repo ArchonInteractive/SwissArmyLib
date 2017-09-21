@@ -16,6 +16,17 @@ namespace Archon.SwissArmyLib.Utils
         }
 
         [UsedImplicitly]
+        private void OnEnable()
+        {
+            var instance = ServiceLocator.Resolve<BetterTimeUpdater>();
+
+            if (instance == null)
+                ServiceLocator.RegisterSingleton(this);
+            else if (instance != this)
+                Destroy(this);
+        }
+
+        [UsedImplicitly]
         private void Start()
         {
             BetterTime.Update();
@@ -158,7 +169,9 @@ namespace Archon.SwissArmyLib.Utils
 
         static BetterTime()
         {
-            ServiceLocator.RegisterSingleton<BetterTimeUpdater>();
+            if (!ServiceLocator.IsRegistered<BetterTimeUpdater>())
+                ServiceLocator.RegisterSingleton<BetterTimeUpdater>();
+
             ServiceLocator.GlobalReset += () => ServiceLocator.RegisterSingleton<BetterTimeUpdater>();
         }
 

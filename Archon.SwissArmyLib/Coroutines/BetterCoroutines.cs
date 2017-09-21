@@ -60,7 +60,9 @@ namespace Archon.SwissArmyLib.Coroutines
         {
             var instance = new BetterCoroutines();
             ServiceLocator.RegisterSingleton(instance);
-            ServiceLocator.RegisterSingleton<BetterCoroutinesEndOfFrame>();
+
+            if (!ServiceLocator.IsRegistered<BetterCoroutinesEndOfFrame>())
+                ServiceLocator.RegisterSingleton<BetterCoroutinesEndOfFrame>();
 
             ServiceLocator.GlobalReset += () =>
             {
@@ -548,7 +550,15 @@ namespace Archon.SwissArmyLib.Coroutines
         [UsedImplicitly]
         private void OnEnable()
         {
-            _endOfFrameCoroutine = StartCoroutine(EndOfFrameCoroutine());
+            var instance = ServiceLocator.Resolve<BetterCoroutinesEndOfFrame>();
+
+            if (instance == null)
+            {
+                ServiceLocator.RegisterSingleton(this);
+                _endOfFrameCoroutine = StartCoroutine(EndOfFrameCoroutine());
+            }
+            else if (instance != this)
+                Destroy(this);
         }
 
         [UsedImplicitly]

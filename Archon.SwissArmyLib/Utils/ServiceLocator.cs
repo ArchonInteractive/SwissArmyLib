@@ -37,8 +37,14 @@ namespace Archon.SwissArmyLib.Utils
         private static GameObject _multiSceneGameObject;
         private static Scene _currentScene;
 
+        private const string MultisceneGameObjectName = "ServiceLocator - Multi-scene";
+
         static ServiceLocator()
         {
+            // in case unity has hot-reloaded
+            if (Application.isEditor)
+                _multiSceneGameObject = GameObject.Find(MultisceneGameObjectName);
+
             _currentScene = SceneManager.GetActiveScene();
             SceneManager.activeSceneChanged += OnActiveSceneChanged;
             SceneManager.sceneUnloaded += OnSceneUnloaded;
@@ -669,7 +675,7 @@ namespace Archon.SwissArmyLib.Utils
         {
             if (_multiSceneGameObject == null)
             {
-                _multiSceneGameObject = new GameObject("ServiceLocator - Multi-scene");
+                _multiSceneGameObject = new GameObject(MultisceneGameObjectName);
                 Object.DontDestroyOnLoad(_multiSceneGameObject);
             }
 
