@@ -13,6 +13,8 @@ Project("{7CF6DF6D-3B04-46F8-A40B-537D21BCA0B4}") = "Documentation", "Documentat
 		{86576CEB-98C2-4234-9577-1335777CFB7D} = {86576CEB-98C2-4234-9577-1335777CFB7D}
 	EndProjectSection
 EndProject
+Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "Archon.SwissArmyLibTests", "Archon.SwissArmyLibTests\Archon.SwissArmyLibTests.csproj", "{38149324-335B-4316-8016-21AB9F9B3074}"
+EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
 		Debug|Any CPU = Debug|Any CPU
@@ -31,6 +33,10 @@ Global
 		{0C59110B-107A-4B22-9783-8CC0737A033F}.Debug|Any CPU.Build.0 = Debug|Any CPU
 		{0C59110B-107A-4B22-9783-8CC0737A033F}.Release|Any CPU.ActiveCfg = Release|Any CPU
 		{0C59110B-107A-4B22-9783-8CC0737A033F}.Release|Any CPU.Build.0 = Release|Any CPU
+		{38149324-335B-4316-8016-21AB9F9B3074}.Debug|Any CPU.ActiveCfg = Debug|Any CPU
+		{38149324-335B-4316-8016-21AB9F9B3074}.Debug|Any CPU.Build.0 = Debug|Any CPU
+		{38149324-335B-4316-8016-21AB9F9B3074}.Release|Any CPU.ActiveCfg = Release|Any CPU
+		{38149324-335B-4316-8016-21AB9F9B3074}.Release|Any CPU.Build.0 = Release|Any CPU
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE
