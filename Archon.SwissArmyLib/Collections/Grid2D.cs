@@ -95,7 +95,7 @@
         /// </summary>
         public void Clear()
         {
-            Fill(DefaultValue, 0, 0, Width - 1, Height - 1);
+            Clear(DefaultValue);
         }
 
         /// <summary>
@@ -103,7 +103,7 @@
         /// </summary>
         public void Clear(T clearValue)
         {
-            Clear();
+            Fill(clearValue, 0, 0, Width - 1, Height - 1);
         }
 
         /// <summary>
@@ -138,7 +138,15 @@
 
             _data = CreateArrays(width, height);
             CopyArraysContents(oldData, _data);
-            Fill(DefaultValue, oldWidth, oldHeight, width, height);
+
+            Width = width;
+            Height = height;
+
+            if (width > oldWidth || height > oldHeight)
+            {
+                Fill(DefaultValue, 0, oldHeight, width - 1, height - 1);
+                Fill(DefaultValue, oldWidth, 0, width - 1, oldHeight - 1);
+            }
         }
 
         private static T[][] CreateArrays(int width, int height)

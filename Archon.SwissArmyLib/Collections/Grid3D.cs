@@ -106,7 +106,7 @@
         /// </summary>
         public void Clear()
         {
-            Fill(DefaultValue, 0, 0, 0, Width - 1, Height - 1, Depth - 1);
+            Clear(DefaultValue);
         }
 
         /// <summary>
@@ -114,7 +114,7 @@
         /// </summary>
         public void Clear(T clearValue)
         {
-            Clear();
+            Fill(clearValue, 0, 0, 0, Width - 1, Height - 1, Depth - 1);
         }
 
         /// <summary>
@@ -129,7 +129,7 @@
         /// <param name="maxZ">Upper right back corner's z value.</param>
         public void Fill(T value, int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
         {
-            for (var z = minZ; z < maxZ; z++)
+            for (var z = minZ; z <= maxZ; z++)
             {
                 var heightArray = _data[z];
 
@@ -158,7 +158,17 @@
 
             _data = CreateArrays(width, height, depth);
             CopyArraysContents(oldData, _data);
-            Fill(DefaultValue, oldWidth, oldHeight, oldDepth, width, height, depth);
+
+            Width = width;
+            Height = height;
+            Depth = depth;
+
+            if (width > oldWidth || height > oldHeight || depth > oldDepth)
+            {
+                Fill(DefaultValue, oldWidth, 0, 0, width - 1, height - 1, depth - 1);
+                Fill(DefaultValue, 0, oldHeight, 0, oldWidth - 1, height - 1, depth - 1);
+                Fill(DefaultValue, 0, 0, oldDepth, oldWidth - 1, oldHeight - 1, depth - 1);
+            }
         }
 
         private static T[][][] CreateArrays(int width, int height, int depth)
@@ -180,13 +190,13 @@
 
         private static void CopyArraysContents(T[][][] src, T[][][] dst)
         {
-            var srcHeight = src.Length;
-            var srcWidth = src[0].Length;
-            var srcDepth = src[0][0].Length;
+            var srcDepth = src.Length;
+            var srcHeight = src[0].Length;
+            var srcWidth = src[0][0].Length;
 
-            var dstHeight = dst.Length;
-            var dstWidth = dst[0].Length;
-            var dstDepth = dst[0][0].Length;
+            var dstDepth = dst.Length;
+            var dstHeight = dst[0].Length;
+            var dstWidth = dst[0][0].Length;
 
             for (var z = 0; z < srcDepth && z < dstDepth; z++)
             {

@@ -56,6 +56,7 @@
     <Compile Include="Collections\PrioritizedList.cs" />
     <Compile Include="Coroutines\BetterCoroutines.cs" />
     <Compile Include="Coroutines\BetterCoroutine.cs" />
+    <Compile Include="Coroutines\BetterCoroutinesExtensions.cs" />
     <Compile Include="Coroutines\IPoolableYieldInstruction.cs" />
     <Compile Include="Coroutines\UpdateLoop.cs" />
     <Compile Include="Coroutines\WaitForAsyncOperation.cs" />

@@ -1,4 +1,7 @@
 ﻿using System.Collections.Generic;
+using System.Linq;
+using Archon.SwissArmyLib.Utils.Editor;
+using JetBrains.Annotations;
 using UnityEngine;
 
 namespace Archon.SwissArmyLib.Pooling
@@ -7,26 +10,21 @@ namespace Archon.SwissArmyLib.Pooling
     /// Manages a list of IPoolable components found in the hierarchy of this GameObject and notifies them when it is spawned and despawned.
     /// </summary>
     [AddComponentMenu("Archon/Poolable Group")]
-    public sealed class PoolableGroup : MonoBehaviour, IPoolable
+    public sealed class PoolableGroup : MonoBehaviour, IPoolable, ISerializationCallbackReceiver
     {
-        private readonly List<IPoolable> _poolableComponents = new List<IPoolable>();
-
-        private void Awake()
-        {
-            GetComponentsInChildren(_poolableComponents);
-            _poolableComponents.Remove(this);
-        }
+        [SerializeField, ReadOnly, UsedImplicitly]
+        private List<MonoBehaviour> _poolableComponents = new List<MonoBehaviour>();
 
         void IPoolable.OnSpawned()
         {
             for (var i = 0; i < _poolableComponents.Count; i++)
-                _poolableComponents[i].OnSpawned();
+                ((IPoolable)_poolableComponents[i]).OnSpawned();
         }
 
         void IPoolable.OnDespawned()
         {
             for (var i = 0; i < _poolableComponents.Count; i++)
-                _poolableComponents[i].OnDespawned();
+                ((IPoolable) _poolableComponents[i]).OnDespawned();
         }
 
         /// <summary>
@@ -35,7 +33,7 @@ namespace Archon.SwissArmyLib.Pooling
         /// Useful if you dynamically add IPoolable components at runtime.
         /// </summary>
         /// <param name="poolable">The poolable object that should be notified.</param>
-        public void AddManually(IPoolable poolable)
+        public void AddManually<T>(T poolable) where T : MonoBehaviour, IPoolable
         {
             _poolableComponents.Add(poolable);
         }
@@ -44,9 +42,25 @@ namespace Archon.SwissArmyLib.Pooling
         /// Manually removes a poolable object so that it no longer is notified when this component is spawned or despawned.
         /// </summary>
         /// <param name="poolable">The poolable object that should no longer be notified.</param>
-        public void RemoveManually(IPoolable poolable)
+        public void RemoveManually<T>(T poolable) where T : MonoBehaviour, IPoolable
         {
             _poolableComponents.Remove(poolable);
+        }
+
+        void ISerializationCallbackReceiver.OnBeforeSerialize()
+        {
+            if (!Application.isPlaying)
+            {
+                _poolableComponents.Clear();
+                var children = GetComponentsInChildren<IPoolable>(true).Cast<MonoBehaviour>();
+                _poolableComponents.AddRange(children);
+                _poolableComponents.Remove(this);
+            }
+        }
+
+        void ISerializationCallbackReceiver.OnAfterDeserialize()
+        {
+            
         }
     }
 }

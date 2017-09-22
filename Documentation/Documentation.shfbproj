@@ -34,7 +34,7 @@
       <DocumentationSource sourceFile="..\Archon.SwissArmyLib.sln" />
     </DocumentationSources>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
-    <BuildAssemblerVerbosity>OnlyWarningsAndErrors</BuildAssemblerVerbosity>
+    <BuildAssemblerVerbosity>OnlyErrors</BuildAssemblerVerbosity>
     <HelpFileFormat>Website</HelpFileFormat>
     <IndentHtml>False</IndentHtml>
     <KeepLogFile>True</KeepLogFile>
@@ -59,19 +59,21 @@
     <SourceCodeBasePath>..\</SourceCodeBasePath>
     <NamespaceSummaries>
       <NamespaceSummaryItem name="Archon.SwissArmyLib.Automata" isDocumented="True" xmlns="">Contains classes for state machines.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Collections" isDocumented="True" xmlns="">Contains useful collection types.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Editor (Group)" isGroup="True" isDocumented="True" xmlns="">Contains classes with a UnityEditor dependency.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Editor.ResourceSystem" isDocumented="True" xmlns="">Editor classes related to the ResourceSystem.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Editor.Utils" isDocumented="True" xmlns="">Misc editor utilities.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Events" isDocumented="True" xmlns="">Contains classes related to events and time handling.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Gravity" isDocumented="True" xmlns="">Contains classes related to the gravitational system.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Pooling" isDocumented="True" xmlns="">Contains classes related to object pooling.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.ResourceSystem" isDocumented="True" xmlns="">Contains classes related to the resource system (health, mana, etc).</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Utils (Group)" isGroup="True" isDocumented="True" xmlns="">Contains various smaller utilities.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Utils" isDocumented="True" xmlns="">Contains various smaller utilities.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Utils.Editor" isDocumented="True" xmlns="">Contains helpful utilities for the Unity editor.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Utils.Extensions" isDocumented="True" xmlns="">Contains various extension classes.</NamespaceSummaryItem>
-<NamespaceSummaryItem name="Archon.SwissArmyLib.Utils.Shake" isDocumented="True" xmlns="">Contains helpful classes for shaking (eg. screenshake).</NamespaceSummaryItem></NamespaceSummaries>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Collections" isDocumented="True" xmlns="">Contains useful collection types.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Editor (Group)" isGroup="True" isDocumented="True" xmlns="">Contains classes with a UnityEditor dependency.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Editor.ResourceSystem" isDocumented="True" xmlns="">Editor classes related to the ResourceSystem.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Editor.Utils" isDocumented="True" xmlns="">Misc editor utilities.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Events" isDocumented="True" xmlns="">Contains classes related to events and time handling.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Gravity" isDocumented="True" xmlns="">Contains classes related to the gravitational system.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Pooling" isDocumented="True" xmlns="">Contains classes related to object pooling.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.ResourceSystem" isDocumented="True" xmlns="">Contains classes related to the resource system (health, mana, etc).</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Utils (Group)" isGroup="True" isDocumented="True" xmlns="">Contains various smaller utilities.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Utils" isDocumented="True" xmlns="">Contains various smaller utilities.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Utils.Editor" isDocumented="True" xmlns="">Contains helpful utilities for the Unity editor.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Utils.Extensions" isDocumented="True" xmlns="">Contains various extension classes.</NamespaceSummaryItem>
+      <NamespaceSummaryItem name="Archon.SwissArmyLib.Utils.Shake" isDocumented="True" xmlns="">Contains helpful classes for shaking (eg. screenshake).</NamespaceSummaryItem>
+    </NamespaceSummaries>
+    <ComponentPath>%SHFB_COMPONENTS%\</ComponentPath>
   </PropertyGroup>
   <!-- There are no properties for these groups.  AnyCPU needs to appear in order for Visual Studio to perform
 			 the build.  The others are optional common platform types that may appear. -->

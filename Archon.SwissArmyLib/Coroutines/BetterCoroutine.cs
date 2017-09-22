@@ -1,5 +1,6 @@
 using System.Collections;
 using Archon.SwissArmyLib.Pooling;
+using UnityEngine;
 
 namespace Archon.SwissArmyLib.Coroutines
 {
@@ -11,9 +12,15 @@ namespace Archon.SwissArmyLib.Coroutines
         internal IEnumerator Enumerator;
         internal BetterCoroutine Parent;
         internal BetterCoroutine Child;
+
         internal float WaitTillTime = float.MinValue;
         internal bool WaitTimeIsUnscaled;
         internal bool WaitingForEndOfFrame;
+
+        internal bool IsLinkedToObject;
+        internal GameObject LinkedObject;
+        internal bool IsLinkedToComponent;
+        internal MonoBehaviour LinkedComponent;
 
         void IPoolable.OnSpawned()
         {
@@ -32,9 +39,15 @@ namespace Archon.SwissArmyLib.Coroutines
             Enumerator = null;
             Parent = null;
             Child = null;
+
             WaitTillTime = float.MinValue;
             WaitTimeIsUnscaled = false;
             WaitingForEndOfFrame = false;
+
+            LinkedObject = null;
+            LinkedComponent = null;
+            IsLinkedToObject = false;
+            IsLinkedToComponent = false;
         }
     }
 }

@@ -9,7 +9,7 @@ namespace Archon.SwissArmyLib.Pooling
     /// An object pool that can recycle prefab instances.
     /// </summary>
     /// <typeparam name="T">The type of the component on the prefab.</typeparam>
-    public class GameObjectPool<T> : Pool<T> where T : Object
+    public class GameObjectPool<T> : Pool<T>, IDisposable where T : Object
     {
         /// <summary>
         /// Gets the prefab used to instantiate GameObjects.
@@ -52,7 +52,19 @@ namespace Archon.SwissArmyLib.Pooling
         /// </summary>
         ~GameObjectPool()
         {
+            if (_root)
+                Object.Destroy(_root.gameObject);
+        }
+
+        /// <summary>
+        /// Destroys the pool and any despawned objects in it.
+        /// </summary>
+        public void Dispose()
+        {
             SceneManager.sceneUnloaded -= OnSceneUnloaded;
+            if (_root)
+                Object.Destroy(_root.gameObject);
+            Free.Clear();
         }
 
         private void OnSceneUnloaded(Scene unloadedScene)
