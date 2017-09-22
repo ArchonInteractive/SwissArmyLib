@@ -1,9 +1,9 @@
-# ![Logo](https://gitlab.com/archoninteractive/SwissArmyLib/raw/master/logo.png) &nbsp; SwissArmyLib
-**Please note this library is under construction and the API is definitely not stable. Also some things might currently be untested and broken.**
+# ![Logo](https://raw.githubusercontent.com/ArchonInteractive/SwissArmyLib/master/logo.png) &nbsp; SwissArmyLib
 
----
-[Download (bleeding edge)](https://archoninteractive.com/swissarmylib/downloads/Release.zip)
-&#8226;
+[![Build status](https://ci.appveyor.com/api/projects/status/sapkbwkbl5ug901u/branch/master?svg=true)](https://ci.appveyor.com/project/Phault/swissarmylib/branch/master)
+[![Download](https://api.bintray.com/packages/phault/SwissArmyLib/development/images/download.svg) ](https://bintray.com/phault/SwissArmyLib/development/_latestVersion#files)
+
+
 [Documentation](https://github.com/ArchonInteractive/SwissArmyLib/wiki)
 &#8226;
 [API Reference](https://archoninteractive.com/swissarmylib/)
@@ -66,7 +66,7 @@ This project is under the very permissive MIT license and we honestly do not car
     * A few other tiny utilities
 
 ### Download
-Binaries for the bleeding edge can be found [here](https://archoninteractive.com/swissarmylib/downloads/Release.zip).
+Binaries for the bleeding edge can be found [here](https://bintray.com/phault/SwissArmyLib/development/_latestVersion#files).
 Alternatively you can either [build it yourself](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Home#building-the-source) (very easily) or simply [copy the source code into your Unity project](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Home#method-2-copy-source) and call it a day.
 
 ### License
