@@ -31,7 +31,8 @@
       <Argument Key="requestExampleUrl" Value="https://github.com/ArchonInteractive/SwissArmyLib/issues/new" />
     </TransformComponentArguments>
     <DocumentationSources>
-      <DocumentationSource sourceFile="..\Archon.SwissArmyLib.sln" />
+      <DocumentationSource sourceFile="..\Archon.SwissArmyLib\Archon.SwissArmyLib.csproj" />
+      <DocumentationSource sourceFile="..\Archon.SwissArmyLib.Editor\Archon.SwissArmyLib.Editor.csproj" />
     </DocumentationSources>
     <SaveComponentCacheCapacity>100</SaveComponentCacheCapacity>
     <BuildAssemblerVerbosity>OnlyErrors</BuildAssemblerVerbosity>
@@ -47,7 +48,7 @@
     <SdkLinkTarget>Blank</SdkLinkTarget>
     <RootNamespaceContainer>False</RootNamespaceContainer>
     <PresentationStyle>VS2013</PresentationStyle>
-    <Preliminary>True</Preliminary>
+    <Preliminary>False</Preliminary>
     <NamingMethod>MemberName</NamingMethod>
     <HelpTitle>SwissArmyLib</HelpTitle>
     <ContentPlacement>AboveNamespaces</ContentPlacement>
