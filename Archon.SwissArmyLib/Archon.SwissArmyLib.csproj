@@ -53,6 +53,7 @@
     <Compile Include="Collections\DelayedList.cs" />
     <Compile Include="Collections\DictionaryWithDefault.cs" />
     <Compile Include="Collections\Grid3D.cs" />
+    <Compile Include="Collections\PooledLinkedList.cs" />
     <Compile Include="Collections\PrioritizedList.cs" />
     <Compile Include="Coroutines\BetterCoroutines.cs" />
     <Compile Include="Coroutines\BetterCoroutine.cs" />

@@ -46,10 +46,12 @@ namespace Archon.SwissArmyLib.Coroutines
         /// </summary>
         public static readonly WaitForEndOfFrame WaitForEndOfFrame = new WaitForEndOfFrame();
 
-        private static readonly LinkedList<BetterCoroutine> CoroutinesUpdate = new LinkedList<BetterCoroutine>();
-        private static readonly LinkedList<BetterCoroutine> CoroutinesLateUpdate = new LinkedList<BetterCoroutine>();
-        private static readonly LinkedList<BetterCoroutine> CoroutinesFixedUpdate = new LinkedList<BetterCoroutine>();
-        private static readonly LinkedList<BetterCoroutine> CoroutinesWaitingForEndOfFrame = new LinkedList<BetterCoroutine>();
+        private static readonly Pool<LinkedListNode<BetterCoroutine>> SharedNodePool = new Pool<LinkedListNode<BetterCoroutine>>(() => new LinkedListNode<BetterCoroutine>(null));
+
+        private static readonly PooledLinkedList<BetterCoroutine> CoroutinesUpdate = new PooledLinkedList<BetterCoroutine>(SharedNodePool);
+        private static readonly PooledLinkedList<BetterCoroutine> CoroutinesLateUpdate = new PooledLinkedList<BetterCoroutine>(SharedNodePool);
+        private static readonly PooledLinkedList<BetterCoroutine> CoroutinesFixedUpdate = new PooledLinkedList<BetterCoroutine>(SharedNodePool);
+        private static readonly PooledLinkedList<BetterCoroutine> CoroutinesWaitingForEndOfFrame = new PooledLinkedList<BetterCoroutine>(SharedNodePool);
 
         private static LinkedListNode<BetterCoroutine> _current;
 
@@ -155,13 +157,12 @@ namespace Archon.SwissArmyLib.Coroutines
 
             IdToCoroutine[coroutine.Id] = coroutine;
 
-            if (_current != null)
-                _current.List.AddBefore(_current, coroutine);
+            var list = GetList(coroutine.UpdateLoop);
+
+            if (_current != null && _current.List == list.BackingList)
+                list.AddBefore(_current, coroutine);
             else
-            {
-                var list = GetList(coroutine.UpdateLoop);
                 list.AddFirst(coroutine);
-            }
         }
 
         private static void StartChild(IEnumerator enumerator, BetterCoroutine parent)
@@ -233,7 +234,7 @@ namespace Archon.SwissArmyLib.Coroutines
         public static void StopAll(UpdateLoop updateLoop)
         {
             var coroutines = GetList(updateLoop);
-            var isInUpdate = _current != null && _current.List == coroutines;
+            var isInUpdate = _current != null && _current.Value.UpdateLoop == updateLoop;
 
             var current = coroutines.First;
             while (current != null)
@@ -337,7 +338,7 @@ namespace Archon.SwissArmyLib.Coroutines
             return _nextId++;
         }
 
-        private static LinkedList<BetterCoroutine> GetList(UpdateLoop updateLoop)
+        private static PooledLinkedList<BetterCoroutine> GetList(UpdateLoop updateLoop)
         {
             switch (updateLoop)
             {
@@ -352,7 +353,7 @@ namespace Archon.SwissArmyLib.Coroutines
             }
         }
 
-        private static void Update(LinkedList<BetterCoroutine> coroutines)
+        private static void Update(PooledLinkedList<BetterCoroutine> coroutines)
         {
             var scaledTime = BetterTime.Time;
             var unscaledTime = BetterTime.UnscaledTime;

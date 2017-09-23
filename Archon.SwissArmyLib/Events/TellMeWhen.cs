@@ -1,5 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
+using Archon.SwissArmyLib.Collections;
+using Archon.SwissArmyLib.Pooling;
 using Archon.SwissArmyLib.Utils;
 using UnityEngine;
 
@@ -15,8 +17,9 @@ namespace Archon.SwissArmyLib.Events
         /// </summary>
         public const int NoId = -1;
 
-        private static readonly LinkedList<Entry> EntriesScaled = new LinkedList<Entry>();
-        private static readonly LinkedList<Entry> EntriesUnscaled = new LinkedList<Entry>();
+        private static readonly Pool<LinkedListNode<Entry>> SharedNodePool = new Pool<LinkedListNode<Entry>>(() => new LinkedListNode<Entry>(default(Entry)));
+        private static readonly PooledLinkedList<Entry> EntriesScaled = new PooledLinkedList<Entry>(SharedNodePool);
+        private static readonly PooledLinkedList<Entry> EntriesUnscaled = new PooledLinkedList<Entry>(SharedNodePool);
 
         static TellMeWhen()
         {
@@ -161,7 +164,7 @@ namespace Archon.SwissArmyLib.Events
             SecondsUnscaled(minutes * 60, callback, id, args, repeating);
         }
 
-        private static void CancelInternal(ITimerCallback callback, LinkedList<Entry> list)
+        private static void CancelInternal(ITimerCallback callback, PooledLinkedList<Entry> list)
         {
             var current = list.First;
 
@@ -180,7 +183,7 @@ namespace Archon.SwissArmyLib.Events
             }
         }
 
-        private static void CancelInternal(ITimerCallback callback, int id, LinkedList<Entry> list)
+        private static void CancelInternal(ITimerCallback callback, int id, PooledLinkedList<Entry> list)
         {
             var current = list.First;
 
@@ -247,7 +250,7 @@ namespace Archon.SwissArmyLib.Events
             EntriesUnscaled.Clear();
         }
 
-        private static void UpdateList(float time, LinkedList<Entry> list)
+        private static void UpdateList(float time, PooledLinkedList<Entry> list)
         {
             LinkedListNode<Entry> current;
             while ((current = list.First) != null)
@@ -268,7 +271,7 @@ namespace Archon.SwissArmyLib.Events
             }
         }
 
-        private static void InsertIntoList(Entry entry, LinkedList<Entry> list)
+        private static void InsertIntoList(Entry entry, PooledLinkedList<Entry> list)
         {
             var current = list.First;
 
