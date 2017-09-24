@@ -87,11 +87,11 @@ namespace Archon.SwissArmyLib.Partitioning
         {
             var internalBounds = GetInternalBounds(bounds);
 
-            for (var z = internalBounds.MinZ; z < internalBounds.MaxZ; z++)
+            for (var z = internalBounds.MinZ; z <= internalBounds.MaxZ; z++)
             {
-                for (var y = internalBounds.MinY; y < internalBounds.MaxY; y++)
+                for (var y = internalBounds.MinY; y <= internalBounds.MaxY; y++)
                 {
-                    for (var x = internalBounds.MinX; x < internalBounds.MaxX; x++)
+                    for (var x = internalBounds.MinX; x <= internalBounds.MaxX; x++)
                     {
                         var cell = _grid[x, y, z];
 
@@ -113,11 +113,11 @@ namespace Archon.SwissArmyLib.Partitioning
         {
             var internalBounds = GetInternalBounds(bounds);
 
-            for (var z = internalBounds.MinZ; z < internalBounds.MaxZ; z++)
+            for (var z = internalBounds.MinZ; z <= internalBounds.MaxZ; z++)
             {
-                for (var y = internalBounds.MinY; y < internalBounds.MaxY; y++)
+                for (var y = internalBounds.MinY; y <= internalBounds.MaxY; y++)
                 {
-                    for (var x = internalBounds.MinX; x < internalBounds.MaxX; x++)
+                    for (var x = internalBounds.MinX; x <= internalBounds.MaxX; x++)
                     {
                         var cell = _grid[x, y, z];
 
@@ -157,11 +157,11 @@ namespace Archon.SwissArmyLib.Partitioning
         {
             var internalBounds = GetInternalBounds(bounds);
 
-            for (var z = internalBounds.MinZ; z < internalBounds.MaxZ; z++)
+            for (var z = internalBounds.MinZ; z <= internalBounds.MaxZ; z++)
             {
-                for (var y = internalBounds.MinY; y < internalBounds.MaxY; y++)
+                for (var y = internalBounds.MinY; y <= internalBounds.MaxY; y++)
                 {
-                    for (var x = internalBounds.MinX; x < internalBounds.MaxX; x++)
+                    for (var x = internalBounds.MinX; x <= internalBounds.MaxX; x++)
                     {
                         var cell = _grid[x, y, z];
 

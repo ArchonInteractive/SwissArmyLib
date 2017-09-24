@@ -71,11 +71,14 @@ namespace Archon.SwissArmyLib.Partitioning
         /// <param name="bounds">The bounds of the item.</param>
         public void Insert(T item, Rect bounds)
         {
+            if (IsOutOfBounds(bounds))
+                return;
+
             var internalBounds = GetInternalBounds(bounds);
 
-            for (var y = internalBounds.MinY; y < internalBounds.MaxY; y++)
+            for (var y = internalBounds.MinY; y <= internalBounds.MaxY; y++)
             {
-                for (var x = internalBounds.MinX; x < internalBounds.MaxX; x++)
+                for (var x = internalBounds.MinX; x <= internalBounds.MaxX; x++)
                 {
                     var cell = _grid[x, y];
 
@@ -94,11 +97,14 @@ namespace Archon.SwissArmyLib.Partitioning
         /// <param name="bounds">The bounds that the item was inserted with.</param>
         public void Remove(T item, Rect bounds)
         {
+            if (IsOutOfBounds(bounds))
+                return;
+
             var internalBounds = GetInternalBounds(bounds);
 
-            for (var y = internalBounds.MinY; y < internalBounds.MaxY; y++)
+            for (var y = internalBounds.MinY; y <= internalBounds.MaxY; y++)
             {
-                for (var x = internalBounds.MinX; x < internalBounds.MaxX; x++)
+                for (var x = internalBounds.MinX; x <= internalBounds.MaxX; x++)
                 {
                     var cell = _grid[x, y];
 
@@ -135,11 +141,14 @@ namespace Archon.SwissArmyLib.Partitioning
         /// <param name="results">Where to add results to.</param>
         public void Retrieve(Rect bounds, HashSet<T> results)
         {
+            if (IsOutOfBounds(bounds))
+                return;
+
             var internalBounds = GetInternalBounds(bounds);
 
-            for (var y = internalBounds.MinY; y < internalBounds.MaxY; y++)
+            for (var y = internalBounds.MinY; y <= internalBounds.MaxY; y++)
             {
-                for (var x = internalBounds.MinX; x < internalBounds.MaxX; x++)
+                for (var x = internalBounds.MinX; x <= internalBounds.MaxX; x++)
                 {
                     var cell = _grid[x, y];
 
@@ -186,6 +195,14 @@ namespace Archon.SwissArmyLib.Partitioning
         public void Dispose()
         {
             Clear();
+        }
+
+        private bool IsOutOfBounds(Rect bounds)
+        {
+            return !(bounds.xMax > 0 
+                && bounds.xMin < Width * CellWidth
+                && bounds.yMax > 0
+                && bounds.yMin < Height * CellHeight);
         }
 
         private InternalBounds GetInternalBounds(Rect bounds)
