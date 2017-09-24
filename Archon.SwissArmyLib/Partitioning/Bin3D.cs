@@ -85,6 +85,9 @@ namespace Archon.SwissArmyLib.Partitioning
         /// <param name="bounds">The bounds of the item.</param>
         public void Insert(T item, Bounds bounds)
         {
+            if (IsOutOfBounds(bounds))
+                return;
+
             var internalBounds = GetInternalBounds(bounds);
 
             for (var z = internalBounds.MinZ; z <= internalBounds.MaxZ; z++)
@@ -111,6 +114,9 @@ namespace Archon.SwissArmyLib.Partitioning
         /// <param name="bounds">The bounds that the item was inserted with.</param>
         public void Remove(T item, Bounds bounds)
         {
+            if (IsOutOfBounds(bounds))
+                return;
+
             var internalBounds = GetInternalBounds(bounds);
 
             for (var z = internalBounds.MinZ; z <= internalBounds.MaxZ; z++)
@@ -155,6 +161,9 @@ namespace Archon.SwissArmyLib.Partitioning
         /// <param name="results">Where to add results to.</param>
         public void Retrieve(Bounds bounds, HashSet<T> results)
         {
+            if (IsOutOfBounds(bounds))
+                return;
+
             var internalBounds = GetInternalBounds(bounds);
 
             for (var z = internalBounds.MinZ; z <= internalBounds.MaxZ; z++)
@@ -212,6 +221,16 @@ namespace Archon.SwissArmyLib.Partitioning
         public void Dispose()
         {
             Clear();
+        }
+
+        private bool IsOutOfBounds(Bounds bounds)
+        {
+            return !(bounds.max.x > 0
+                     && bounds.min.x < Width * CellWidth
+                     && bounds.max.y > 0
+                     && bounds.min.y < Height * CellHeight
+                     && bounds.max.z > 0
+                     && bounds.min.z < Depth * CellDepth);
         }
 
         private InternalBounds GetInternalBounds(Bounds bounds)

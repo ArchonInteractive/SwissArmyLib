@@ -75,8 +75,8 @@ namespace Archon.SwissArmyLibTests.Partitioning.Tests
                     Assert.IsNull(bin[x, y]);
         }
 
-        [TestCase(1, 1, 1, 7)] // overlap y
         [TestCase(1, 1, 7, 1)] // overlap x
+        [TestCase(1, 1, 1, 7)] // overlap y
         [TestCase(1, 1, 7, 7)] // overlap both
         [TestCase(-1, -1, 9, 9)] // fully covered
         [TestCase(-1, -1, -1, -1)] // out of bounds
