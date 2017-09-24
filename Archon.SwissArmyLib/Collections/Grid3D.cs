@@ -1,4 +1,6 @@
-﻿namespace Archon.SwissArmyLib.Collections
+﻿using System;
+
+namespace Archon.SwissArmyLib.Collections
 {
     /// <summary>
     /// A generic three-dimensional grid.
@@ -39,9 +41,23 @@
         /// <returns>The contents of the cell.</returns>
         public T this[int x, int y, int z]
         {
-            get { return _data[z][y][x]; }
-            set { _data[z][y][x] = value; }
+            get
+            {
+                if (x < 0 || y < 0 || z < 0 || x >= Width || y >= Height || z >= Depth)
+                    throw new IndexOutOfRangeException();
+                return _data[z][y][x];
+            }
+            set
+            {
+                if (x < 0 || y < 0 || z < 0 || x >= Width || y >= Height || z >= Depth)
+                    throw new IndexOutOfRangeException();
+                _data[z][y][x] = value;
+            }
         }
+
+        private int InternalWidth { get { return _data[0][0].Length; } }
+        private int InternalHeight { get { return _data[0].Length; } }
+        private int InternalDepth { get { return _data.Length; } }
 
         /// <summary>
         /// Creates a new 3D Grid with the specified width, height and depth. 
@@ -145,19 +161,24 @@
 
         /// <summary>
         /// Resizes the Grid to the given size, keeping data the same but any new cells will be set to <see cref="DefaultValue"/>.
+        /// 
+        /// Growing the grid will allocate new arrays, shrinking will not.
         /// </summary>
         /// <param name="width">The new width.</param>
         /// <param name="height">The new height.</param>
         /// <param name="depth">The new depth.</param>
         public void Resize(int width, int height, int depth)
         {
-            var oldData = _data;
             var oldWidth = Width;
             var oldHeight = Height;
             var oldDepth = Depth;
 
-            _data = CreateArrays(width, height, depth);
-            CopyArraysContents(oldData, _data);
+            if (width > InternalWidth || height > InternalHeight || depth > InternalDepth)
+            {
+                var oldData = _data;
+                _data = CreateArrays(width, height, depth);
+                CopyArraysContents(oldData, _data);
+            }
 
             Width = width;
             Height = height;

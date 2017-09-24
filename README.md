@@ -57,7 +57,7 @@ This project is under the very permissive MIT license and we honestly do not car
 * Misc
     * [Shake](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Shake)
         * Useful for creating proper screen shake
-    * [Some niche collection types](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Collections)
+    * [Some collection types](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Collections)
     * [Some useful attributes](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes)
         * [ExecutionOrder](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#executionorder)
             * Sets a default (or forces) an execution order for a MonoBehaviour
