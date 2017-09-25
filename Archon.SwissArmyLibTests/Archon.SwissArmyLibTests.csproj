@@ -57,6 +57,7 @@
   <ItemGroup>
     <Compile Include="Collections\Grid3DTests.cs" />
     <Compile Include="Collections\Grid2DTests.cs" />
+    <Compile Include="Partitioning\QuadtreeTests.cs" />
     <Compile Include="Partitioning\Bin3DTests.cs" />
     <Compile Include="Partitioning\Bin2DTests.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />

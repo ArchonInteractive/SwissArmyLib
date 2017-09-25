@@ -30,7 +30,7 @@ namespace Archon.SwissArmyLibTests.Partitioning.Tests
         [Test]
         public void Constructor_CorrectSize()
         {
-            var bin = new Bin3D<string>(9, 18, 7, 1, 2, 3);
+            var bin = new Bin3D<object>(9, 18, 7, 1, 2, 3);
 
             Assert.AreEqual(9, bin.Width);
             Assert.AreEqual(18, bin.Height);
