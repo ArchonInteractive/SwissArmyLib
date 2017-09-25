@@ -104,6 +104,40 @@ namespace Archon.SwissArmyLibTests.Partitioning.Tests
             }
         }
 
+        [TestCase(1, 1, 7, 1)] // overlap x
+        [TestCase(1, 1, 1, 7)] // overlap y
+        [TestCase(1, 1, 7, 7)] // overlap both
+        [TestCase(-1, -1, 9, 9)] // fully covered
+        [TestCase(-1, -1, -1, -1)] // out of bounds
+        public void Insert_WithOffsetOrigin_CorrectCells(int minX, int minY, int maxX, int maxY)
+        {
+            var origin = new Vector2(-4.5f, -4.5f);
+
+            var bin = new Bin2D<object>(9, 9, 1, 1, origin);
+            var val = new object();
+
+            var rect = GetRectInsideCells(minX, minY, maxX, maxY, 1, 1);
+            rect.x += origin.x;
+            rect.y += origin.y;
+
+            bin.Insert(val, rect);
+
+            for (var x = 0; x < bin.Width; x++)
+            {
+                for (var y = 0; y < bin.Height; y++)
+                {
+                    if (x >= minX && y >= minY
+                        && x <= maxX && y <= maxY)
+                    {
+                        Assert.IsNotNull(bin[x, y]);
+                        Assert.IsTrue(bin[x, y].Contains(val));
+                    }
+                    else
+                        Assert.IsNull(bin[x, y]);
+                }
+            }
+        }
+
         [Test]
         public void Retrieve_Empty_NoResults()
         {

@@ -21,6 +21,9 @@ namespace Archon.SwissArmyLib.Partitioning
 
         private readonly Grid3D<PooledLinkedList<T>> _grid;
 
+        private readonly Vector3 _bottomLeftFront;
+        private readonly Vector3 _topRightBack;
+
         /// <summary>
         /// Gets the width (number of columns) of the Bin.
         /// </summary>
@@ -52,6 +55,11 @@ namespace Archon.SwissArmyLib.Partitioning
         public float CellDepth { get; private set; }
 
         /// <summary>
+        /// The coordinate at which this bin's bottom left front corner lies.
+        /// </summary>
+        public Vector3 Origin { get { return _bottomLeftFront; } }
+
+        /// <summary>
         /// Gets an <see cref="IEnumerable{T}"/> for the items in the given cell.
         /// </summary>
         /// <param name="x">The x coordinate of the cell.</param>
@@ -73,12 +81,32 @@ namespace Archon.SwissArmyLib.Partitioning
         /// <param name="cellHeight">The height of a cell.</param>
         /// <param name="cellDepth">The depth of a cell.</param>
         public Bin3D(int gridWidth, int gridHeight, int gridDepth, float cellWidth, float cellHeight, float cellDepth)
+            : this(gridWidth, gridHeight, gridDepth, cellWidth, cellHeight, cellDepth, Vector3.zero)
+        {
+        }
+
+        /// <summary>
+        /// Creates a new Bin.
+        /// </summary>
+        /// <param name="gridWidth">The width of the grid.</param>
+        /// <param name="gridHeight">The height of the grid.</param>
+        /// <param name="gridDepth">The depth of the grid.</param>
+        /// <param name="cellWidth">The width of a cell.</param>
+        /// <param name="cellHeight">The height of a cell.</param>
+        /// <param name="cellDepth">The depth of a cell.</param>
+        /// <param name="origin">The coordinate of the bottom left front point of the grid.</param>
+        public Bin3D(int gridWidth, int gridHeight, int gridDepth, float cellWidth, float cellHeight, float cellDepth, Vector3 origin)
         {
             _grid = new Grid3D<PooledLinkedList<T>>(gridWidth, gridHeight, gridDepth);
 
             CellWidth = cellWidth;
             CellHeight = cellHeight;
             CellDepth = cellDepth;
+
+            _bottomLeftFront = origin;
+            _topRightBack = new Vector3(origin.x + gridWidth * cellWidth,
+                origin.y + gridHeight * cellHeight,
+                origin.z + gridDepth * cellDepth);
         }
 
         /// <summary>
@@ -252,18 +280,21 @@ namespace Archon.SwissArmyLib.Partitioning
 
         private bool IsOutOfBounds(Bounds bounds)
         {
-            return !(bounds.max.x > 0
-                     && bounds.min.x < Width * CellWidth
-                     && bounds.max.y > 0
-                     && bounds.min.y < Height * CellHeight
-                     && bounds.max.z > 0
-                     && bounds.min.z < Depth * CellDepth);
+            var min = bounds.min;
+            var max = bounds.max;
+
+            return !(max.x > _bottomLeftFront.x
+                     && min.x < _topRightBack.x
+                     && max.y > _bottomLeftFront.y
+                     && min.y < _topRightBack.y
+                     && max.z > _bottomLeftFront.z
+                     && min.z < _topRightBack.z);
         }
 
         private InternalBounds GetInternalBounds(Bounds bounds)
         {
-            var min = bounds.min;
-            var max = bounds.max;
+            var min = bounds.min - _bottomLeftFront;
+            var max = bounds.max - _bottomLeftFront;
 
             var internalBounds = new InternalBounds
             {

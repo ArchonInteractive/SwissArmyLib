@@ -120,6 +120,43 @@ namespace Archon.SwissArmyLibTests.Partitioning.Tests
             }
         }
 
+        [TestCase(1, 1, 1, 7, 1, 1)] // overlap x
+        [TestCase(1, 1, 1, 1, 7, 1)] // overlap y
+        [TestCase(1, 1, 1, 1, 1, 7)] // overlap z
+        [TestCase(1, 1, 1, 7, 7, 7)] // overlap all
+        [TestCase(-1, -1, -1, 9, 9, 9)] // fully covered
+        [TestCase(-1, -1, -1, -1, -1, -1)] // out of bounds
+        public void Insert_WithOffsetOrigin_CorrectCells(int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
+        {
+            var origin = new Vector3(-4.5f, -4.5f, -4.5f);
+
+            var bin = new Bin3D<object>(9, 9, 9, 1, 1, 1, origin);
+            var val = new object();
+
+            var bounds = GetBoundsInsideCells(minX, minY, minZ, maxX, maxY, maxZ, 1, 1, 1);
+            bounds.center += origin;
+
+            bin.Insert(val, bounds);
+
+            for (var x = 0; x < bin.Width; x++)
+            {
+                for (var y = 0; y < bin.Height; y++)
+                {
+                    for (var z = 0; z < bin.Depth; z++)
+                    {
+                        if (x >= minX && y >= minY && z >= minZ
+                            && x <= maxX && y <= maxY && z <= maxZ)
+                        {
+                            Assert.IsNotNull(bin[x, y, z]);
+                            Assert.IsTrue(bin[x, y, z].Contains(val));
+                        }
+                        else
+                            Assert.IsNull(bin[x, y, z]);
+                    }
+                }
+            }
+        }
+
         [Test]
         public void Retrieve_Empty_NoResults()
         {

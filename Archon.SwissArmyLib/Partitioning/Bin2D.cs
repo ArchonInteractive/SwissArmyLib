@@ -20,6 +20,8 @@ namespace Archon.SwissArmyLib.Partitioning
         private static readonly Pool<PooledLinkedList<T>> ListPool = new Pool<PooledLinkedList<T>>(() => new PooledLinkedList<T>(SharedNodePool));
 
         private readonly Grid2D<PooledLinkedList<T>> _grid;
+        private readonly Vector2 _bottomLeft;
+        private readonly Vector2 _topRight;
 
         /// <summary>
         /// Gets the width (number of columns) of the Bin.
@@ -42,6 +44,11 @@ namespace Archon.SwissArmyLib.Partitioning
         public float CellHeight { get; private set; }
 
         /// <summary>
+        /// The coordinate at which this bin's bottom left corner lies.
+        /// </summary>
+        public Vector2 Origin { get { return _bottomLeft; }}
+
+        /// <summary>
         /// Gets an <see cref="IEnumerable{T}"/> for the items in the given cell.
         /// </summary>
         /// <param name="x">The x coordinate of the cell.</param>
@@ -60,11 +67,27 @@ namespace Archon.SwissArmyLib.Partitioning
         /// <param name="cellWidth">The width of a cell.</param>
         /// <param name="cellHeight">The height of a cell.</param>
         public Bin2D(int gridWidth, int gridHeight, float cellWidth, float cellHeight)
+            : this(gridWidth, gridHeight, cellWidth, cellHeight, Vector2.zero)
+        {
+
+        }
+
+        /// <summary>
+        /// Creates a new Bin.
+        /// </summary>
+        /// <param name="gridWidth">The width of the grid.</param>
+        /// <param name="gridHeight">The height of the grid.</param>
+        /// <param name="cellWidth">The width of a cell.</param>
+        /// <param name="cellHeight">The height of a cell.</param>
+        /// <param name="origin">The coordinate of the bottom left point of the grid.</param>
+        public Bin2D(int gridWidth, int gridHeight, float cellWidth, float cellHeight, Vector2 origin) 
         {
             _grid = new Grid2D<PooledLinkedList<T>>(gridWidth, gridHeight);
 
             CellWidth = cellWidth;
             CellHeight = cellHeight;
+            _bottomLeft = origin;
+            _topRight = new Vector2(origin.x + gridWidth * cellWidth, origin.y + gridHeight * cellHeight);
         }
 
         /// <summary>
@@ -223,20 +246,20 @@ namespace Archon.SwissArmyLib.Partitioning
 
         private bool IsOutOfBounds(Rect bounds)
         {
-            return !(bounds.xMax > 0 
-                && bounds.xMin < Width * CellWidth
-                && bounds.yMax > 0
-                && bounds.yMin < Height * CellHeight);
+            return !(bounds.xMax > _bottomLeft.x 
+                && bounds.xMin < _topRight.x
+                && bounds.yMax > _bottomLeft.y
+                && bounds.yMin < _topRight.y);
         }
 
         private InternalBounds GetInternalBounds(Rect bounds)
         {
             var internalBounds = new InternalBounds
             {
-                MinX = Mathf.Max(0, (int)(bounds.xMin / CellWidth)),
-                MinY = Mathf.Max(0, (int)(bounds.yMin / CellHeight)),
-                MaxX = Mathf.Min(Width - 1, (int)(bounds.xMax / CellWidth)),
-                MaxY = Mathf.Min(Height - 1, (int)(bounds.yMax / CellHeight))
+                MinX = Mathf.Max(0, (int)((bounds.xMin - _bottomLeft.x) / CellWidth)),
+                MinY = Mathf.Max(0, (int)((bounds.yMin - _bottomLeft.y) / CellHeight)),
+                MaxX = Mathf.Min(Width - 1, (int)((bounds.xMax - _bottomLeft.x) / CellWidth)),
+                MaxY = Mathf.Min(Height - 1, (int)((bounds.yMax - _bottomLeft.y) / CellHeight))
             };
 
             return internalBounds;
