@@ -152,7 +152,22 @@ namespace Archon.SwissArmyLibTests.Partitioning.Tests
         }
 
         [Test]
-        public void Remove_RemovedFromCells()
+        public void Remove_NoBounds_RemovedFromCells()
+        {
+            var bin = new Bin3D<object>(9, 9, 9, 1, 1, 1);
+            var results = new HashSet<object>();
+            var val = new object();
+            var bounds = GetBoundsInsideCells(3, 6, 4, 7, 8, 6, bin.CellWidth, bin.CellHeight, bin.CellDepth);
+
+            bin.Insert(val, bounds);
+            bin.Remove(val);
+            bin.Retrieve(bounds, results);
+
+            Assert.False(results.Contains(val));
+        }
+
+        [Test]
+        public void Remove_WithBounds_RemovedFromCells()
         {
             var bin = new Bin3D<object>(9, 9, 9, 1, 1, 1);
             var results = new HashSet<object>();

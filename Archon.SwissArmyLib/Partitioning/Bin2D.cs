@@ -94,6 +94,27 @@ namespace Archon.SwissArmyLib.Partitioning
         }
 
         /// <summary>
+        /// Goes through all cells and removes the specified item if they contain it.
+        /// If you can you should use <see cref="Remove(T, Rect)"/> instead.
+        /// </summary>
+        /// <param name="item">The item to remove</param>
+        public void Remove(T item)
+        {
+            for (var y = 0; y < Height; y++)
+            {
+                for (var x = 0; x < Width; x++)
+                {
+                    var list = _grid[x, y];
+
+                    if (list == null)
+                        continue;
+
+                    list.Remove(item);
+                }
+            }
+        }
+
+        /// <summary>
         /// Removes an item which was inserted with the given bounds from the Bin.
         /// </summary>
         /// <param name="item">The item to remove.</param>

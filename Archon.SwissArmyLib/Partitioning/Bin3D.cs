@@ -146,6 +146,30 @@ namespace Archon.SwissArmyLib.Partitioning
         }
 
         /// <summary>
+        /// Goes through all cells and removes the specified item if they contain it.
+        /// If you can you should use <see cref="Remove(T, Bounds)"/> instead.
+        /// </summary>
+        /// <param name="item">The item to remove</param>
+        public void Remove(T item)
+        {
+            for (var z = 0; z < Depth; z++)
+            {
+                for (var y = 0; y < Height; y++)
+                {
+                    for (var x = 0; x < Width; x++)
+                    {
+                        var list = _grid[x, y, z];
+
+                        if (list == null)
+                            continue;
+
+                        list.Remove(item);
+                    }
+                }
+            }
+        }
+
+        /// <summary>
         /// Removes and reinserts an item with new bounds, essentially moving it.
         /// </summary>
         /// <param name="item">The item to update.</param>
