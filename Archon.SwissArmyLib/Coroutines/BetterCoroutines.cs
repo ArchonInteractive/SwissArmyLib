@@ -148,21 +148,24 @@ namespace Archon.SwissArmyLib.Coroutines
             var scaledTime = GetTime(coroutine.UpdateLoop, false);
             var unscaledTime = GetTime(coroutine.UpdateLoop, true);
 
-            var continueRunning = UpdateCoroutine(scaledTime, unscaledTime, coroutine);
-            if (!continueRunning)
-            {
-                PoolHelper<BetterCoroutine>.Despawn(coroutine);
-                return;
-            }
-
             IdToCoroutine[coroutine.Id] = coroutine;
 
             var list = GetList(coroutine.UpdateLoop);
 
-            if (_current != null && _current.List == list.BackingList)
-                list.AddBefore(_current, coroutine);
-            else
-                list.AddFirst(coroutine);
+            var node = list.AddFirst(coroutine);
+
+            var prevCurrent = _current;
+            _current = node;
+
+            var continueRunning = UpdateCoroutine(scaledTime, unscaledTime, coroutine);
+            if (!continueRunning)
+            {
+                IdToCoroutine.Remove(coroutine.Id);
+                PoolHelper<BetterCoroutine>.Despawn(coroutine);
+                list.Remove(coroutine);
+            }
+
+            _current = prevCurrent;
         }
 
         private static void StartChild(IEnumerator enumerator, BetterCoroutine parent)
@@ -175,12 +178,76 @@ namespace Archon.SwissArmyLib.Coroutines
 
         /// <summary>
         /// Checks whether a coroutine with the given ID is running.
+        /// 
+        /// A paused coroutine is still considered running.
         /// </summary>
         /// <param name="id">The id of the coroutine to check.</param>
         /// <returns>True if running, otherwise false.</returns>
         public static bool IsRunning(int id)
         {
             return id > 0 && IdToCoroutine.ContainsKey(id);
+        }
+
+        /// <summary>
+        /// Pauses or unpauses a coroutine.
+        /// </summary>
+        /// <param name="id">The id of the coroutine.</param>
+        /// <param name="paused">True to pause, false to unpause.</param>
+        public static void SetPaused(int id, bool paused)
+        {
+            var coroutine = IdToCoroutine[id];
+
+            if (coroutine == null)
+                throw new ArgumentException("No coroutine is running with the specified ID", "id");
+
+            if (coroutine.IsPaused == paused)
+                return;
+
+            coroutine.IsPaused = paused;
+
+            var child = coroutine.Child;
+            while (child != null)
+            {
+                child.IsParentPaused = paused;
+
+                if (child.IsPaused)
+                    break;
+
+                child = child.Child;
+            }
+        }
+
+        /// <summary>
+        /// Checks whether a coroutine is currently paused either directly or because of a paused parent.
+        /// </summary>
+        /// <param name="id">Id of the coroutine.</param>
+        /// <returns>True if paused or parent is paused, otherwise false.</returns>
+        public static bool IsPaused(int id)
+        {
+            var coroutine = IdToCoroutine[id];
+
+            if (coroutine == null)
+                throw new ArgumentException("No coroutine is running with the specified ID", "id");
+
+            return coroutine.IsPaused || coroutine.IsParentPaused;
+        }
+
+        /// <summary>
+        /// Pauses a coroutine.
+        /// </summary>
+        /// <param name="id">Id of the coroutine to pause.</param>
+        public static void Pause(int id)
+        {
+            SetPaused(id, true);
+        }
+
+        /// <summary>
+        /// Unpauses a paused coroutine.
+        /// </summary>
+        /// <param name="id">Id of the coroutine to unpause.</param>
+        public static void Unpause(int id)
+        {
+            SetPaused(id, false);
         }
 
         /// <summary>
@@ -382,6 +449,7 @@ namespace Archon.SwissArmyLib.Coroutines
             }
         }
 
+        // this method has gotten out of hand..
         private static bool UpdateCoroutine(float scaledTime, float unscaledTime, BetterCoroutine coroutine)
         {
             if (coroutine.IsDone)
@@ -392,6 +460,9 @@ namespace Archon.SwissArmyLib.Coroutines
 
             if (coroutine.IsLinkedToComponent && (!coroutine.LinkedComponent || !coroutine.LinkedComponent.isActiveAndEnabled))
                 return false;
+
+            if (coroutine.IsPaused || coroutine.IsParentPaused)
+                return true;
 
             if (coroutine.Child != null)
                 return true;

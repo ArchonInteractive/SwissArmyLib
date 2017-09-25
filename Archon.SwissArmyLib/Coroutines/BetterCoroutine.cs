@@ -8,6 +8,8 @@ namespace Archon.SwissArmyLib.Coroutines
     {
         internal int Id;
         internal bool IsDone;
+        internal bool IsPaused;
+        internal bool IsParentPaused;
         internal UpdateLoop UpdateLoop;
         internal IEnumerator Enumerator;
         internal BetterCoroutine Parent;
@@ -35,6 +37,8 @@ namespace Archon.SwissArmyLib.Coroutines
 
             Id = -1;
             IsDone = false;
+            IsPaused = false;
+            IsParentPaused = false;
             UpdateLoop = UpdateLoop.Update;
             Enumerator = null;
             Parent = null;
