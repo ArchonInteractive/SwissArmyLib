@@ -59,9 +59,9 @@ This project is under the very permissive MIT license and we honestly do not car
         * Useful for creating proper screen shake
     * [Some collection types](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Collections)
     * [Some useful attributes](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes)
-        * [ExecutionOrder](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#executionorder)
+        * [ExecutionOrder](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ExecutionOrder)
             * Sets a default (or forces) an execution order for a MonoBehaviour
-        * [ReadOnly](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Attributes#readonly)
+        * [ReadOnly](https://github.com/ArchonInteractive/SwissArmyLib/wiki/ReadOnly)
             * Makes fields uninteractable in the inspector
     * A few other tiny utilities
 
