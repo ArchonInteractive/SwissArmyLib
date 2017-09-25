@@ -16,7 +16,10 @@ namespace Archon.SwissArmyLib.Partitioning
     /// <typeparam name="T">The type of items this Bin will hold.</typeparam>
     public class Bin2D<T> : IDisposable
     {
-        private readonly Grid2D<LinkedList<T>> _grid;
+        private static readonly Pool<LinkedListNode<T>> SharedNodePool = new Pool<LinkedListNode<T>>(() => new LinkedListNode<T>(default(T)));
+        private static readonly Pool<PooledLinkedList<T>> ListPool = new Pool<PooledLinkedList<T>>(() => new PooledLinkedList<T>(SharedNodePool));
+
+        private readonly Grid2D<PooledLinkedList<T>> _grid;
 
         /// <summary>
         /// Gets the width (number of columns) of the Bin.
@@ -58,7 +61,7 @@ namespace Archon.SwissArmyLib.Partitioning
         /// <param name="cellHeight">The height of a cell.</param>
         public Bin2D(int gridWidth, int gridHeight, float cellWidth, float cellHeight)
         {
-            _grid = new Grid2D<LinkedList<T>>(gridWidth, gridHeight);
+            _grid = new Grid2D<PooledLinkedList<T>>(gridWidth, gridHeight);
 
             CellWidth = cellWidth;
             CellHeight = cellHeight;
@@ -83,7 +86,7 @@ namespace Archon.SwissArmyLib.Partitioning
                     var cell = _grid[x, y];
 
                     if (cell == null)
-                        _grid[x, y] = cell = PoolHelper<LinkedList<T>>.Spawn();
+                        _grid[x, y] = cell = ListPool.Spawn();
 
                     cell.AddLast(item);
                 }
@@ -115,7 +118,7 @@ namespace Archon.SwissArmyLib.Partitioning
 
                     if (cell.Count == 0)
                     {
-                        PoolHelper<LinkedList<T>>.Despawn(cell);
+                        ListPool.Despawn(cell);
                         _grid[x, y] = null;
                     }
                 }
@@ -180,7 +183,7 @@ namespace Archon.SwissArmyLib.Partitioning
                         continue;
 
                     cell.Clear();
-                    PoolHelper<LinkedList<T>>.Despawn(cell);
+                    ListPool.Despawn(cell);
 
                     _grid[x, y] = null;
                 }

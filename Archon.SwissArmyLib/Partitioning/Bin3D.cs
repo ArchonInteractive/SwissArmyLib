@@ -16,7 +16,10 @@ namespace Archon.SwissArmyLib.Partitioning
     /// <typeparam name="T">The type of items this Bin will hold.</typeparam>
     public class Bin3D<T> : IDisposable
     {
-        private readonly Grid3D<LinkedList<T>> _grid;
+        private static readonly Pool<LinkedListNode<T>> SharedNodePool = new Pool<LinkedListNode<T>>(() => new LinkedListNode<T>(default(T)));
+        private static readonly Pool<PooledLinkedList<T>> ListPool = new Pool<PooledLinkedList<T>>(() => new PooledLinkedList<T>(SharedNodePool));
+
+        private readonly Grid3D<PooledLinkedList<T>> _grid;
 
         /// <summary>
         /// Gets the width (number of columns) of the Bin.
@@ -71,7 +74,7 @@ namespace Archon.SwissArmyLib.Partitioning
         /// <param name="cellDepth">The depth of a cell.</param>
         public Bin3D(int gridWidth, int gridHeight, int gridDepth, float cellWidth, float cellHeight, float cellDepth)
         {
-            _grid = new Grid3D<LinkedList<T>>(gridWidth, gridHeight, gridDepth);
+            _grid = new Grid3D<PooledLinkedList<T>>(gridWidth, gridHeight, gridDepth);
 
             CellWidth = cellWidth;
             CellHeight = cellHeight;
@@ -99,7 +102,7 @@ namespace Archon.SwissArmyLib.Partitioning
                         var cell = _grid[x, y, z];
 
                         if (cell == null)
-                            _grid[x, y, z] = cell = PoolHelper<LinkedList<T>>.Spawn();
+                            _grid[x, y, z] = cell = ListPool.Spawn();
 
                         cell.AddLast(item);
                     }
@@ -134,7 +137,7 @@ namespace Archon.SwissArmyLib.Partitioning
 
                         if (cell.Count == 0)
                         {
-                            PoolHelper<LinkedList<T>>.Despawn(cell);
+                            ListPool.Despawn(cell);
                             _grid[x, y, z] = null;
                         }
                     }
@@ -205,7 +208,7 @@ namespace Archon.SwissArmyLib.Partitioning
                             continue;
 
                         cell.Clear();
-                        PoolHelper<LinkedList<T>>.Despawn(cell);
+                        ListPool.Despawn(cell);
 
                         _grid[x, y, z] = null;
                     }
