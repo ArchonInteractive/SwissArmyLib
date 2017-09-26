@@ -90,7 +90,7 @@ namespace Archon.SwissArmyLib.Collections
             get { return _items[index]; }
             set
             {
-                throw new System.NotImplementedException("Setting a specific index is not supported.");
+                throw new NotImplementedException("Setting a specific index is not supported.");
             }
         }
 
@@ -161,7 +161,7 @@ namespace Archon.SwissArmyLib.Collections
         {
             for (var i = 0; i < _items.Count; i++)
             {
-                if (_items[i].Equals(item))
+                if (_items[i].Item.Equals(item))
                 {
                     _items.RemoveAt(i);
                     return true;
@@ -207,7 +207,7 @@ namespace Archon.SwissArmyLib.Collections
         {
             for (var i = 0; i < _items.Count; i++)
             {
-                if (_items[i].Equals(item))
+                if (_items[i].Item.Equals(item))
                     return true;
             }
 
@@ -254,7 +254,7 @@ namespace Archon.SwissArmyLib.Collections
         {
             for (var i = 0; i < _items.Count; i++)
             {
-                if (_items[i].Equals(item))
+                if (_items[i].Item.Equals(item))
                     return i;
             }
 
@@ -263,7 +263,7 @@ namespace Archon.SwissArmyLib.Collections
 
         void IList<PrioritizedItem<T>>.Insert(int index, PrioritizedItem<T> item)
         {
-            throw new System.NotImplementedException("Inserting at a specific index is not supported.");
+            throw new NotImplementedException("Inserting at a specific index is not supported.");
         }
 
         /// <summary>
