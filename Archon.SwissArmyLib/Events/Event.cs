@@ -1,4 +1,5 @@
 ﻿using System;
+using System.Collections.ObjectModel;
 using Archon.SwissArmyLib.Collections;
 using UnityEngine;
 
@@ -17,11 +18,30 @@ namespace Archon.SwissArmyLib.Events
     public class Event
     {
         private readonly DelayedList<PrioritizedItem<IEventListener>> _listeners;
+        private bool _isIterating;
 
         /// <summary>
         /// Gets the ID of this event.
         /// </summary>
         public int Id { get; private set; }
+
+        /// <summary>
+        /// Gets or sets whether listener exceptions should be logged. 
+        /// </summary>
+        public bool SuppressExceptions { get; set; }
+
+        /// <summary>
+        /// Gets a readonly collection of current listeners.
+        /// </summary>
+        public ReadOnlyCollection<PrioritizedItem<IEventListener>> Listeners
+        {
+            get
+            {
+                if (!_isIterating)
+                    _listeners.ProcessPending();
+                return _listeners.BackingList;
+            }
+        }
 
         /// <summary>
         /// Creates a new Event with the specified ID.
@@ -53,12 +73,33 @@ namespace Archon.SwissArmyLib.Events
         }
 
         /// <summary>
+        /// Checks whether the specified listener is currently listening to this event.
+        /// </summary>
+        /// <param name="listener">The listener to check.</param>
+        /// <returns>True if listening, otherwise false.</returns>
+        public bool HasListener(IEventListener listener)
+        {
+            if (!_isIterating)
+                _listeners.ProcessPending();
+
+            for (var i = 0; i < _listeners.Count; i++)
+            {
+                var current = _listeners[i];
+                if (current.Item == listener)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Notifies all listeners that the event occured.
         /// </summary>
         public void Invoke()
         {
             _listeners.ProcessPending();
 
+            _isIterating = true;
             for (var i = 0; i < _listeners.Count; i++)
             {
                 // gotta wrap it up so one guy doesn't spoil it for everyone
@@ -68,9 +109,11 @@ namespace Archon.SwissArmyLib.Events
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e);
+                    if (!SuppressExceptions)
+                        Debug.LogError(e);
                 }
             }
+            _isIterating = false;
         }
 
         /// <summary>
@@ -95,11 +138,30 @@ namespace Archon.SwissArmyLib.Events
     public class Event<T>
     {
         private readonly DelayedList<PrioritizedItem<IEventListener<T>>> _listeners;
+        private bool _isIterating;
 
         /// <summary>
         /// Gets the ID of this event.
         /// </summary>
         public int Id { get; private set; }
+
+        /// <summary>
+        /// Gets or sets whether listener exceptions should be logged. 
+        /// </summary>
+        public bool SuppressExceptions { get; set; }
+
+        /// <summary>
+        /// Gets a readonly collection of current listeners.
+        /// </summary>
+        public ReadOnlyCollection<PrioritizedItem<IEventListener<T>>> Listeners
+        {
+            get
+            {
+                if (!_isIterating)
+                    _listeners.ProcessPending();
+                return _listeners.BackingList;
+            }
+        }
 
         /// <summary>
         /// Creates a new Event with the specified ID.
@@ -131,12 +193,33 @@ namespace Archon.SwissArmyLib.Events
         }
 
         /// <summary>
+        /// Checks whether the specified listener is currently listening to this event.
+        /// </summary>
+        /// <param name="listener">The listener to check.</param>
+        /// <returns>True if listening, otherwise false.</returns>
+        public bool HasListener(IEventListener<T> listener)
+        {
+            if (!_isIterating)
+                _listeners.ProcessPending();
+
+            for (var i = 0; i < _listeners.Count; i++)
+            {
+                var current = _listeners[i];
+                if (current.Item == listener)
+                    return true;
+            }
+
+            return false;
+        }
+
+        /// <summary>
         /// Notifies all listeners that the event occured.
         /// </summary>
         public void Invoke(T args)
         {
             _listeners.ProcessPending();
 
+            _isIterating = true;
             for (var i = 0; i < _listeners.Count; i++)
             {
                 // gotta wrap it up so one guy doesn't spoil it for everyone
@@ -146,9 +229,11 @@ namespace Archon.SwissArmyLib.Events
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e);
+                    if (!SuppressExceptions)
+                        Debug.LogError(e);
                 }
             }
+            _isIterating = false;
         }
 
         /// <summary>

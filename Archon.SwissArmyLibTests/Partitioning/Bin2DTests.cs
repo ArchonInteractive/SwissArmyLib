@@ -1,10 +1,9 @@
 ﻿using System.Collections.Generic;
 using System.Linq;
-using Archon.SwissArmyLib.Partitioning;
 using NUnit.Framework;
 using UnityEngine;
 
-namespace Archon.SwissArmyLibTests.Partitioning.Tests
+namespace Archon.SwissArmyLib.Partitioning.Tests
 {
     [TestFixture]
     public class Bin2DTests

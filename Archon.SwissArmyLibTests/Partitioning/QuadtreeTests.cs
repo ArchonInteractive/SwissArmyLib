@@ -1,9 +1,8 @@
-﻿using Archon.SwissArmyLib.Partitioning;
-using NUnit.Framework;
+﻿using NUnit.Framework;
 using UnityEngine;
 using Random = System.Random;
 
-namespace Archon.SwissArmyLibTests.Partitioning.Tests
+namespace Archon.SwissArmyLib.Partitioning.Tests
 {
     [TestFixture]
     public class QuadtreeTests
