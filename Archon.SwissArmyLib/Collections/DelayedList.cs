@@ -93,6 +93,17 @@ namespace Archon.SwissArmyLib.Collections
         public void Add(T item)
         {
             _itemsToAdd.Add(item);
+            _itemsToRemove.Remove(item);
+        }
+
+        /// <summary>
+        ///     Adds multiple items to the list the next time <see cref="ProcessPending" /> is called.
+        /// </summary>
+        /// <param name="items">The items to add.</param>
+        public void AddRange(IEnumerable<T> items)
+        {
+            foreach (var item in items)
+                Add(item);
         }
 
         /// <summary>

@@ -55,6 +55,7 @@
     <Otherwise />
   </Choose>
   <ItemGroup>
+    <Compile Include="Collections\DelayedListTests.cs" />
     <Compile Include="Collections\PrioritizedListTests.cs" />
     <Compile Include="Collections\Grid3DTests.cs" />
     <Compile Include="Collections\Grid2DTests.cs" />
