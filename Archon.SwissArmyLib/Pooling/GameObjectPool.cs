@@ -115,7 +115,14 @@ namespace Archon.SwissArmyLib.Pooling
             if (target == null)
                 throw new NullReferenceException("Target is null.");
 
-            base.Despawn(target);
+            try
+            {
+                base.Despawn(target);
+            }
+            catch (ArgumentException)
+            {
+                throw new ArgumentException(string.Format("Target '{0}' is already despawned!", target.name), "target");
+            }
 
             var gameObject = GetGameObject(target);
             gameObject.SetActive(false);

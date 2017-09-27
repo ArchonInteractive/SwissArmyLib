@@ -318,7 +318,7 @@ namespace Archon.SwissArmyLib.Events
                 }
                 catch (Exception e)
                 {
-                    Debug.LogError(e.Message);
+                    Debug.LogError(e);
                 }
             }
         }
