@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
+using System.ComponentModel;
 
 namespace Archon.SwissArmyLib.Collections
 {
@@ -58,14 +59,18 @@ namespace Archon.SwissArmyLib.Collections
 
     /// <summary>
     /// A list of items sorted by their priority.
-    /// 
-    /// <remarks>
-    ///     Currently it's unintuitively only sorted ascendingly. Sorry.
-    /// </remarks>
     /// </summary>
     /// <typeparam name="T">The type of the prioritized items.</typeparam>
     public class PrioritizedList<T> : IList<PrioritizedItem<T>>
     {
+        /// <summary>
+        /// Gets the sorting direction used for prioritized items in this list.
+        /// 
+        /// <b>Ascending</b>: Lower priorities are placed first.
+        /// <b>Descending</b>: Lower priorities are placed last.
+        /// </summary>
+        public readonly ListSortDirection SortDirection;
+
         private readonly List<PrioritizedItem<T>> _items = new List<PrioritizedItem<T>>();
 
         /// <summary>
@@ -95,6 +100,15 @@ namespace Archon.SwissArmyLib.Collections
         }
 
         /// <summary>
+        /// Creates a new PrioritizedList with the specified sort direction.
+        /// </summary>
+        /// <param name="sortDirection">Whether items with lower priorities are placed first in the list (ascending) or last (descending).</param>
+        public PrioritizedList(ListSortDirection sortDirection = ListSortDirection.Ascending)
+        {
+            SortDirection = sortDirection;
+        }
+
+        /// <summary>
         /// Adds a prioritized item to the list.
         /// </summary>
         /// <param name="item">The prioritized item to add.</param>
@@ -106,7 +120,10 @@ namespace Archon.SwissArmyLib.Collections
                 return;
             }
 
-            if (item.Priority >= _items[_items.Count - 1].Priority)
+            var lastItemPriority = _items[_items.Count - 1].Priority;
+
+            if (SortDirection == ListSortDirection.Ascending && item.Priority >= lastItemPriority
+                || SortDirection == ListSortDirection.Descending && item.Priority <= lastItemPriority)
             {
                 _items.Add(item);
                 return;
@@ -114,7 +131,8 @@ namespace Archon.SwissArmyLib.Collections
 
             for (var i = 0; i < _items.Count; i++)
             {
-                if (item.Priority < _items[i].Priority)
+                if (SortDirection == ListSortDirection.Ascending && item.Priority < _items[i].Priority
+                    || SortDirection == ListSortDirection.Descending && item.Priority > _items[i].Priority)
                 {
                     _items.Insert(i, item);
                     return;

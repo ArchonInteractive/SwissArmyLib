@@ -148,7 +148,7 @@ namespace Archon.SwissArmyLib.ResourceSystem
         /// <param name="args">Optional args that will be passed to listeners.</param>
         /// <param name="forced">Controls whether to force the change, despite modifications by listeners.</param>
         /// <returns>The resulting change in the pool.</returns>
-        public float Remove(float amount, object source = null , object args = null, bool forced = false)
+        public float Remove(float amount, object source = null, object args = null, bool forced = false)
         {
             return -Change(-amount, source, args, forced);
         }

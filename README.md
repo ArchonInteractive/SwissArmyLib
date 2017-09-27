@@ -11,7 +11,7 @@
 ---
 
 ### About
-**SwissArmyLib** is an attempt to create a collection of useful utilities primarily intended for Unity projects, but feel free to rip parts out and use them for whatever you want.
+**SwissArmyLib** is an attempt to create a collection of useful utilities with a focus on being performant. It is primarily intended for Unity projects, but feel free to rip parts out and use them for whatever you want.
 
 A very important part in the design decisions of this library was to keep the garbage generation low. This means you will probably frown a little upon the use of interfaces for callbacks, instead of just using delicious delegates. It also means using the trusty old *for* loops for iterating through collections where possible.
 
@@ -55,6 +55,9 @@ This project is under the very permissive MIT license and we honestly do not car
     * Flexible gravitational system
     * Useful for planet gravity, black holes, magnets and all that sort of stuff.
 * Misc
+    * [BetterTime](https://github.com/ArchonInteractive/SwissArmyLib/wiki/BetterTime)
+        * A wrapper for Unity's static Time class that caches the values per frame to avoid the marshal overhead.
+        * About 4x faster than using the Time class directly, but we're talking miniscule differences here.
     * [Shake](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Shake)
         * Useful for creating proper screen shake
     * [Some collection types](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Collections)

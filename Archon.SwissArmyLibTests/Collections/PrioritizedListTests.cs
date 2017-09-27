@@ -1,4 +1,5 @@
-﻿using NUnit.Framework;
+﻿using System.ComponentModel;
+using NUnit.Framework;
 
 namespace Archon.SwissArmyLib.Collections.Tests
 {
@@ -23,10 +24,10 @@ namespace Archon.SwissArmyLib.Collections.Tests
         }
 
         [Test]
-        public void Add_LowestPriority_IsAddedFirst()
+        public void Add_Ascending_LowestPriority_IsAddedFirst()
         {
             var item = new object();
-            var list = new PrioritizedList<object>();
+            var list = new PrioritizedList<object>(ListSortDirection.Ascending);
 
             Fill(list, -5, 5);
             list.Add(item, -100);
@@ -35,10 +36,10 @@ namespace Archon.SwissArmyLib.Collections.Tests
         }
 
         [Test]
-        public void Add_HighestPriority_IsAddedLast()
+        public void Add_Ascending_HighestPriority_IsAddedLast()
         {
             var item = new object();
-            var list = new PrioritizedList<object>();
+            var list = new PrioritizedList<object>(ListSortDirection.Ascending);
 
             Fill(list, -5, 5);
             list.Add(item, 100);
@@ -47,10 +48,46 @@ namespace Archon.SwissArmyLib.Collections.Tests
         }
 
         [Test]
-        public void Add_SamePriority_IsAddedAfterOthers()
+        public void Add_Ascending_SamePriority_IsAddedAfterOthers()
         {
             var item = new object();
-            var list = new PrioritizedList<object>();
+            var list = new PrioritizedList<object>(ListSortDirection.Ascending);
+
+            Fill(list, -5, 5);
+            list.Add(item, list[3].Priority);
+
+            Assert.AreSame(item, list[4].Item);
+        }
+
+        [Test]
+        public void Add_Descending_LowestPriority_IsAddedLast()
+        {
+            var item = new object();
+            var list = new PrioritizedList<object>(ListSortDirection.Descending);
+
+            Fill(list, -5, 5);
+            list.Add(item, -100);
+
+            Assert.AreSame(item, list[list.Count - 1].Item);
+        }
+
+        [Test]
+        public void Add_Descending_HighestPriority_IsAddedFirst()
+        {
+            var item = new object();
+            var list = new PrioritizedList<object>(ListSortDirection.Descending);
+
+            Fill(list, -5, 5);
+            list.Add(item, 100);
+
+            Assert.AreSame(item, list[0].Item);
+        }
+
+        [Test]
+        public void Add_Descending_SamePriority_IsAddedAfterOthers()
+        {
+            var item = new object();
+            var list = new PrioritizedList<object>(ListSortDirection.Descending);
 
             Fill(list, -5, 5);
             list.Add(item, list[3].Priority);
