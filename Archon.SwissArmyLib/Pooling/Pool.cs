@@ -75,9 +75,11 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="target">The object to despawn.</param>
         public virtual void Despawn(T target)
         {
+#if !TEST
             // costly check, so we only run it in the editor
-            if (Application.isEditor && Free.Contains(target))
+            if (Debug.isDebugBuild && Free.Contains(target))
                 throw new ArgumentException("Target is already despawned!", "target");
+#endif
 
             _instanceToTimerId.Remove(target);
             OnDespawned(target);
