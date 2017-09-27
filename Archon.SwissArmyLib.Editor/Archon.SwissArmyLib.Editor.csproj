@@ -32,9 +32,9 @@
     <DocumentationFile>..\bin\Release\Editor\Archon.SwissArmyLib.Editor.xml</DocumentationFile>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Test|AnyCPU'">
-    <OutputPath>bin\Test\</OutputPath>
+    <OutputPath>..\bin\Test\</OutputPath>
     <DefineConstants>TRACE</DefineConstants>
-    <DocumentationFile>..\bin\Release\Editor\Archon.SwissArmyLib.Editor.xml</DocumentationFile>
+    <DocumentationFile>..\bin\Test\Editor\Archon.SwissArmyLib.Editor.xml</DocumentationFile>
     <Optimize>true</Optimize>
     <DebugType>pdbonly</DebugType>
     <PlatformTarget>AnyCPU</PlatformTarget>

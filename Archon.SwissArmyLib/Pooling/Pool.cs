@@ -77,7 +77,7 @@ namespace Archon.SwissArmyLib.Pooling
         {
 #if !TEST
             // costly check, so we only run it in the editor
-            if (Debug.isDebugBuild && Free.Contains(target))
+            if (Application.isEditor && Free.Contains(target))
                 throw new ArgumentException("Target is already despawned!", "target");
 #endif
 
