@@ -14,6 +14,11 @@ namespace Archon.SwissArmyLib.Pooling
     public class Pool<T> : IPool<T>, TellMeWhen.ITimerCallback where T : class
     {
         /// <summary>
+        /// Gets the current amount of free instances in the pool.
+        /// </summary>
+        public int FreeCount { get { return Free.Count; } }
+
+        /// <summary>
         /// Contains the items ready to be reused.
         /// </summary>
         protected readonly List<T> Free = new List<T>();

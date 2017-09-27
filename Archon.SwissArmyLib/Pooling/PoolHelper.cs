@@ -99,6 +99,19 @@ namespace Archon.SwissArmyLib.Pooling
         }
 
         /// <summary>
+        /// Gets the amount of free instances in the pool for the specified prefab.
+        /// </summary>
+        /// <returns>The amount of free instances in the pool.</returns>
+        public static int GetFreeCount(Object prefab)
+        {
+            if (prefab == null)
+                throw new NullReferenceException("Target is null.");
+
+            var pool = GetPool(prefab);
+            return pool != null ? pool.FreeCount : 0;
+        }
+
+        /// <summary>
         /// Gets the prefab that was used to spawn <paramref name="instance"/>.
         /// </summary>
         /// <param name="instance">The instance to get the prefab for.</param>
@@ -155,6 +168,11 @@ namespace Archon.SwissArmyLib.Pooling
     public static class PoolHelper<T> where T : class, new()
     {
         private static readonly Pool<T> Pool = new Pool<T>(() => new T());
+
+        /// <summary>
+        /// Gets the amount of free instances in the pool.
+        /// </summary>
+        public static int FreeCount { get { return Pool.FreeCount; } }
 
         /// <summary>
         /// Spawns a recycled or new instance of the type <typeparamref name="T"/>.
