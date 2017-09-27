@@ -131,7 +131,9 @@ namespace Archon.SwissArmyLib.Pooling
         {
             var target = args as T;
 
-            if (target != null && _instanceToTimerId.ContainsKey(target))
+            int mappedId;
+
+            if (target != null && _instanceToTimerId.TryGetValue(target, mappedId) && mappedId == id)
                 Despawn(target);
         }
     }
