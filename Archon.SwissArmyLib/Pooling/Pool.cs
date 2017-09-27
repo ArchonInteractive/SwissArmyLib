@@ -111,9 +111,9 @@ namespace Archon.SwissArmyLib.Pooling
             _instanceToTimerId[target] = id;
 
             if (unscaledTime)
-                TellMeWhen.SecondsUnscaled(delay, this, id);
+                TellMeWhen.SecondsUnscaled(delay, this, id, target);
             else
-                TellMeWhen.Seconds(delay, this, id);
+                TellMeWhen.Seconds(delay, this, id, target);
         }
 
         /// <summary>
