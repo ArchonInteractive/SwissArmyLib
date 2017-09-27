@@ -133,7 +133,7 @@ namespace Archon.SwissArmyLib.Pooling
 
             int mappedId;
 
-            if (target != null && _instanceToTimerId.TryGetValue(target, mappedId) && mappedId == id)
+            if (target != null && _instanceToTimerId.TryGetValue(target, out mappedId) && mappedId == id)
                 Despawn(target);
         }
     }
