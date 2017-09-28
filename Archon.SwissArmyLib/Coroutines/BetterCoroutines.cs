@@ -597,15 +597,18 @@ namespace Archon.SwissArmyLib.Coroutines
                 var next = current.Next;
                 var routine = current.Value;
 
-                routine.WaitingForEndOfFrame = false;
+                if (routine.WaitingForEndOfFrame)
+                {
+                    routine.WaitingForEndOfFrame = false;
 
-                var scaledTime = GetTime(routine.UpdateLoop, false);
-                var unscaledTime = GetTime(routine.UpdateLoop, true);
+                    var scaledTime = GetTime(routine.UpdateLoop, false);
+                    var unscaledTime = GetTime(routine.UpdateLoop, true);
 
-                var shouldContinue = UpdateCoroutine(scaledTime, unscaledTime, routine);
+                    var shouldContinue = UpdateCoroutine(scaledTime, unscaledTime, routine);
 
-                if (!shouldContinue)
-                    Stop(routine);
+                    if (!shouldContinue)
+                        Stop(routine);
+                }
 
                 CoroutinesWaitingForEndOfFrame.Remove(current);
 
