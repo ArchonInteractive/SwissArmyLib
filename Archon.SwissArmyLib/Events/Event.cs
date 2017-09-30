@@ -82,10 +82,11 @@ namespace Archon.SwissArmyLib.Events
             if (!_isIterating)
                 _listeners.ProcessPending();
 
-            for (var i = 0; i < _listeners.Count; i++)
+            var listenerCount = _listeners.Count;
+            for (var i = 0; i < listenerCount; i++)
             {
                 var current = _listeners[i];
-                if (current.Item == listener)
+                if (ReferenceEquals(current.Item, listener))
                     return true;
             }
 
@@ -100,7 +101,8 @@ namespace Archon.SwissArmyLib.Events
             _listeners.ProcessPending();
 
             _isIterating = true;
-            for (var i = 0; i < _listeners.Count; i++)
+            var listenerCount = _listeners.Count;
+            for (var i = 0; i < listenerCount; i++)
             {
                 // gotta wrap it up so one guy doesn't spoil it for everyone
                 try
@@ -202,10 +204,11 @@ namespace Archon.SwissArmyLib.Events
             if (!_isIterating)
                 _listeners.ProcessPending();
 
-            for (var i = 0; i < _listeners.Count; i++)
+            var listenerCount = _listeners.Count;
+            for (var i = 0; i < listenerCount; i++)
             {
                 var current = _listeners[i];
-                if (current.Item == listener)
+                if (ReferenceEquals(current.Item, listener))
                     return true;
             }
 
@@ -220,7 +223,8 @@ namespace Archon.SwissArmyLib.Events
             _listeners.ProcessPending();
 
             _isIterating = true;
-            for (var i = 0; i < _listeners.Count; i++)
+            var listenerCount = _listeners.Count;
+            for (var i = 0; i < listenerCount; i++)
             {
                 // gotta wrap it up so one guy doesn't spoil it for everyone
                 try

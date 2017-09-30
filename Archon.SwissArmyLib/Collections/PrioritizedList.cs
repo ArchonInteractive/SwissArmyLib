@@ -32,6 +32,9 @@ namespace Archon.SwissArmyLib.Collections
 
         public bool Equals(PrioritizedItem<T> other)
         {
+            if (default(T) == null)
+                return ReferenceEquals(Item, other.Item);
+
             return EqualityComparer<T>.Default.Equals(Item, other.Item);
         }
 
@@ -114,13 +117,15 @@ namespace Archon.SwissArmyLib.Collections
         /// <param name="item">The prioritized item to add.</param>
         public void Add(PrioritizedItem<T> item)
         {
-            if (_items.Count == 0)
+            var itemCount = _items.Count;
+
+            if (itemCount == 0)
             {
                 _items.Add(item);
                 return;
             }
 
-            var lastItemPriority = _items[_items.Count - 1].Priority;
+            var lastItemPriority = _items[itemCount - 1].Priority;
 
             if (SortDirection == ListSortDirection.Ascending && item.Priority >= lastItemPriority
                 || SortDirection == ListSortDirection.Descending && item.Priority <= lastItemPriority)
@@ -129,7 +134,7 @@ namespace Archon.SwissArmyLib.Collections
                 return;
             }
 
-            for (var i = 0; i < _items.Count; i++)
+            for (var i = 0; i < itemCount; i++)
             {
                 if (SortDirection == ListSortDirection.Ascending && item.Priority < _items[i].Priority
                     || SortDirection == ListSortDirection.Descending && item.Priority > _items[i].Priority)
@@ -177,7 +182,8 @@ namespace Archon.SwissArmyLib.Collections
         /// <returns>True if found and removed, false otherwise.</returns>
         public bool Remove(T item)
         {
-            for (var i = 0; i < _items.Count; i++)
+            var itemCount = _items.Count;
+            for (var i = 0; i < itemCount; i++)
             {
                 if (_items[i].Item.Equals(item))
                 {
@@ -223,7 +229,8 @@ namespace Archon.SwissArmyLib.Collections
         /// <returns>True if found, false otherwise.</returns>
         public bool Contains(T item)
         {
-            for (var i = 0; i < _items.Count; i++)
+            var itemCount = _items.Count;
+            for (var i = 0; i < itemCount; i++)
             {
                 if (_items[i].Item.Equals(item))
                     return true;
@@ -249,7 +256,9 @@ namespace Archon.SwissArmyLib.Collections
         /// <param name="arrayIndex">The index to start at.</param>
         public void CopyTo(T[] array, int arrayIndex)
         {
-            for (var i = arrayIndex; i < array.Length && i < _items.Count; i++)
+            var arrayLength = array.Length;
+            var itemCount = _items.Count;
+            for (var i = arrayIndex; i < arrayLength && i < itemCount; i++)
                 array[i] = _items[i].Item;
         }
 

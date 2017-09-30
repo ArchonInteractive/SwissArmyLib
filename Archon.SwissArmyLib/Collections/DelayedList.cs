@@ -12,10 +12,15 @@ namespace Archon.SwissArmyLib.Collections
     public class DelayedList<T> : IList<T>
     {
         private readonly IList<T> _items;
-        private readonly IList<T> _itemsToAdd = new List<T>();
-        private readonly IList<T> _itemsToRemove = new List<T>();
+        private readonly Queue<PendingChange> _changeQueue = new Queue<PendingChange>();
 
         private readonly ReadOnlyCollection<T> _readonlyCollection;
+
+        private struct PendingChange
+        {
+            public bool Remove;
+            public T Value;
+        }
 
         /// <summary>
         ///     Gets the amount of items in the list.
@@ -92,8 +97,7 @@ namespace Archon.SwissArmyLib.Collections
         /// <param name="item">The item to add.</param>
         public void Add(T item)
         {
-            _itemsToAdd.Add(item);
-            _itemsToRemove.Remove(item);
+            _changeQueue.Enqueue(new PendingChange {Value = item});
         }
 
         /// <summary>
@@ -112,21 +116,17 @@ namespace Archon.SwissArmyLib.Collections
         /// <param name="item">The item to add.</param>
         public bool Remove(T item)
         {
-            _itemsToRemove.Add(item);
+            _changeQueue.Enqueue(new PendingChange {Value = item, Remove = true});
             return true;
         }
 
         /// <summary>
         ///     Clears all items from the list and all pending additions and removals.
-        ///     <remark>
-        ///         <see cref="PreItemAddition" /> and <see cref="PreItemRemoval" /> are not invoked by this method!
-        ///     </remark>
         /// </summary>
         public void Clear()
         {
             _items.Clear();
-            _itemsToAdd.Clear();
-            _itemsToRemove.Clear();
+            _changeQueue.Clear();
         }
 
         /// <summary>
@@ -170,37 +170,23 @@ namespace Archon.SwissArmyLib.Collections
         /// <param name="index"></param>
         public void RemoveAt(int index)
         {
-            _itemsToRemove.Add(_items[index]);
+            Remove(_items[index]);
         }
-
-        /// <summary>
-        ///     Called just before pending items are actually added to the list.
-        /// </summary>
-        public event Action<IList<T>> PreItemAddition;
-
-        /// <summary>
-        ///     Called just before pending items are actually removed from the list.
-        /// </summary>
-        public event Action<IList<T>> PreItemRemoval;
 
         /// <summary>
         ///     Processes all pending additions and removals.
         /// </summary>
         public void ProcessPending()
         {
-            if (PreItemAddition != null)
-                PreItemAddition.Invoke(_itemsToAdd);
+            while (_changeQueue.Count > 0)
+            {
+                var change = _changeQueue.Dequeue();
 
-            for (var i = 0; i < _itemsToAdd.Count; i++)
-                _items.Add(_itemsToAdd[i]);
-            _itemsToAdd.Clear();
-
-            if (PreItemRemoval != null)
-                PreItemRemoval.Invoke(_itemsToRemove);
-
-            for (var i = 0; i < _itemsToRemove.Count; i++)
-                _items.Remove(_itemsToRemove[i]);
-            _itemsToRemove.Clear();
+                if (change.Remove)
+                    _items.Remove(change.Value);
+                else
+                    _items.Add(change.Value);
+            }
         }
     }
 }
