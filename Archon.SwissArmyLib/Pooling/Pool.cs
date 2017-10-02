@@ -133,9 +133,7 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="target">The target that shouldn't despawn after all.</param>
         public void CancelDespawn(T target)
         {
-            int id;
-            if (_instanceToTimerId.TryGetValue(target, out id))
-                _instanceToTimerId.Remove(target);
+            _instanceToTimerId.Remove(target);
         }
 
         void TellMeWhen.ITimerCallback.OnTimesUp(int id, object args)
