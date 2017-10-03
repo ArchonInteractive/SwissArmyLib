@@ -8,7 +8,7 @@ namespace Archon.SwissArmyLib.Events
     /// 
     /// Useful for GameLoaded, MatchEnded and similar events.
     /// 
-    /// This uses <see cref="Event"/> which in turn uses interface instead of delegates in order to avoid the often short-lived memory they allocate.
+    /// This uses <see cref="Event"/> instances behind the scenes.
     /// 
     /// This version is for parameterless events. 
     /// See <see cref="GlobalEvents{T}"/> if you need to send data with the events.
@@ -51,6 +51,24 @@ namespace Archon.SwissArmyLib.Events
         }
 
         /// <summary>
+        /// Adds a listener for an event.
+        /// </summary>
+        /// <param name="eventId">The id of the event.</param>
+        /// <param name="listener">The listener to be called.</param>
+        /// <param name="priority">The priority of the listener which affects the order which listeners are called in.</param>
+        public static void AddListener(int eventId, Action listener, int priority = 0)
+        {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
+            Event e;
+            if (!Events.TryGetValue(eventId, out e))
+                Events[eventId] = e = new Event(eventId);
+
+            e.AddListener(listener, priority);
+        }
+
+        /// <summary>
         /// Removes a listener for an event.
         /// </summary>
         /// <param name="eventId">The id of the event.</param>
@@ -66,10 +84,38 @@ namespace Archon.SwissArmyLib.Events
         }
 
         /// <summary>
+        /// Removes a listener for an event.
+        /// </summary>
+        /// <param name="eventId">The id of the event.</param>
+        /// <param name="listener">The listener to remove.</param>
+        public static void RemoveListener(int eventId, Action listener)
+        {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
+            Event e;
+            if (Events.TryGetValue(eventId, out e))
+                e.RemoveListener(listener);
+        }
+
+        /// <summary>
         /// Removes the specified listener from all events.
         /// </summary>
         /// <param name="listener">The listener to unsubscribe from all events.</param>
         public static void RemoveListener(IEventListener listener)
+        {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
+            foreach (var eventId in Events.Keys)
+                RemoveListener(eventId, listener);
+        }
+
+        /// <summary>
+        /// Removes the specified listener from all events.
+        /// </summary>
+        /// <param name="listener">The listener to unsubscribe from all events.</param>
+        public static void RemoveListener(Action listener)
         {
             if (ReferenceEquals(listener, null))
                 throw new ArgumentNullException("listener");
@@ -104,10 +150,10 @@ namespace Archon.SwissArmyLib.Events
     /// 
     /// Useful for GameLoaded, MatchEnded and similar events.
     /// 
-    /// This uses <see cref="Event"/> which in turn uses interface instead of delegates in order to avoid the often short-lived memory they allocate.
+    /// This uses <see cref="Event{T}"/> instances behind the scenes.
     /// 
     /// This version is for events with args. 
-    /// See <see cref="GlobalEvents"/> if you need to send data with the events.
+    /// See <see cref="GlobalEvents"/> if you don't need to send data with the events.
     /// 
     /// Events are differentiated by an integer. You are expected to create constants to define your events.
     /// 
@@ -148,6 +194,24 @@ namespace Archon.SwissArmyLib.Events
         }
 
         /// <summary>
+        /// Adds a listener for an event.
+        /// </summary>
+        /// <param name="eventId">The id of the event.</param>
+        /// <param name="listener">The listener to be called.</param>
+        /// <param name="priority">The priority of the listener which affects the order which listeners are called in.</param>
+        public static void AddListener(int eventId, Action<T> listener, int priority = 0)
+        {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
+            Event<T> e;
+            if (!Events.TryGetValue(eventId, out e))
+                Events[eventId] = e = new Event<T>(eventId);
+
+            e.AddListener(listener, priority);
+        }
+
+        /// <summary>
         /// Removes a listener for an event.
         /// </summary>
         /// <param name="eventId">The id of the event.</param>
@@ -163,10 +227,35 @@ namespace Archon.SwissArmyLib.Events
         }
 
         /// <summary>
+        /// Removes a listener for an event.
+        /// </summary>
+        /// <param name="eventId">The id of the event.</param>
+        /// <param name="listener">The listener to remove.</param>
+        public static void RemoveListener(int eventId, Action<T> listener)
+        {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
+            Event<T> e;
+            if (Events.TryGetValue(eventId, out e))
+                e.RemoveListener(listener);
+        }
+
+        /// <summary>
         /// Removes the specified listener from all events.
         /// </summary>
         /// <param name="listener">The listener to unsubscribe from all events.</param>
         public static void RemoveListener(IEventListener<T> listener)
+        {
+            foreach (var eventId in Events.Keys)
+                RemoveListener(eventId, listener);
+        }
+
+        /// <summary>
+        /// Removes the specified listener from all events.
+        /// </summary>
+        /// <param name="listener">The listener to unsubscribe from all events.</param>
+        public static void RemoveListener(Action<T> listener)
         {
             foreach (var eventId in Events.Keys)
                 RemoveListener(eventId, listener);

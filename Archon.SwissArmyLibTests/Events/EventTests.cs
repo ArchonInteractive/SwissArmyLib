@@ -6,11 +6,11 @@ namespace Archon.SwissArmyLib.Events.Tests
     [TestFixture]
     public class EventTests
     {
-        public class Listener : IEventListener
+        public class InterfaceListener : IEventListener
         {
             public Action Callback;
 
-            public Listener(Action callback)
+            public InterfaceListener(Action callback)
             {
                 Callback = callback;
             }
@@ -22,10 +22,10 @@ namespace Archon.SwissArmyLib.Events.Tests
         }
 
         [Test]
-        public void AddListener_ListenerIsAdded()
+        public void AddListener_Interface_ListenerIsAdded()
         {
             var e = new Event(0);
-            var listener = new Listener(null);
+            var listener = new InterfaceListener(null);
 
             e.AddListener(listener);
 
@@ -33,10 +33,33 @@ namespace Archon.SwissArmyLib.Events.Tests
         }
 
         [Test]
-        public void RemoveListener_ListenerIsRemoved()
+        public void AddListener_Delegate_ListenerIsAdded()
         {
             var e = new Event(0);
-            var listener = new Listener(null);
+            Action listener = () => { };
+
+            e.AddListener(listener);
+
+            Assert.IsTrue(e.HasListener(listener));
+        }
+
+        [Test]
+        public void RemoveListener_Interface_ListenerIsRemoved()
+        {
+            var e = new Event(0);
+            var listener = new InterfaceListener(null);
+
+            e.AddListener(listener);
+            e.RemoveListener(listener);
+
+            Assert.IsFalse(e.HasListener(listener));
+        }
+
+        [Test]
+        public void RemoveListener_Delegate_ListenerIsRemoved()
+        {
+            var e = new Event(0);
+            Action listener = () => { };
 
             e.AddListener(listener);
             e.RemoveListener(listener);
@@ -48,9 +71,11 @@ namespace Archon.SwissArmyLib.Events.Tests
         public void RemoveListener_Empty_NoChange()
         {
             var e = new Event(0);
-            var listener = new Listener(null);
+            var interfaceListener = new InterfaceListener(null);
+            Action delegateListener = () => { };
 
-            e.RemoveListener(listener);
+            e.RemoveListener(interfaceListener);
+            e.RemoveListener(delegateListener);
 
             Assert.IsEmpty(e.Listeners);
         }
@@ -61,7 +86,10 @@ namespace Archon.SwissArmyLib.Events.Tests
             var e = new Event(0);
 
             for (var i = 0; i < 10; i++)
-                e.AddListener(new Listener(null));
+            {
+                e.AddListener(new InterfaceListener(null));
+                e.AddListener(() => { });
+            }
 
             e.Clear();
 
@@ -75,13 +103,13 @@ namespace Archon.SwissArmyLib.Events.Tests
             var callCount = 0;
             for (var i = 0; i < 10; i++)
             {
-                var listener = new Listener(() => callCount++);
-                e.AddListener(listener);
+                e.AddListener(new InterfaceListener(() => callCount++));
+                e.AddListener(() => callCount++);
             }
 
             e.Invoke();
 
-            Assert.AreEqual(10, callCount);
+            Assert.AreEqual(20, callCount);
         }
 
         [Test]
@@ -92,8 +120,8 @@ namespace Archon.SwissArmyLib.Events.Tests
 
             for (var i = 0; i < 10; i++)
             {
-                var listener = new Listener(() => throw new Exception());
-                e.AddListener(listener);
+                e.AddListener(new InterfaceListener(() => throw new Exception()));
+                e.AddListener(() => throw new Exception());
             }
 
             Assert.DoesNotThrow(() => e.Invoke());
@@ -104,8 +132,8 @@ namespace Archon.SwissArmyLib.Events.Tests
         {
             var wasCalled = false;
             var e = new Event(0);
-            var secondListener = new Listener(() => wasCalled = true);
-            var firstListener = new Listener(() => e.AddListener(secondListener));
+            var secondListener = new InterfaceListener(() => wasCalled = true);
+            var firstListener = new InterfaceListener(() => e.AddListener(secondListener));
 
             e.AddListener(firstListener);
             e.Invoke();
@@ -121,8 +149,8 @@ namespace Archon.SwissArmyLib.Events.Tests
         {
             var wasCalled = false;
             var e = new Event(0);
-            var secondListener = new Listener(() => wasCalled = true);
-            var firstListener = new Listener(() => e.RemoveListener(secondListener));
+            var secondListener = new InterfaceListener(() => wasCalled = true);
+            var firstListener = new InterfaceListener(() => e.RemoveListener(secondListener));
 
             e.AddListener(firstListener);
             e.AddListener(secondListener);
