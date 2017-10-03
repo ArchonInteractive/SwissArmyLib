@@ -40,19 +40,19 @@ namespace Archon.SwissArmyLib.Collections
                 if (x < 0 || y < 0 || x >= Width || y >= Height)
                     throw new IndexOutOfRangeException();
 
-                return _data[y][x];
+                return _data[x][y];
             }
             set
             {
                 if (x < 0 || y < 0 || x >= Width || y >= Height)
                     throw new IndexOutOfRangeException();
 
-                _data[y][x] = value;
+                _data[x][y] = value;
             }
         }
 
-        private int InternalWidth { get { return _data[0].Length; } }
-        private int InternalHeight { get { return _data.Length; } }
+        private int InternalWidth { get { return _data.Length; } }
+        private int InternalHeight { get { return _data[0].Length; } }
 
         /// <summary>
         /// Creates a new 2D Grid with the specified width and height. 
@@ -133,12 +133,12 @@ namespace Archon.SwissArmyLib.Collections
         /// <param name="maxY">Upper right corner's y value.</param>
         public void Fill(T value, int minX, int minY, int maxX, int maxY)
         {
-            for (var y = minY; y <= maxY; y++)
+            for (var x = minX; x <= maxX; x++)
             {
-                var widthArray = _data[y];
+                var heightArray = _data[x];
 
-                for (var x = minX; x <= maxX; x++)
-                    widthArray[x] = value;
+                for (var y = minY; y <= maxY; y++)
+                    heightArray[y] = value;
             }
         }
 
@@ -173,29 +173,29 @@ namespace Archon.SwissArmyLib.Collections
 
         private static T[][] CreateArrays(int width, int height)
         {
-            var arrays = new T[height][];
+            var arrays = new T[width][];
 
-            for (var y = 0; y < arrays.Length; y++)
-                arrays[y] = new T[width];
+            for (var x = 0; x < width; x++)
+                arrays[x] = new T[height];
 
             return arrays;
         }
 
         private static void CopyArraysContents(T[][] src, T[][] dst)
         {
-            var srcHeight = src.Length;
-            var srcWidth = src[0].Length;
+            var srcWidth = src.Length;
+            var srcHeight = src[0].Length;
 
-            var dstHeight = dst.Length;
-            var dstWidth = dst[0].Length;
+            var dstWidth = dst.Length;
+            var dstHeight = dst[0].Length;
 
-            for (var y = 0; y < srcHeight && y < dstHeight; y++)
+            for (var x = 0; x < srcWidth && x < dstWidth; x++)
             {
-                var srcWidthArray = src[y];
-                var dstWidthArray = dst[y];
+                var srcHeightArray = src[x];
+                var dstHeightArray = dst[x];
 
-                for (var x = 0; x < srcWidth && x < dstWidth; x++)
-                    dstWidthArray[x] = srcWidthArray[x];
+                for (var y = 0; y < srcHeight && y < dstHeight; y++)
+                    dstHeightArray[y] = srcHeightArray[y];
             }
         }
     }

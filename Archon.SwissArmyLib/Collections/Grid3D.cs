@@ -45,19 +45,19 @@ namespace Archon.SwissArmyLib.Collections
             {
                 if (x < 0 || y < 0 || z < 0 || x >= Width || y >= Height || z >= Depth)
                     throw new IndexOutOfRangeException();
-                return _data[z][y][x];
+                return _data[x][y][z];
             }
             set
             {
                 if (x < 0 || y < 0 || z < 0 || x >= Width || y >= Height || z >= Depth)
                     throw new IndexOutOfRangeException();
-                _data[z][y][x] = value;
+                _data[x][y][z] = value;
             }
         }
 
-        private int InternalWidth { get { return _data[0][0].Length; } }
+        private int InternalWidth { get { return _data.Length; } }
         private int InternalHeight { get { return _data[0].Length; } }
-        private int InternalDepth { get { return _data.Length; } }
+        private int InternalDepth { get { return _data[0][0].Length; } }
 
         /// <summary>
         /// Creates a new 3D Grid with the specified width, height and depth. 
@@ -145,16 +145,16 @@ namespace Archon.SwissArmyLib.Collections
         /// <param name="maxZ">Upper right back corner's z value.</param>
         public void Fill(T value, int minX, int minY, int minZ, int maxX, int maxY, int maxZ)
         {
-            for (var z = minZ; z <= maxZ; z++)
+            for (var x = minX; x <= maxX; x++)
             {
-                var heightArray = _data[z];
+                var heightArray = _data[x];
 
                 for (var y = minY; y <= maxY; y++)
                 {
-                    var widthArray = heightArray[y];
+                    var depthArray = heightArray[y];
 
-                    for (var x = minX; x <= maxX; x++)
-                        widthArray[x] = value;
+                    for (var z = minZ; z <= maxZ; z++)
+                        depthArray[z] = value;
                 }
             }
         }
@@ -194,43 +194,43 @@ namespace Archon.SwissArmyLib.Collections
 
         private static T[][][] CreateArrays(int width, int height, int depth)
         {
-            var depthArray = new T[depth][][];
+            var widthArray = new T[width][][];
 
-            for (var z = 0; z < depth; z++)
+            for (var x = 0; x < width; x++)
             {
                 var heightArray = new T[height][];
 
                 for (var y = 0; y < height; y++)
-                    heightArray[y] = new T[width];
+                    heightArray[y] = new T[depth];
 
-                depthArray[z] = heightArray;
+                widthArray[x] = heightArray;
             }
 
-            return depthArray;
+            return widthArray;
         }
 
         private static void CopyArraysContents(T[][][] src, T[][][] dst)
         {
-            var srcDepth = src.Length;
+            var srcWidth = src.Length;
             var srcHeight = src[0].Length;
-            var srcWidth = src[0][0].Length;
+            var srcDepth = src[0][0].Length;
 
-            var dstDepth = dst.Length;
+            var dstWidth = dst.Length;
             var dstHeight = dst[0].Length;
-            var dstWidth = dst[0][0].Length;
+            var dstDepth = dst[0][0].Length;
 
-            for (var z = 0; z < srcDepth && z < dstDepth; z++)
+            for (var x = 0; x < srcWidth && x < dstWidth; x++)
             {
-                var srcHeightArray = src[z];
-                var dstHeightArray = dst[z];
+                var srcHeightArray = src[x];
+                var dstHeightArray = dst[x];
 
                 for (var y = 0; y < srcHeight && y < dstHeight; y++)
                 {
-                    var srcWidthArray = srcHeightArray[y];
-                    var dstWidthArray = dstHeightArray[y];
+                    var srcDepthArray = srcHeightArray[y];
+                    var dstDepthArray = dstHeightArray[y];
 
-                    for (var x = 0; x < srcWidth && x < dstWidth; x++)
-                        dstWidthArray[x] = srcWidthArray[x];
+                    for (var z = 0; z < srcDepth && z < dstDepth; z++)
+                        dstDepthArray[z] = srcDepthArray[z];
                 }
             }
         }
