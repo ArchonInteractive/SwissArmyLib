@@ -48,6 +48,9 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="targetCount"></param>
         public void Prewarm(int targetCount)
         {
+            if (Free.Capacity < targetCount)
+                Free.Capacity = targetCount;
+
             for (var i = 0; i < targetCount && Free.Count < targetCount; i++)
                 Free.Add(_factory());
         }

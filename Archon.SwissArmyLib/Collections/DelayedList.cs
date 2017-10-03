@@ -12,7 +12,7 @@ namespace Archon.SwissArmyLib.Collections
     public class DelayedList<T> : IList<T>
     {
         private readonly IList<T> _items;
-        private readonly Queue<PendingChange> _changeQueue = new Queue<PendingChange>();
+        private readonly Queue<PendingChange> _changeQueue;
 
         private readonly ReadOnlyCollection<T> _readonlyCollection;
 
@@ -40,6 +40,16 @@ namespace Archon.SwissArmyLib.Collections
         }
 
         /// <summary>
+        ///     Creates a new DelayedList which uses <see cref="List{T}" /> and has the specified initial capacity and change capacity.
+        /// </summary>
+        /// <param name="capacity">The initial capacity of the list.</param>
+        /// <param name="changeCapacity">The initial capacity of the change queue.</param>
+        public DelayedList(int capacity, int changeCapacity) : this(new List<T>(capacity), changeCapacity)
+        {
+
+        }
+
+        /// <summary>
         ///     Creates a new DelayedList that wraps the given list.
         /// </summary>
         /// <param name="list">The list to wrap.</param>
@@ -47,6 +57,19 @@ namespace Archon.SwissArmyLib.Collections
         {
             _items = list;
             _readonlyCollection = new ReadOnlyCollection<T>(_items);
+            _changeQueue = new Queue<PendingChange>();
+        }
+
+        /// <summary>
+        ///     Creates a new DelayedList that wraps the given list.
+        /// </summary>
+        /// <param name="list">The list to wrap.</param>
+        /// <param name="changeCapacity">The initial capacity of the change queue.</param>
+        public DelayedList(IList<T> list, int changeCapacity)
+        {
+            _items = list;
+            _readonlyCollection = new ReadOnlyCollection<T>(_items);
+            _changeQueue = new Queue<PendingChange>(changeCapacity);
         }
 
         /// <summary>

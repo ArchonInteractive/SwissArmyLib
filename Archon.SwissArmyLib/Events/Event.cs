@@ -54,6 +54,17 @@ namespace Archon.SwissArmyLib.Events
         }
 
         /// <summary>
+        /// Creates a new Event with the specified ID and initial listener capacity.
+        /// </summary>
+        /// <param name="id">The id of the event.</param>
+        /// <param name="initialListenerCapacity">The initial capacity for listeners.</param>
+        public Event(int id, int initialListenerCapacity)
+        {
+            Id = id;
+            _listeners = new DelayedList<PrioritizedItem<IEventListener>>(new PrioritizedList<IEventListener>(initialListenerCapacity));
+        }
+
+        /// <summary>
         /// Adds a listener for the event with an optional call-order priority.
         /// </summary>
         /// <param name="listener">The listener to add.</param>

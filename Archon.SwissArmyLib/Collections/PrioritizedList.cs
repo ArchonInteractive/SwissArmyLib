@@ -74,7 +74,7 @@ namespace Archon.SwissArmyLib.Collections
         /// </summary>
         public readonly ListSortDirection SortDirection;
 
-        private readonly List<PrioritizedItem<T>> _items = new List<PrioritizedItem<T>>();
+        private readonly List<PrioritizedItem<T>> _items;
 
         /// <summary>
         /// Gets the amount of items in the list.
@@ -109,6 +109,18 @@ namespace Archon.SwissArmyLib.Collections
         public PrioritizedList(ListSortDirection sortDirection = ListSortDirection.Ascending)
         {
             SortDirection = sortDirection;
+            _items = new List<PrioritizedItem<T>>();
+        }
+
+        /// <summary>
+        /// Creates a new PrioritizedList with the specified sort direction and initial capacity.
+        /// </summary>
+        /// <param name="capacity">The number of elements that the new list can initially store.</param>
+        /// <param name="sortDirection">Whether items with lower priorities are placed first in the list (ascending) or last (descending).</param>
+        public PrioritizedList(int capacity, ListSortDirection sortDirection = ListSortDirection.Ascending)
+        {
+            SortDirection = sortDirection;
+            _items = new List<PrioritizedItem<T>>(capacity);
         }
 
         /// <summary>
