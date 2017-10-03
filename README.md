@@ -20,7 +20,7 @@ This project is under the very permissive MIT license and we honestly do not car
 
 ### Features
 * [Events](https://github.com/ArchonInteractive/SwissArmyLib/wiki/Event)
-    * Uses interfaces instead of delegates to reduce garbage
+    * Supports both interface and delegate listeners
     * Can be prioritized to control call order
     * Check out [GlobalEvents](https://github.com/ArchonInteractive/SwissArmyLib/wiki/GlobalEvents) if you need.. well.. global events.
 * [Timers](https://github.com/ArchonInteractive/SwissArmyLib/wiki/TellMeWhen)
