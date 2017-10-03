@@ -16,10 +16,27 @@ namespace Archon.SwissArmyLib.Collections
 
         private readonly ReadOnlyCollection<T> _readonlyCollection;
 
+        private enum Action
+        {
+            Add,
+            Remove,
+            Clear
+        }
+
         private struct PendingChange
         {
-            public bool Remove;
-            public T Value;
+            public readonly Action Action;
+            public readonly T Value;
+
+            public PendingChange(Action action) : this()
+            {
+                Action = action;
+            }
+
+            public PendingChange(Action action, T value) : this(action)
+            {
+                Value = value;
+            }
         }
 
         /// <summary>
@@ -120,7 +137,7 @@ namespace Archon.SwissArmyLib.Collections
         /// <param name="item">The item to add.</param>
         public void Add(T item)
         {
-            _changeQueue.Enqueue(new PendingChange {Value = item});
+            _changeQueue.Enqueue(new PendingChange(Action.Add, item));
         }
 
         /// <summary>
@@ -139,16 +156,40 @@ namespace Archon.SwissArmyLib.Collections
         /// <param name="item">The item to add.</param>
         public bool Remove(T item)
         {
-            _changeQueue.Enqueue(new PendingChange {Value = item, Remove = true});
+            _changeQueue.Enqueue(new PendingChange(Action.Remove, item));
             return true;
         }
 
         /// <summary>
-        ///     Clears all items from the list and all pending additions and removals.
+        ///     Clears all items from the list the next time <see cref="ProcessPending"/> is called.
+        /// 
+        ///     <seealso cref="ClearInstantly"/>
+        ///     <seealso cref="ClearPending"/>
         /// </summary>
         public void Clear()
         {
+            ClearPending();
+            _changeQueue.Enqueue(new PendingChange(Action.Clear));
+        }
+
+        /// <summary>
+        ///     Clears all items from the list and all pending additions and removals instantly, without having to call <see cref="ProcessPending"/>.
+        /// 
+        ///     <seealso cref="Clear"/>
+        /// </summary>
+        public void ClearInstantly()
+        {
             _items.Clear();
+            _changeQueue.Clear();
+        }
+
+        /// <summary>
+        ///     Clears all pending changes.
+        /// 
+        ///     <seealso cref="Clear"/>
+        /// </summary>
+        public void ClearPending()
+        {
             _changeQueue.Clear();
         }
 
@@ -188,7 +229,7 @@ namespace Archon.SwissArmyLib.Collections
         }
 
         /// <summary>
-        ///     Removes the item found at the specified index the next time <see cref="ProcessPending" /> is called.
+        ///     Removes the value currently found at the specified index the next time <see cref="ProcessPending" /> is called.
         /// </summary>
         /// <param name="index"></param>
         public void RemoveAt(int index)
@@ -201,14 +242,23 @@ namespace Archon.SwissArmyLib.Collections
         /// </summary>
         public void ProcessPending()
         {
-            while (_changeQueue.Count > 0)
+            var changeCount = _changeQueue.Count;
+            for (var i = 0; i < changeCount; i++)
             {
                 var change = _changeQueue.Dequeue();
 
-                if (change.Remove)
-                    _items.Remove(change.Value);
-                else
-                    _items.Add(change.Value);
+                switch (change.Action)
+                {
+                    case Action.Add:
+                        _items.Add(change.Value);
+                        break;
+                    case Action.Remove:
+                        _items.Remove(change.Value);
+                        break;
+                    case Action.Clear:
+                        _items.Clear();
+                        break;
+                }
             }
         }
     }

@@ -114,24 +114,67 @@ namespace Archon.SwissArmyLib.Collections.Tests
         }
 
         [Test]
-        public void Clear_AllItemsRemoved()
-        {
-            var list = new DelayedList<object>();
-
-            Fill(list, 5);
-            list.ProcessPending();
-            list.Clear();
-
-            Assert.IsEmpty(list);
-        }
-
-        [Test]
         public void AddThenClear_Processed_NoItemsAdded()
         {
             var list = new DelayedList<object>();
 
             Fill(list, 5);
             list.Clear();
+            list.ProcessPending();
+
+            Assert.IsEmpty(list);
+        }
+
+        [Test]
+        public void Clear_Processed_AllItemsRemoved()
+        {
+            var list = new DelayedList<object>();
+
+            Fill(list, 5);
+            list.ProcessPending();
+
+            list.Clear();
+            list.ProcessPending();
+
+            Assert.IsEmpty(list);
+        }
+
+        [Test]
+        public void ClearThenAdd_Processed_OnlyAddedItemLeft()
+        {
+            var list = new DelayedList<object>();
+            var item = new object();
+
+            Fill(list, 5);
+            list.ProcessPending();
+
+            list.Clear();
+            list.Add(item);
+            list.ProcessPending();
+
+            Assert.AreEqual(1, list.Count);
+            Assert.AreSame(item, list[0]);
+        }
+
+        [Test]
+        public void ClearInstantly_Unprocessed_AllItemsRemoved()
+        {
+            var list = new DelayedList<object>();
+
+            Fill(list, 5);
+            list.ProcessPending();
+            list.ClearInstantly();
+
+            Assert.IsEmpty(list);
+        }
+
+        [Test]
+        public void AddThenClearPending_Processed_NoItemsAdded()
+        {
+            var list = new DelayedList<object>();
+
+            Fill(list, 5);
+            list.ClearPending();
             list.ProcessPending();
 
             Assert.IsEmpty(list);
