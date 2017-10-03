@@ -46,6 +46,9 @@ namespace Archon.SwissArmyLib.Pooling
         public static T Spawn<T>(T prefab)
             where T : Object
         {
+            if (ReferenceEquals(prefab, null))
+                throw new ArgumentNullException("prefab");
+
             var pool = GetPool(prefab);
             var obj = pool.Spawn();
             InstanceToPrefab[obj] = prefab;
@@ -60,6 +63,9 @@ namespace Archon.SwissArmyLib.Pooling
         public static T Spawn<T>(T prefab, Vector3 position, Quaternion rotation, Transform parent)
             where T : Object
         {
+            if (ReferenceEquals(prefab, null))
+                throw new ArgumentNullException("prefab");
+
             var pool = GetPool(prefab);
             var obj = pool.Spawn(position, rotation, parent);
             InstanceToPrefab[obj] = prefab;
@@ -73,10 +79,14 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="target">The instance to despawn.</param>
         public static void Despawn(Object target)
         {
-            if (target == null)
-                throw new NullReferenceException("Target is null.");
+            if (ReferenceEquals(target, null))
+                throw new ArgumentNullException("target");
 
             var prefab = GetPrefab(target);
+
+            if (ReferenceEquals(prefab, null))
+                throw new ArgumentException("Cannot find prefab for target.");
+
             var pool = GetPool(prefab);
             pool.Despawn(target);
         }
@@ -90,8 +100,8 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="unscaledTime">Should the delay be according to <see cref="Time.time"/> or <see cref="Time.unscaledTime"/>?</param>
         public static void Despawn(Object target, float delay, bool unscaledTime = false)
         {
-            if (target == null)
-                throw new NullReferenceException("Target is null.");
+            if (ReferenceEquals(target, null))
+                throw new ArgumentNullException("target");
 
             var prefab = GetPrefab(target);
             var pool = GetPool(prefab);
@@ -104,8 +114,8 @@ namespace Archon.SwissArmyLib.Pooling
         /// <returns>The amount of free instances in the pool.</returns>
         public static int GetFreeCount(Object prefab)
         {
-            if (prefab == null)
-                throw new NullReferenceException("Target is null.");
+            if (ReferenceEquals(prefab, null))
+                throw new ArgumentNullException("prefab");
 
             var pool = GetPool(prefab);
             return pool != null ? pool.FreeCount : 0;
@@ -118,6 +128,9 @@ namespace Archon.SwissArmyLib.Pooling
         /// <returns>The prefab for the instance, or null if not found.</returns>
         public static Object GetPrefab(Object instance)
         {
+            if (ReferenceEquals(instance, null))
+                throw new ArgumentNullException("instance");
+
             Object prefab;
             InstanceToPrefab.TryGetValue(instance, out prefab);
             return prefab;
@@ -132,6 +145,9 @@ namespace Archon.SwissArmyLib.Pooling
         public static T GetPrefab<T>(T instance)
             where T : Object
         {
+            if (ReferenceEquals(instance, null))
+                throw new ArgumentNullException("instance");
+
             Object prefab;
             InstanceToPrefab.TryGetValue(instance, out prefab);
             return prefab as T;
@@ -144,10 +160,12 @@ namespace Archon.SwissArmyLib.Pooling
         /// <returns>The pool for the prefab.</returns>
         public static GameObjectPool<Object> GetPool(Object prefab)
         {
-            GameObjectPool<Object> pool;
-            PrefabToPool.TryGetValue(prefab, out pool);
+            if (ReferenceEquals(prefab, null))
+                throw new ArgumentNullException("prefab");
 
-            if (pool == null)
+            GameObjectPool<Object> pool;
+
+            if (!PrefabToPool.TryGetValue(prefab, out pool))
             {
                 pool = new GameObjectPool<Object>(prefab, true);
                 PrefabToPool[prefab] = pool;

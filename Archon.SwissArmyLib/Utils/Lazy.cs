@@ -52,6 +52,9 @@ namespace Archon.SwissArmyLib.Utils
         /// <param name="valueFactory">The function to use for producing the lazily initialized value.</param>
         public Lazy(Func<T> valueFactory)
         {
+            if (ReferenceEquals(valueFactory, null))
+                throw new ArgumentNullException("valueFactory");
+
             _valueFactory = valueFactory;
         }
 

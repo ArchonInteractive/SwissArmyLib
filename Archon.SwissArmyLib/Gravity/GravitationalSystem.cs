@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using Archon.SwissArmyLib.Events;
 using Archon.SwissArmyLib.Utils;
 using UnityEngine;
@@ -49,6 +50,9 @@ namespace Archon.SwissArmyLib.Gravity
         /// <param name="affecter">The affecter to register.</param>
         public static void Register(IGravitationalAffecter affecter)
         {
+            if (ReferenceEquals(affecter, null))
+                throw new ArgumentNullException("affecter");
+
             Affecters.Add(affecter);
         }
 
@@ -58,6 +62,9 @@ namespace Archon.SwissArmyLib.Gravity
         /// <param name="rigidbody">The rigidbody to register.</param>
         public static void Register(Rigidbody rigidbody)
         {
+            if (ReferenceEquals(rigidbody, null))
+                throw new ArgumentNullException("rigidbody");
+
             Rigidbodies.Add(rigidbody);
         }
 
@@ -67,6 +74,9 @@ namespace Archon.SwissArmyLib.Gravity
         /// <param name="rigidbody">The rigidbody to register.</param>
         public static void Register(Rigidbody2D rigidbody)
         {
+            if (ReferenceEquals(rigidbody, null))
+                throw new ArgumentNullException("rigidbody");
+
             Rigidbodies2D.Add(rigidbody);
         }
 
@@ -76,6 +86,9 @@ namespace Archon.SwissArmyLib.Gravity
         /// <param name="affecter">The affecter to unregister.</param>
         public static void Unregister(IGravitationalAffecter affecter)
         {
+            if (ReferenceEquals(affecter, null))
+                throw new ArgumentNullException("affecter");
+
             Affecters.Remove(affecter);
         }
 
@@ -85,6 +98,9 @@ namespace Archon.SwissArmyLib.Gravity
         /// <param name="rigidbody">The rigidbody to unregister.</param>
         public static void Unregister(Rigidbody rigidbody)
         {
+            if (ReferenceEquals(rigidbody, null))
+                throw new ArgumentNullException("rigidbody");
+
             Rigidbodies.Remove(rigidbody);
         }
 
@@ -94,6 +110,9 @@ namespace Archon.SwissArmyLib.Gravity
         /// <param name="rigidbody">The rigidbody to unregister.</param>
         public static void Unregister(Rigidbody2D rigidbody)
         {
+            if (ReferenceEquals(rigidbody, null))
+                throw new ArgumentNullException("rigidbody");
+
             Rigidbodies2D.Remove(rigidbody);
         }
 

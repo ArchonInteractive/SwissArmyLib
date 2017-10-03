@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 
 namespace Archon.SwissArmyLib.Events
 {
@@ -39,6 +40,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="priority">The priority of the listener which affects the order which listeners are called in.</param>
         public static void AddListener(int eventId, IEventListener listener, int priority = 0)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             Event e;
             if (!Events.TryGetValue(eventId, out e))
                 Events[eventId] = e = new Event(eventId);
@@ -53,6 +57,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="listener">The listener to remove.</param>
         public static void RemoveListener(int eventId, IEventListener listener)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             Event e;
             if (Events.TryGetValue(eventId, out e))
                 e.RemoveListener(listener);
@@ -64,6 +71,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="listener">The listener to unsubscribe from all events.</param>
         public static void RemoveListener(IEventListener listener)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             foreach (var eventId in Events.Keys)
                 RemoveListener(eventId, listener);
         }
@@ -127,6 +137,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="priority">The priority of the listener which affects the order which listeners are called in.</param>
         public static void AddListener(int eventId, IEventListener<T> listener, int priority = 0)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             Event<T> e;
             if (!Events.TryGetValue(eventId, out e))
                 Events[eventId] = e = new Event<T>(eventId);
@@ -141,6 +154,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="listener">The listener to remove.</param>
         public static void RemoveListener(int eventId, IEventListener<T> listener)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             Event<T> e;
             if (Events.TryGetValue(eventId, out e))
                 e.RemoveListener(listener);

@@ -98,6 +98,9 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns>The id of the coroutine.</returns>
         public static int Start(IEnumerator enumerator, UpdateLoop updateLoop = UpdateLoop.Update)
         {
+            if (ReferenceEquals(enumerator, null))
+                throw new ArgumentNullException("enumerator");
+
             var coroutine = SpawnCoroutine(enumerator, updateLoop);
 
             Start(coroutine);
@@ -115,6 +118,12 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns>The id of the coroutine.</returns>
         public static int Start(IEnumerator enumerator, GameObject linkedObject, UpdateLoop updateLoop = UpdateLoop.Update)
         {
+            if (ReferenceEquals(enumerator, null))
+                throw new ArgumentNullException("enumerator");
+
+            if (ReferenceEquals(linkedObject, null))
+                throw new ArgumentNullException("linkedObject");
+
             var coroutine = SpawnCoroutine(enumerator, updateLoop);
             coroutine.LinkedObject = linkedObject;
             coroutine.IsLinkedToObject = true;
@@ -134,6 +143,12 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns>The id of the coroutine.</returns>
         public static int Start(IEnumerator enumerator, MonoBehaviour linkedComponent, UpdateLoop updateLoop = UpdateLoop.Update)
         {
+            if (ReferenceEquals(enumerator, null))
+                throw new ArgumentNullException("enumerator");
+
+            if (ReferenceEquals(linkedComponent, null))
+                throw new ArgumentNullException("linkedComponent");
+
             var coroutine = SpawnCoroutine(enumerator, updateLoop);
             coroutine.LinkedComponent = linkedComponent;
             coroutine.IsLinkedToComponent = true;
@@ -355,6 +370,9 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns></returns>
         public static IEnumerator WaitForAsyncOperation(AsyncOperation operation)
         {
+            if (ReferenceEquals(operation, null))
+                throw new ArgumentNullException("operation");
+
             return Coroutines.WaitForAsyncOperation.Create(operation);
         }
 
@@ -365,6 +383,9 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns></returns>
         public static IEnumerator WaitForWWW(WWW www)
         {
+            if (ReferenceEquals(www, null))
+                throw new ArgumentNullException("www");
+
             return Coroutines.WaitForWWW.Create(www);
         }
 
@@ -375,6 +396,9 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns></returns>
         public static IEnumerator WaitUntil(Func<bool> predicate)
         {
+            if (ReferenceEquals(predicate, null))
+                throw new ArgumentNullException("predicate");
+
             return WaitUntilLite.Create(predicate);
         }
 
@@ -385,6 +409,9 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns></returns>
         public static IEnumerator WaitWhile(Func<bool> predicate)
         {
+            if (ReferenceEquals(predicate, null))
+                throw new ArgumentNullException("predicate");
+
             return WaitWhileLite.Create(predicate);
         }
 

@@ -406,6 +406,9 @@ namespace Archon.SwissArmyLib.Utils
         /// <param name="factory">The factory that will be used for creating instances.</param>
         public static void RegisterTransient<TAbstract, TConcrete>(Func<TConcrete> factory) where TConcrete : TAbstract
         {
+            if (ReferenceEquals(factory, null))
+                throw new ArgumentNullException("factory");
+
             GlobalResolvers[typeof(TAbstract)] = () => factory();
         }
 
@@ -436,6 +439,9 @@ namespace Archon.SwissArmyLib.Utils
         public static void RegisterTransientForScene<TAbstract, TConcrete>(Func<TConcrete> factory, Scene scene)
             where TConcrete : TAbstract
         {
+            if (ReferenceEquals(factory, null))
+                throw new ArgumentNullException("factory");
+
             GetOrCreateSceneData(scene).Resolvers[typeof(TAbstract)] = () => factory();
         }
 

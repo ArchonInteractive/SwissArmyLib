@@ -51,6 +51,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="args">An optional args object that will be passed to the callback.</param>
         public static void Exact(float time, ITimerCallback callback, int id = NoId, object args = null)
         {
+            if (ReferenceEquals(callback, null))
+                throw new ArgumentNullException("callback");
+
             var entry = new Entry(time, callback, id, args);
             InsertIntoList(entry, EntriesScaled);
         }
@@ -65,6 +68,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="args">An optional args object that will be passed to the callback.</param>
         public static void Exact(float time, float repeatInterval, ITimerCallback callback, int id = NoId, object args = null)
         {
+            if (ReferenceEquals(callback, null))
+                throw new ArgumentNullException("callback");
+
             var entry = new Entry(time, callback, id, args)
             {
                 Repeating = true,
@@ -112,6 +118,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="args">An optional args object that will be passed to the callback.</param>
         public static void ExactUnscaled(float time, ITimerCallback callback, int id = NoId, object args = null)
         {
+            if (ReferenceEquals(callback, null))
+                throw new ArgumentNullException("callback");
+
             var entry = new Entry(time, callback, id, args);
             InsertIntoList(entry, EntriesUnscaled);
         }
@@ -126,6 +135,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="args">An optional args object that will be passed to the callback.</param>
         public static void ExactUnscaled(float time, float repeatInterval, ITimerCallback callback, int id = NoId, object args = null)
         {
+            if (ReferenceEquals(callback, null))
+                throw new ArgumentNullException("callback");
+
             var entry = new Entry(time, callback, id, args)
             { 
                 Repeating = true,
@@ -166,6 +178,9 @@ namespace Archon.SwissArmyLib.Events
 
         private static void CancelInternal(ITimerCallback callback, PooledLinkedList<Entry> list)
         {
+            if (ReferenceEquals(callback, null))
+                throw new ArgumentNullException("callback");
+
             var current = list.First;
 
             while (current != null)
@@ -185,6 +200,9 @@ namespace Archon.SwissArmyLib.Events
 
         private static void CancelInternal(ITimerCallback callback, int id, PooledLinkedList<Entry> list)
         {
+            if (ReferenceEquals(callback, null))
+                throw new ArgumentNullException("callback");
+
             var current = list.First;
 
             while (current != null)

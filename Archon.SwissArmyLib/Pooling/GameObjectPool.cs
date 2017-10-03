@@ -26,6 +26,9 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="multiScene">Should the pool and its contents survive a scene change?</param>
         public GameObjectPool(T prefab, bool multiScene) : this(prefab.name, () => Object.Instantiate(prefab), multiScene)
         {
+            if (ReferenceEquals(prefab, null))
+                throw new ArgumentNullException("prefab");
+
             Prefab = prefab;
         }
 
@@ -112,8 +115,8 @@ namespace Archon.SwissArmyLib.Pooling
         /// <inheritdoc />
         public override void Despawn(T target)
         {
-            if (target == null)
-                throw new NullReferenceException("Target is null.");
+            if (ReferenceEquals(target, null))
+                throw new ArgumentNullException("target");
 
             try
             {
@@ -133,6 +136,9 @@ namespace Archon.SwissArmyLib.Pooling
 
         private static GameObject GetGameObject(T obj)
         {
+            if (ReferenceEquals(obj, null))
+                throw new ArgumentNullException("obj");
+
             var component = obj as Component;
             if (component != null)
                 return component.gameObject;

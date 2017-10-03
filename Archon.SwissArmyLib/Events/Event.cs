@@ -60,6 +60,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="priority">The priority of the listener compared to other listeners. Controls whether the listener is called before or after other listeners.</param>
         public void AddListener(IEventListener listener, int priority = 0)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             _listeners.Add(new PrioritizedItem<IEventListener>(listener, priority));
         }
 
@@ -69,6 +72,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="listener">The listener to remove</param>
         public void RemoveListener(IEventListener listener)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             _listeners.Remove(new PrioritizedItem<IEventListener>(listener, 0));
         }
 
@@ -79,6 +85,9 @@ namespace Archon.SwissArmyLib.Events
         /// <returns>True if listening, otherwise false.</returns>
         public bool HasListener(IEventListener listener)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             if (!_isIterating)
                 _listeners.ProcessPending();
 
@@ -182,6 +191,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="priority">The priority of the listener compared to other listeners. Controls whether the listener is called before or after other listeners.</param>
         public void AddListener(IEventListener<T> listener, int priority = 0)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             _listeners.Add(new PrioritizedItem<IEventListener<T>>(listener, priority));
         }
 
@@ -191,6 +203,9 @@ namespace Archon.SwissArmyLib.Events
         /// <param name="listener">The listener to remove</param>
         public void RemoveListener(IEventListener<T> listener)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             _listeners.Remove(new PrioritizedItem<IEventListener<T>>(listener, 0));
         }
 
@@ -201,6 +216,9 @@ namespace Archon.SwissArmyLib.Events
         /// <returns>True if listening, otherwise false.</returns>
         public bool HasListener(IEventListener<T> listener)
         {
+            if (ReferenceEquals(listener, null))
+                throw new ArgumentNullException("listener");
+
             if (!_isIterating)
                 _listeners.ProcessPending();
 

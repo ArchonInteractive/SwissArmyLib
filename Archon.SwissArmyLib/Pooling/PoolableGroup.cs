@@ -1,4 +1,5 @@
-﻿using System.Collections.Generic;
+﻿using System;
+using System.Collections.Generic;
 using System.Linq;
 using Archon.SwissArmyLib.Utils.Editor;
 using JetBrains.Annotations;
@@ -35,6 +36,9 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="poolable">The poolable object that should be notified.</param>
         public void AddManually<T>(T poolable) where T : MonoBehaviour, IPoolable
         {
+            if (ReferenceEquals(poolable, null))
+                throw new ArgumentNullException("poolable");
+
             _poolableComponents.Add(poolable);
         }
 
@@ -44,6 +48,9 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="poolable">The poolable object that should no longer be notified.</param>
         public void RemoveManually<T>(T poolable) where T : MonoBehaviour, IPoolable
         {
+            if (ReferenceEquals(poolable, null))
+                throw new ArgumentNullException("poolable");
+
             _poolableComponents.Remove(poolable);
         }
 

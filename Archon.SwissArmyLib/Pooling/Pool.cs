@@ -34,6 +34,9 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="create">Factory method to use for creating new instances.</param>
         public Pool(Func<T> create)
         {
+            if (ReferenceEquals(create, null))
+                throw new ArgumentNullException("create");
+
             _factory = create;
         }
 
@@ -75,6 +78,9 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="target">The object to despawn.</param>
         public virtual void Despawn(T target)
         {
+            if (ReferenceEquals(target, null))
+                throw new ArgumentNullException("target");
+
 #if !TEST
             // costly check, so we only run it in the editor
             if (Application.isEditor && Free.Contains(target))
@@ -118,6 +124,9 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="unscaledTime">Should the delay be according to <see cref="Time.time"/> or <see cref="Time.unscaledTime"/>?</param>
         public void Despawn(T target, float delay, bool unscaledTime = false)
         {
+            if (ReferenceEquals(target, null))
+                throw new ArgumentNullException("target");
+
             var id = _nextTimerId++;
             _instanceToTimerId[target] = id;
 
@@ -133,6 +142,9 @@ namespace Archon.SwissArmyLib.Pooling
         /// <param name="target">The target that shouldn't despawn after all.</param>
         public void CancelDespawn(T target)
         {
+            if (ReferenceEquals(target, null))
+                throw new ArgumentNullException("target");
+
             _instanceToTimerId.Remove(target);
         }
 
