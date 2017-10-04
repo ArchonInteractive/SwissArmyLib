@@ -17,6 +17,7 @@ namespace Archon.SwissArmyLib.Gravity
         [SerializeField] private bool _isGlobal;
 
         private float _radiusSqr;
+        private Transform _transform;
 
         /// <summary>
         /// The gravitational pull of this point.
@@ -63,6 +64,7 @@ namespace Archon.SwissArmyLib.Gravity
         [UsedImplicitly]
         private void Awake()
         {
+            _transform = transform;
             _radiusSqr = _radius * _radius;
         }
 
@@ -82,20 +84,27 @@ namespace Archon.SwissArmyLib.Gravity
         private void OnDrawGizmos()
         {
             Gizmos.color = Color.magenta;
-            Gizmos.DrawWireSphere(transform.position, Radius);
+            Gizmos.DrawWireSphere(_transform.position, _radius);
         }
 
         /// <inheritdoc />
         public Vector3 GetForceAt(Vector3 location)
         {
-            var deltaPos = transform.position - location;
+            var deltaPos = _transform.position - location;
 
             var sqrDist = deltaPos.sqrMagnitude;
 
-            if (IsGlobal || sqrDist < _radiusSqr)
-                return deltaPos.normalized * DropoffCurve.Evaluate(sqrDist / _radiusSqr) * _strength;
+            if (_isGlobal || sqrDist < _radiusSqr)
+            {
+                var strength = _dropoffCurve.Evaluate(sqrDist / _radiusSqr) * _strength;
+                var force = deltaPos.normalized;
+                force.x *= strength;
+                force.y *= strength;
+                force.z *= strength;
+                return force;
+            }
 
-            return Vector3.zero;
+            return new Vector3();
         }
     }
 }

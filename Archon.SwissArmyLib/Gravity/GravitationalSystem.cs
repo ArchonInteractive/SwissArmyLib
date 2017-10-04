@@ -121,12 +121,18 @@ namespace Archon.SwissArmyLib.Gravity
         /// </summary>
         /// <param name="location">The location to test.</param>
         /// <returns>A vector representing the sum of gravitational force at <paramref name="location"/>.</returns>
-        public Vector3 GetGravityAtPoint(Vector3 location)
+        public static Vector3 GetGravityAtPoint(Vector3 location)
         {
             var gravity = new Vector3();
 
-            for (var i = 0; i < Affecters.Count; i++)
-                gravity += Affecters[i].GetForceAt(location);
+            var affecterCount = Affecters.Count;
+            for (var i = 0; i < affecterCount; i++)
+            {
+                var force = Affecters[i].GetForceAt(location);
+                gravity.x += force.x;
+                gravity.y += force.y;
+                gravity.z += force.z;
+            }
 
             return gravity;
         }
@@ -136,25 +142,34 @@ namespace Archon.SwissArmyLib.Gravity
             if (eventId != ManagedUpdate.EventIds.FixedUpdate)
                 return;
 
-            for (var i = 0; i < Rigidbodies.Count; i++)
+            var rigidbodyCount = Rigidbodies.Count;
+            for (var i = 0; i < rigidbodyCount; i++)
             {
                 var body = Rigidbodies[i];
 
                 if (body.useGravity && !body.IsSleeping())
                 {
                     var gravity = GetGravityAtPoint(body.position);
-                    body.AddForce(gravity);
+                    if (gravity.sqrMagnitude > 0.0001f)
+                        body.AddForce(gravity);
                 }
             }
 
-            for (var i = 0; i < Rigidbodies2D.Count; i++)
+            var rigidbody2DCount = Rigidbodies2D.Count;
+            for (var i = 0; i < rigidbody2DCount; i++)
             {
                 var body = Rigidbodies2D[i];
+                var gravityScale = body.gravityScale;
 
-                if (body.simulated && body.gravityScale > 0 && body.IsAwake())
+                if (body.simulated && gravityScale > 0 && body.IsAwake())
                 {
-                    var gravity = GetGravityAtPoint(body.position);
-                    body.AddForce((Vector2)gravity * body.gravityScale);
+                    Vector2 gravity = GetGravityAtPoint(body.position);
+                    if (gravity.sqrMagnitude < 0.0001f)
+                        continue;
+
+                    gravity.x *= gravityScale;
+                    gravity.y *= gravityScale;
+                    body.AddForce(gravity);
                 }
             }
         }
