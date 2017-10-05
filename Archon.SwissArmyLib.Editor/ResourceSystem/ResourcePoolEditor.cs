@@ -5,12 +5,12 @@ using UnityEngine;
 namespace Archon.SwissArmyLib.Editor.ResourceSystem
 {
     /// <summary>
-    /// Custom editor for <see cref="ResourcePool"/> components.
+    /// Custom editor for <see cref="ResourcePoolBase"/> components.
     /// 
     /// Shows a health bar and debugging buttons.
     /// </summary>
     [CanEditMultipleObjects]
-    [CustomEditor(typeof(ResourcePool), true)]
+    [CustomEditor(typeof(ResourcePoolBase), true)]
     public class ResourcePoolEditor : UnityEditor.Editor
     {
         private float _addVal = 50;
@@ -21,7 +21,7 @@ namespace Archon.SwissArmyLib.Editor.ResourceSystem
         {
             if (targets.Length == 1)
             {
-                var resourcePool = (ResourcePool)target;
+                var resourcePool = (ResourcePoolBase)target;
                 EditorGUILayout.Separator();
                 var containerRect = EditorGUILayout.BeginHorizontal();
                 var barRect = GUILayoutUtility.GetRect(containerRect.width, 20);
@@ -61,7 +61,7 @@ namespace Archon.SwissArmyLib.Editor.ResourceSystem
         protected void Add(float amount)
         {
             for (var i = 0; i < targets.Length; i++)
-                ((ResourcePool)targets[i]).Add(amount);
+                ((ResourcePoolBase)targets[i]).Add(amount);
         }
 
         /// <summary>
@@ -71,7 +71,7 @@ namespace Archon.SwissArmyLib.Editor.ResourceSystem
         protected void Remove(float amount)
         {
             for (var i = 0; i < targets.Length; i++)
-                ((ResourcePool)targets[i]).Remove(amount);
+                ((ResourcePoolBase)targets[i]).Remove(amount);
         }
 
         /// <summary>
@@ -80,7 +80,7 @@ namespace Archon.SwissArmyLib.Editor.ResourceSystem
         protected void Empty()
         {
             for (var i = 0; i < targets.Length; i++)
-                ((ResourcePool)targets[i]).Empty();
+                ((ResourcePoolBase)targets[i]).Empty();
         }
 
         /// <summary>
@@ -89,7 +89,7 @@ namespace Archon.SwissArmyLib.Editor.ResourceSystem
         protected void Fill()
         {
             for (var i = 0; i < targets.Length; i++)
-                ((ResourcePool) targets[i]).Fill();
+                ((ResourcePoolBase) targets[i]).Fill();
         }
 
         /// <summary>
@@ -98,7 +98,7 @@ namespace Archon.SwissArmyLib.Editor.ResourceSystem
         protected void Renew()
         {
             for (var i = 0; i < targets.Length; i++)
-                ((ResourcePool)targets[i]).Renew();
+                ((ResourcePoolBase)targets[i]).Renew();
         }
     }
 }

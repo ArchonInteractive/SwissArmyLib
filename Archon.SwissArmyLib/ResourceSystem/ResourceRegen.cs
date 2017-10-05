@@ -8,17 +8,40 @@ using UnityEngine;
 namespace Archon.SwissArmyLib.ResourceSystem
 {
     /// <summary>
-    /// Adds resource to a pool at a constant rate or in intervals.
+    /// Adds resource to a <see cref="ResourcePool"/> at a constant rate or in intervals.
     /// 
-    /// If the <see cref="Target"/> is not set, it will try to find a resource pool on the same GameObject.
+    /// If the <see cref="ResourceRegen{TSource,TArgs}.Target"/> is not set, it will try to find a <see cref="ResourcePool" /> on the same GameObject.
+    /// 
+    /// If you need type-safety consider subclassing the generic version: <see cref="ResourceRegen{TSource,TArgs}"/>.
+    /// 
+    /// <remarks>
+    ///     This non-generic version only works for the non-generic <see cref="ResourcePool"/>.
+    /// </remarks>
     /// </summary>
-    [RequireComponent(typeof(ResourcePool))]
-    public class ResourceRegen : MonoBehaviour, IEventListener<IResourceChangeEvent>
+    public class ResourceRegen : ResourceRegen<object, object>
     {
         [Tooltip("The target resource pool that should regen.")]
         [SerializeField, ReadOnly(OnlyWhilePlaying = true)]
         private ResourcePool _target;
 
+        /// <inheritdoc />
+        protected override void Awake()
+        {
+            Target = _target;
+            base.Awake();
+        }
+    }
+
+    /// <summary>
+    /// Adds resource to a <see cref="ResourcePool{TSource, TArgs}"/> at a constant rate or in intervals.
+    /// 
+    /// If the <see cref="Target"/> is not set, it will try to find a <see cref="ResourcePool{TSource,TArgs}" /> on the same GameObject.
+    /// 
+    /// Generic version of <see cref="ResourceRegen"/> in case you want type-safety. 
+    /// To be able to use this you should make a non-generic subclass.
+    /// </summary>
+    public class ResourceRegen<TSource, TArgs> : MonoBehaviour, IEventListener<IResourceChangeEvent<TSource, TArgs>>
+    {
         [Tooltip("Time in seconds that regen should be paused when the target loses resource.")]
         [SerializeField] private float _downTimeOnResourceLoss;
 
@@ -30,6 +53,7 @@ namespace Archon.SwissArmyLib.ResourceSystem
         [Tooltip("How often in seconds that resource should be gained.")]
         [SerializeField] private float _interval;
 
+        private ResourcePool<TSource, TArgs> _target;
         private float _lastInterval;
         private float _lastLossTime;
 
@@ -72,7 +96,7 @@ namespace Archon.SwissArmyLib.ResourceSystem
         /// <summary>
         /// Gets or sets the target <see cref="ResourcePool"/> that should regen.
         /// </summary>
-        public ResourcePool Target
+        public ResourcePool<TSource, TArgs> Target
         {
             get { return _target; }
             set
@@ -91,10 +115,10 @@ namespace Archon.SwissArmyLib.ResourceSystem
         /// Called when the MonoBehaviour is added to a GameObject.
         /// </summary>
         [UsedImplicitly]
-        protected void Awake()
+        protected virtual void Awake()
         {
             if (_target == null)
-                _target = GetComponent<ResourcePool>();
+                _target = GetComponent<ResourcePool<TSource, TArgs>>();
         }
 
         /// <summary>
@@ -132,16 +156,16 @@ namespace Archon.SwissArmyLib.ResourceSystem
                 return;
 
             if (Math.Abs(ConstantAmountPerSecond) > 0.001f)
-                _target.Add(ConstantAmountPerSecond * BetterTime.DeltaTime, this);
+                _target.Add(ConstantAmountPerSecond * BetterTime.DeltaTime);
 
             if (Interval > 0 && time > _lastInterval + Interval)
             {
-                _target.Add(AmountPerInterval, this);
+                _target.Add(AmountPerInterval);
                 _lastInterval = time;
             }
         }
 
-        void IEventListener<IResourceChangeEvent>.OnEvent(int eventId, IResourceChangeEvent args)
+        void IEventListener<IResourceChangeEvent<TSource, TArgs>>.OnEvent(int eventId, IResourceChangeEvent<TSource, TArgs> args)
         {
             if (args.AppliedDelta < 0)
                 _lastLossTime = BetterTime.Time;

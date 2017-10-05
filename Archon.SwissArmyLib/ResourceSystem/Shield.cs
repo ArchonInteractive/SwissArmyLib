@@ -6,19 +6,46 @@ using UnityEngine;
 
 namespace Archon.SwissArmyLib.ResourceSystem
 {
+
     /// <summary>
     /// A resource pool that is used to protect another resource pool from getting drained. 
     /// The shield intercepts the event and applies some of the change to itself, only letting part (or none at all) of the change get through.
     /// 
-    /// If the <see cref="ProtectedTarget"/> is not set, it will try to find a resource pool on the same GameObject.
+    /// If the <see cref="Shield{TSource, TArgs}.ProtectedTarget"/> is not set, it will try to find a <see cref="ResourcePool" /> on the same GameObject.
+    /// 
+    /// If you need type-safety consider subclassing the generic version: <see cref="Shield{TSource,TArgs}"/>.
+    /// 
+    /// <remarks>
+    ///     This non-generic version only works for the non-generic <see cref="ResourcePool"/>.
+    /// </remarks>
     /// </summary>
-    public class Shield : ResourcePool, IEventListener<IResourcePreChangeEvent>, IEventListener<IResourceEvent>
+    public class Shield : Shield<object, object>
     {
-        private static readonly List<ResourcePool> GetComponentResults = new List<ResourcePool>();
-            
         [Tooltip("The target resource pool that should be protected.")]
         [SerializeField, ReadOnly(OnlyWhilePlaying = true)]
         private ResourcePool _protectedTarget;
+
+        /// <inheritdoc />
+        protected override void Awake()
+        {
+            ProtectedTarget = _protectedTarget;
+
+            base.Awake();
+        }
+    }
+
+    /// <summary>
+    /// A resource pool that is used to protect another resource pool from getting drained. 
+    /// The shield intercepts the event and applies some of the change to itself, only letting part (or none at all) of the change get through.
+    /// 
+    /// If the <see cref="ProtectedTarget"/> is not set, it will try to find a <see cref="ResourcePool{TSource, TArgs}"/> on the same GameObject.
+    /// 
+    /// Generic version of <see cref="Shield"/> in case you want type-safety. 
+    /// To be able to use this you should make a non-generic subclass.
+    /// </summary>
+    public class Shield<TSource, TArgs> : ResourcePool<TSource, TArgs>, IEventListener<IResourcePreChangeEvent<TSource, TArgs>>, IEventListener<IResourceEvent<TSource, TArgs>>
+    {
+        private static readonly List<ResourcePool<TSource, TArgs>> GetComponentResults = new List<ResourcePool<TSource, TArgs>>();
 
         [Tooltip("Flat amount of removed resource that should be absorbed.")]
         [SerializeField]
@@ -36,10 +63,12 @@ namespace Archon.SwissArmyLib.ResourceSystem
         [SerializeField]
         private bool _renewsWithTarget = true;
 
+        private ResourcePool<TSource, TArgs> _protectedTarget;
+
         /// <summary>
         /// Gets or sets the target that this shield should protect.
         /// </summary>
-        public ResourcePool ProtectedTarget
+        public ResourcePool<TSource, TArgs> ProtectedTarget
         {
             get { return _protectedTarget; }
             set
@@ -135,7 +164,7 @@ namespace Archon.SwissArmyLib.ResourceSystem
         }
 
         /// <inheritdoc />
-        protected override float Change(float delta, object source = null, object args = null, bool forced = false)
+        protected override float Change(float delta, TSource source = default(TSource), TArgs args = default(TArgs), bool forced = false)
         {
             if (_emptiesWithTarget && ProtectedTarget.IsEmpty && !forced)
                 return 0;
@@ -144,7 +173,7 @@ namespace Archon.SwissArmyLib.ResourceSystem
         }
 
         /// <inheritdoc />
-        public void OnEvent(int eventId, IResourcePreChangeEvent args)
+        public void OnEvent(int eventId, IResourcePreChangeEvent<TSource, TArgs> args)
         {
             if (args.ModifiedDelta < 0 && !IsEmpty)
             {
@@ -159,7 +188,7 @@ namespace Archon.SwissArmyLib.ResourceSystem
         }
 
         /// <inheritdoc />
-        public void OnEvent(int eventId, IResourceEvent args)
+        public void OnEvent(int eventId, IResourceEvent<TSource, TArgs> args)
         {
             switch (eventId)
             {
@@ -178,7 +207,7 @@ namespace Archon.SwissArmyLib.ResourceSystem
         /// Attempts to find a different resource pool on this GameObject.
         /// </summary>
         /// <returns>The found pool, or null if none were found.</returns>
-        private ResourcePool GetDefaultTarget()
+        private ResourcePool<TSource, TArgs> GetDefaultTarget()
         {
             GetComponentsInChildren(GetComponentResults);
 

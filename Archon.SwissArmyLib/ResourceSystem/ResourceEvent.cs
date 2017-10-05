@@ -1,8 +1,6 @@
-﻿using JetBrains.Annotations;
-
-namespace Archon.SwissArmyLib.ResourceSystem
+﻿namespace Archon.SwissArmyLib.ResourceSystem
 {
-    internal class ResourceEvent : IResourceChangeEvent, IResourcePreChangeEvent
+    internal class ResourceEvent<TSource, TArgs> : IResourceChangeEvent<TSource, TArgs>, IResourcePreChangeEvent<TSource, TArgs>
     {
         /// <inheritdoc />
         public float OriginalDelta { get; set; }
@@ -14,16 +12,16 @@ namespace Archon.SwissArmyLib.ResourceSystem
         public float AppliedDelta { get; set; }
 
         /// <inheritdoc />
-        public object Source { get; set; }
+        public TSource Source { get; set; }
 
         /// <inheritdoc />
-        public object Args { get; set; }
+        public TArgs Args { get; set; }
     }
 
     /// <summary>
     /// Defines an event for after a resource pool has been changed.
     /// </summary>
-    public interface IResourceChangeEvent : IResourceEvent
+    public interface IResourceChangeEvent<TSource, TArgs> : IResourceEvent<TSource, TArgs>
     {
         /// <summary>
         /// Gets the originally requested resource change.
@@ -31,7 +29,7 @@ namespace Archon.SwissArmyLib.ResourceSystem
         float OriginalDelta { get; }
 
         /// <summary>
-        /// Gets the modified delta after listeners of <see cref="ResourcePool.OnPreChange"/> had their chance to affect it.
+        /// Gets the modified delta after listeners of <see cref="ResourcePool{TSource, TArgs}.OnPreChange"/> had their chance to affect it.
         /// </summary>
         float ModifiedDelta { get; }
 
@@ -45,7 +43,7 @@ namespace Archon.SwissArmyLib.ResourceSystem
     /// <summary>
     /// Defines a change event that has not yet happened, and can be altered.
     /// </summary>
-    public interface IResourcePreChangeEvent : IResourceEvent
+    public interface IResourcePreChangeEvent<TSource, TArgs> : IResourceEvent<TSource, TArgs>
     {
         /// <summary>
         /// Gets the originally requested resource change.
@@ -61,19 +59,16 @@ namespace Archon.SwissArmyLib.ResourceSystem
     /// <summary>
     /// Defines a barebones resource event.
     /// </summary>
-    public interface IResourceEvent
+    public interface IResourceEvent<TSource, TArgs>
     {
         /// <summary>
-        /// Gets the source of the resource change. 
-        /// Can be null.
+        /// Gets or sets the source of the resource change.
         /// </summary>
-        [CanBeNull]
-        object Source { get; }
+        TSource Source { get; set; }
 
         /// <summary>
-        /// Gets the args that the sender sent with the change.
+        /// Gets or sets the args that the sender sent with the change.
         /// </summary>
-        [CanBeNull]
-        object Args { get; }
+        TArgs Args { get; set; }
     }
 }

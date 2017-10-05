@@ -94,6 +94,7 @@
     <Compile Include="Pooling\PoolableGroup.cs" />
     <Compile Include="ResourceSystem\ResourceEvent.cs" />
     <Compile Include="ResourceSystem\ResourcePool.cs" />
+    <Compile Include="ResourceSystem\ResourcePoolBase.cs" />
     <Compile Include="ResourceSystem\ResourceRegen.cs" />
     <Compile Include="ResourceSystem\Shield.cs" />
     <Compile Include="Utils\BetterTime.cs" />
