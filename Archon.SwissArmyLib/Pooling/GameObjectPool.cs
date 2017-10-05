@@ -160,9 +160,9 @@ namespace Archon.SwissArmyLib.Pooling
             var gameObject = GetGameObject(obj);
 
             var transform = gameObject.transform;
+            transform.SetParent(parent, false);
             transform.position = position;
             transform.rotation = rotation;
-            transform.SetParent(parent, false);
 
             OnSpawned(obj);
 
