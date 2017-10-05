@@ -19,7 +19,9 @@ environment:
 before_build:
 - cmd: >-
     nuget restore Archon.SwissArmyLib.sln
+    
     nuget install EWSoftware.SHFB -Version 2017.5.15
+
     nuget install EWSoftware.SHFB.NETFramework -Version 4.7.0
 build:
   project: Archon.SwissArmyLib.sln
@@ -27,8 +29,11 @@ build:
 after_build:
 - ps: >-
     if ($env:CONFIGURATION -ne "Test") {
+
     jar -cMf "./SwissArmyLib-${env:APPVEYOR_BUILD_VERSION}.zip" -C "./bin/${env:CONFIGURATION}" .
+
     jar -cMf "./SwissArmyLib-${env:APPVEYOR_BUILD_VERSION}-Docs.zip" -C ./Documentation/Help .
+
     }
 test:
   assemblies:
