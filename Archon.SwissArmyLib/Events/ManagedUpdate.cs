@@ -47,9 +47,9 @@ namespace Archon.SwissArmyLib.Events
         {
 #pragma warning disable 1591
             public const int
-                Update = -1000,
-                LateUpdate = -1001,
-                FixedUpdate = -1002;
+                Update = BuiltinEventIds.Update,
+                LateUpdate = BuiltinEventIds.LateUpdate,
+                FixedUpdate = BuiltinEventIds.FixedUpdate;
 #pragma warning restore 1591
         }
 

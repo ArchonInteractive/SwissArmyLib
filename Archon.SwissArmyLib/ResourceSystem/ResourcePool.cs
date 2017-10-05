@@ -37,11 +37,11 @@ namespace Archon.SwissArmyLib.ResourceSystem
         {
 #pragma warning disable 1591
             public const int
-                PreChange = -8000,
-                Change = -8001,
-                Empty = -8002,
-                Full = -8003,
-                Renew = -8004;
+                PreChange = BuiltinEventIds.PreChange,
+                Change = BuiltinEventIds.Change,
+                Empty = BuiltinEventIds.Empty,
+                Full = BuiltinEventIds.Full,
+                Renew = BuiltinEventIds.Renew;
 #pragma warning restore 1591
         }
 
