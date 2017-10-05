@@ -81,9 +81,9 @@ namespace Archon.SwissArmyLib.Pooling
         }
 
         /// <inheritdoc />
-        public override T Spawn()
+        protected override T SpawnInternal()
         {
-            var obj = base.Spawn();
+            var obj = base.SpawnInternal();
 
             var gameObject = GetGameObject(obj);
             gameObject.transform.SetParent(null, false);
@@ -98,16 +98,73 @@ namespace Archon.SwissArmyLib.Pooling
         /// Spawns a recycled object if there's one available, otherwise creates a new instance.
         /// </summary>
         /// <returns>The spawned object.</returns>
-        public T Spawn(Vector3 position, Quaternion rotation, Transform parent)
+        public T Spawn(Transform parent)
         {
-            var obj = Spawn();
+            var obj = SpawnInternal();
+
+            var gameObject = GetGameObject(obj);
+
+            var transform = gameObject.transform;
+            transform.SetParent(parent, false);
+
+            OnSpawned(obj);
+
+            return obj;
+        }
+
+        /// <summary>
+        /// Spawns a recycled object if there's one available, otherwise creates a new instance.
+        /// </summary>
+        /// <returns>The spawned object.</returns>
+        public T Spawn(Vector3 position)
+        {
+            var obj = SpawnInternal();
+
+            var gameObject = GetGameObject(obj);
+
+            var transform = gameObject.transform;
+            transform.position = position;
+
+            OnSpawned(obj);
+
+            return obj;
+        }
+
+        /// <summary>
+        /// Spawns a recycled object if there's one available, otherwise creates a new instance.
+        /// </summary>
+        /// <returns>The spawned object.</returns>
+        public T Spawn(Vector3 position, Quaternion rotation)
+        {
+            var obj = SpawnInternal();
 
             var gameObject = GetGameObject(obj);
 
             var transform = gameObject.transform;
             transform.position = position;
             transform.rotation = rotation;
-            transform.parent = parent;
+
+            OnSpawned(obj);
+
+            return obj;
+        }
+
+        /// <summary>
+        /// Spawns a recycled object if there's one available, otherwise creates a new instance.
+        /// </summary>
+        /// <returns>The spawned object.</returns>
+        public T Spawn(Vector3 position, Quaternion rotation, Transform parent)
+        {
+            var obj = SpawnInternal();
+
+            var gameObject = GetGameObject(obj);
+
+            var transform = gameObject.transform;
+            transform.position = position;
+            transform.rotation = rotation;
+            transform.SetParent(parent, false);
+
+            OnSpawned(obj);
 
             return obj;
         }

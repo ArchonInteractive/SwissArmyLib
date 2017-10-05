@@ -59,9 +59,22 @@ namespace Archon.SwissArmyLib.Pooling
         /// Spawns a recycled object if there's one available, otherwise creates a new instance.
         /// </summary>
         /// <returns>The spawned object.</returns>
-        public virtual T Spawn()
+        public T Spawn()
+        {
+            var obj = SpawnInternal();
+            OnSpawned(obj);
+
+            return obj;
+        }
+
+        /// <summary>
+        /// Recycles or creates a object if there's one available without calling <see cref="OnSpawned"/>.
+        /// </summary>
+        /// <returns>The spawned object.</returns>
+        protected virtual T SpawnInternal()
         {
             T obj;
+
             if (Free.Count > 0)
             {
                 obj = Free[Free.Count - 1];
@@ -69,8 +82,6 @@ namespace Archon.SwissArmyLib.Pooling
             }
             else
                 obj = _factory();
-
-            OnSpawned(obj);
 
             return obj;
         }

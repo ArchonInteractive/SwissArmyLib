@@ -60,6 +60,57 @@ namespace Archon.SwissArmyLib.Pooling
         /// Spawns a recycled object if there's one available, otherwise creates a new instance.
         /// </summary>
         /// <returns>The spawned object.</returns>
+        public static T Spawn<T>(T prefab, Transform parent)
+            where T : Object
+        {
+            if (ReferenceEquals(prefab, null))
+                throw new ArgumentNullException("prefab");
+
+            var pool = GetPool(prefab);
+            var obj = pool.Spawn(parent);
+            InstanceToPrefab[obj] = prefab;
+
+            return obj as T;
+        }
+
+        /// <summary>
+        /// Spawns a recycled object if there's one available, otherwise creates a new instance.
+        /// </summary>
+        /// <returns>The spawned object.</returns>
+        public static T Spawn<T>(T prefab, Vector3 position)
+            where T : Object
+        {
+            if (ReferenceEquals(prefab, null))
+                throw new ArgumentNullException("prefab");
+
+            var pool = GetPool(prefab);
+            var obj = pool.Spawn(position);
+            InstanceToPrefab[obj] = prefab;
+
+            return obj as T;
+        }
+
+        /// <summary>
+        /// Spawns a recycled object if there's one available, otherwise creates a new instance.
+        /// </summary>
+        /// <returns>The spawned object.</returns>
+        public static T Spawn<T>(T prefab, Vector3 position, Quaternion rotation)
+            where T : Object
+        {
+            if (ReferenceEquals(prefab, null))
+                throw new ArgumentNullException("prefab");
+
+            var pool = GetPool(prefab);
+            var obj = pool.Spawn(position, rotation);
+            InstanceToPrefab[obj] = prefab;
+
+            return obj as T;
+        }
+
+        /// <summary>
+        /// Spawns a recycled object if there's one available, otherwise creates a new instance.
+        /// </summary>
+        /// <returns>The spawned object.</returns>
         public static T Spawn<T>(T prefab, Vector3 position, Quaternion rotation, Transform parent)
             where T : Object
         {
