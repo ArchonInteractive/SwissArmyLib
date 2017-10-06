@@ -122,7 +122,7 @@ namespace Archon.SwissArmyLib.Pooling
             var gameObject = GetGameObject(obj);
 
             var transform = gameObject.transform;
-            transform.position = position;
+            transform.SetPositionAndRotation(position, Quaternion.identity);
 
             OnSpawned(obj);
 
@@ -140,8 +140,7 @@ namespace Archon.SwissArmyLib.Pooling
             var gameObject = GetGameObject(obj);
 
             var transform = gameObject.transform;
-            transform.position = position;
-            transform.rotation = rotation;
+            transform.SetPositionAndRotation(position, rotation);
 
             OnSpawned(obj);
 
@@ -160,8 +159,7 @@ namespace Archon.SwissArmyLib.Pooling
 
             var transform = gameObject.transform;
             transform.SetParent(parent, false);
-            transform.position = position;
-            transform.rotation = rotation;
+            transform.SetPositionAndRotation(position, rotation);
 
             OnSpawned(obj);
 
