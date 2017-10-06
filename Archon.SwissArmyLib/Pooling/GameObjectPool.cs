@@ -89,7 +89,6 @@ namespace Archon.SwissArmyLib.Pooling
             gameObject.transform.SetParent(null, false);
             if (_multiScene)
                 SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetActiveScene());
-            gameObject.SetActive(true);
 
             return obj;
         }
@@ -189,6 +188,15 @@ namespace Archon.SwissArmyLib.Pooling
 
             var transform = gameObject.transform;
             transform.SetParent(_root, false);
+        }
+
+        /// <inheritdoc />
+        protected override void OnSpawned(T target)
+        {
+            var gameObject = GetGameObject(target);
+            gameObject.SetActive(true);
+
+            base.OnSpawned(target);
         }
 
         private static GameObject GetGameObject(T obj)
