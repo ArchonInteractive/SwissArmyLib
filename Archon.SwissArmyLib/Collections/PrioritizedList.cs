@@ -1,7 +1,6 @@
 ﻿using System;
 using System.Collections;
 using System.Collections.Generic;
-using System.ComponentModel;
 
 namespace Archon.SwissArmyLib.Collections
 {
@@ -58,6 +57,22 @@ namespace Archon.SwissArmyLib.Collections
         {
             return !left.Equals(right);
         }
+    }
+
+    /// <summary>
+    /// Specifies the direction of a sort operation.
+    /// </summary>
+    public enum ListSortDirection
+    {
+        /// <summary>
+        /// Sorts in ascending order.
+        /// </summary>
+        Ascending,
+
+        /// <summary>
+        /// Sorts in descending order.
+        /// </summary>
+        Descending,
     }
 
     /// <summary>
