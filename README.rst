@@ -32,59 +32,92 @@ This project is under the very permissive MIT license and we honestly do not car
 Features
 --------
 
-* `Events <https://swissarmylib-docs.readthedocs.io/en/latest/Events/Event.html>`_
-    * Supports both interface and delegate listeners
-    * Can be prioritized to control call order
-    * Check out `GlobalEvents <Events/GlobalEvents>`_ if you need.. well.. global events.
-* `Timers <https://swissarmylib-docs.readthedocs.io/en/latest/Events/TellMeWhen.html>`_
-    * Supports both scaled and unscaled time
-    * Optional arbitrary args to pass in
-    * Also uses interfaces for callbacks to avoid garbage
-* `Coroutines <https://swissarmylib-docs.readthedocs.io/en/latest/Coroutines/BetterCoroutines.html>`_
-    * More performant alternative to Unity's coroutines with a very similar API.
-* `Automata <https://swissarmylib-docs.readthedocs.io/en/latest/Automata/index.html>`_
-    * `Finite State Machine <https://swissarmylib-docs.readthedocs.io/en/latest/Automata/Finite%20State%20Machine.html>`_
-    * `Pushdown Automaton <https://swissarmylib-docs.readthedocs.io/en/latest/Automata/Pushdown%20Automaton.html>`_
-* `Pooling <https://swissarmylib-docs.readthedocs.io/en/latest/Pooling/index.html>`_
-    * Support for both arbitrary classes and GameObjects
-    * `IPoolable <https://swissarmylib-docs.readthedocs.io/en/latest/Pooling/IPoolable.html>`_ interface for callbacks
-        * `PoolableGroup <https://swissarmylib-docs.readthedocs.io/en/latest/Pooling/PoolableGroup.html>`_ component in case multiple IPoolable components needs to be notified
-    * Timed despawns
-* `Service Locator <https://swissarmylib-docs.readthedocs.io/en/latest/Utils/Service%20Locator.html>`_
-    * An implementation of the Service Locator pattern
-    * Aware of MonoBehaviours and how to work with them
-    * Supports scene-specific resolvers
-    * Supports both singletons and short-lived objects
-        * Singletons can be lazy loaded
-* `Managed Update Loop <https://swissarmylib-docs.readthedocs.io/en/latest/Events/ManagedUpdate.html>`_
-    * An update loop maintained in managed space to avoid the `overhead of Native C++ --> Managed C# <https://blogs.unity3d.com/2015/12/23/1k-update-calls/>`_
-    * Useful for non-MonoBehaviours that needs to be part of the update loop
-    * Optional `ManagedUpdateBehaviour <https://swissarmylib-docs.readthedocs.io/en/latest/Events/ManagedUpdateBehaviour.html>`_ class for easy usage
-* `Spatial Partitioning <https://swissarmylib-docs.readthedocs.io/en/latest/Partitioning/index.html>`_
-    * GC-friendly implementations of common space-partitioning systems
-* `Resource Pool <https://swissarmylib-docs.readthedocs.io/en/latest/Resource%20System/index.html>`_
-    * Generic and flexible resource pool (health, mana, energy etc.)
-* Gravity
-    * Flexible gravitational system
-    * Useful for planet gravity, black holes, magnets and all that sort of stuff.
-* Misc
-    * `BetterTime <https://swissarmylib-docs.readthedocs.io/en/latest/Utils/BetterTime.html>`_
-        * A wrapper for Unity's static Time class that caches the values per frame to avoid the marshal overhead.
-        * About 4x faster than using the Time class directly, but we're talking miniscule differences here.
-    * Shake
-        * Useful for creating proper screen shake
-    * `Some collection types <https://swissarmylib-docs.readthedocs.io/en/latest/Collections/index.html>`_
-    * `Some useful attributes <https://swissarmylib-docs.readthedocs.io/en/latest/Utils/Attributes/index.html>`_
-        * `ExecutionOrder <https://swissarmylib-docs.readthedocs.io/en/latest/Utils/Attributes/ExecutionOrder.html>`_
-            * Sets a default (or forces) an execution order for a MonoBehaviour
-        * `ReadOnly <https://swissarmylib-docs.readthedocs.io/en/latest/Utils/Attributes/ReadOnly.html>`_
-            * Makes fields uninteractable in the inspector
-    * A few other tiny utilities
+*   Events_
+
+    -   Supports both interface and delegate listeners
+    -   Can be prioritized to control call order
+    -   Check out GlobalEvents_ if you need.. well.. global events.
+      
+*   Timers_
+
+    -   Supports both scaled and unscaled time
+    -   Optional arbitrary args to pass in
+    -   Also uses interfaces for callbacks to avoid garbage
+    
+*   Coroutines_
+
+    -   More performant alternative to Unity's coroutines with a very similar API.
+    
+*   Automata_
+
+    -   `Finite State Machine`_
+    -   `Pushdown Automaton`_
+
+*   Pooling_
+
+    -   Support for both arbitrary classes and GameObjects
+    -   IPoolable_ interface for callbacks
+
+        +   PoolableGroup_ component in case multiple IPoolable components needs to be notified
+
+    -   Timed despawns
+
+*   `Service Locator`_
+
+    -   An implementation of the Service Locator pattern
+    -   Aware of MonoBehaviours and how to work with them
+    -   Supports scene-specific resolvers
+    -   Supports both singletons and short-lived objects
+
+        +   Singletons can be lazy loaded
+
+*   `Managed Update Loop`_
+
+    -   An update loop maintained in managed space to avoid the `overhead of Native C++ --> Managed C# <https://blogs.unity3d.com/2015/12/23/1k-update-calls/>`_
+    -   Useful for non-MonoBehaviours that needs to be part of the update loop
+    -   Optional ManagedUpdateBehaviour_ class for easy usage
+
+*   `Spatial Partitioning`_
+
+    -   GC-friendly implementations of common space-partitioning systems
+
+*   `Resource Pool`_
+
+    -   Generic and flexible resource pool (health, mana, energy etc.)
+
+*   Gravity
+
+    -   Flexible gravitational system
+    -   Useful for planet gravity, black holes, magnets and all that sort of stuff.
+
+*   Misc
+
+    -   BetterTime_
+
+        +   A wrapper for Unity's static Time class that caches the values per frame to avoid the marshal overhead.
+        +   About 4x faster than using the Time class directly, but we're talking miniscule differences here.
+
+    -   Shake
+
+        +   Useful for creating proper screen shake
+
+    -   `Some collection types`_
+    -   `Some useful attributes`_
+        
+        +   ExecutionOrder_
+
+            *   Sets a default (or forces) an execution order for a MonoBehaviour
+
+        +   ReadOnly_
+
+            *   Makes fields uninteractable in the inspector
+
+    -   A few other tiny utilities
 
 Download
 ~~~~~~~~
-Binaries for the bleeding edge can be found `here <https://bintray.com/phault/SwissArmyLib/development/_latestVersion#files>`_.
-Alternatively you can either `build it yourself <https://swissarmylib-docs.readthedocs.io/en/latest/Getting%20Started.html#building-the-source>`_ (very easily) or simply `copy the source code into your Unity project <https://swissarmylib-docs.readthedocs.io/en/latest/Getting%20Started.html#method-2-copy-source>`_ and call it a day.
+Binaries for the bleeding edge can be found `here <download_>`_.
+Alternatively you can either `build it yourself <building_>`_ (very easily) or simply `copy the source code into your Unity project <copysource_>`_ and call it a day.
 
 License
 ~~~~~~~
@@ -97,3 +130,28 @@ Pull requests are very welcome!
 I might deny new features if they're too niche though, but it's still very much appreciated!
 
 If you're looking for a way to contribute, please consider helping with the documentation at `this repository <https://github.com/ArchonInteractive/SwissArmyLib-docs>`_.
+
+.. _download: https://bintray.com/phault/SwissArmyLib/development/_latestVersion#files
+.. _building: https://swissarmylib-docs.readthedocs.io/en/latest/Getting%20Started.html#building-the-source
+.. _copysource: https://swissarmylib-docs.readthedocs.io/en/latest/Getting%20Started.html#method-2-copy-source
+
+.. _Events: https://swissarmylib-docs.readthedocs.io/en/latest/Events/Event.html
+.. _GlobalEvents: https://swissarmylib-docs.readthedocs.io/en/latest/Events/GlobalEvents.html
+.. _Timers: https://swissarmylib-docs.readthedocs.io/en/latest/Events/TellMeWhen.html
+.. _Coroutines: https://swissarmylib-docs.readthedocs.io/en/latest/Coroutines/BetterCoroutines.html
+.. _Automata: https://swissarmylib-docs.readthedocs.io/en/latest/Automata/index.html
+.. _Finite State Machine: https://swissarmylib-docs.readthedocs.io/en/latest/Automata/Finite%20State%20Machine.html
+.. _Pushdown Automaton: https://swissarmylib-docs.readthedocs.io/en/latest/Automata/Pushdown%20Automaton.html
+.. _Pooling: https://swissarmylib-docs.readthedocs.io/en/latest/Pooling/index.html
+.. _IPoolable: https://swissarmylib-docs.readthedocs.io/en/latest/Pooling/IPoolable.html
+.. _PoolableGroup: https://swissarmylib-docs.readthedocs.io/en/latest/Pooling/PoolableGroup.html
+.. _Service Locator: https://swissarmylib-docs.readthedocs.io/en/latest/Utils/Service%20Locator.html
+.. _Managed Update Loop: https://swissarmylib-docs.readthedocs.io/en/latest/Events/ManagedUpdate.html
+.. _ManagedUpdateBehaviour: https://swissarmylib-docs.readthedocs.io/en/latest/Events/ManagedUpdateBehaviour.html
+.. _Spatial Partitioning: https://swissarmylib-docs.readthedocs.io/en/latest/Partitioning/index.html
+.. _Resource Pool: https://swissarmylib-docs.readthedocs.io/en/latest/Resource%20System/index.html
+.. _BetterTime: https://swissarmylib-docs.readthedocs.io/en/latest/Utils/BetterTime.html
+.. _Some collection types: https://swissarmylib-docs.readthedocs.io/en/latest/Collections/index.html
+.. _Some useful attributes: https://swissarmylib-docs.readthedocs.io/en/latest/Utils/Attributes/index.html
+.. _ExecutionOrder: https://swissarmylib-docs.readthedocs.io/en/latest/Utils/Attributes/ExecutionOrder.html
+.. _ReadOnly: https://swissarmylib-docs.readthedocs.io/en/latest/Utils/Attributes/ReadOnly.html
