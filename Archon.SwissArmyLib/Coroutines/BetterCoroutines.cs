@@ -176,8 +176,10 @@ namespace Archon.SwissArmyLib.Coroutines
             if (!continueRunning)
             {
                 IdToCoroutine.Remove(coroutine.Id);
-                PoolHelper<BetterCoroutine>.Despawn(coroutine);
                 list.Remove(coroutine);
+                if (coroutine.Parent != null)
+                    coroutine.Parent.Child = null;
+                PoolHelper<BetterCoroutine>.Despawn(coroutine);
             }
 
             _current = prevCurrent;
