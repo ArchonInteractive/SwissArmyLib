@@ -8,7 +8,9 @@
 #pragma warning disable 1591
         Update,
         LateUpdate,
-        FixedUpdate
+        FixedUpdate,
+        FrameIntervalUpdate,
+        TimeIntervalUpdate
 #pragma warning restore 1591
     }
 }

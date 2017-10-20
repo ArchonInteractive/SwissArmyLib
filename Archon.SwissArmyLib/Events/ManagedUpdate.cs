@@ -17,6 +17,8 @@ namespace Archon.SwissArmyLib.Events
     ///     <item><description><see cref="OnUpdate"/></description></item>
     ///     <item><description><see cref="OnLateUpdate"/></description></item>
     ///     <item><description><see cref="OnFixedUpdate"/></description></item>
+    ///     <item><description><see cref="OnFrameIntervalUpdate"/></description></item>
+    ///     <item><description><see cref="OnTimeIntervalUpdate"/></description></item>
     /// </list>
     /// 
     /// <seealso cref="ManagedUpdateBehaviour"/>
@@ -41,15 +43,76 @@ namespace Archon.SwissArmyLib.Events
         public static readonly Event OnFixedUpdate = new Event(EventIds.FixedUpdate);
 
         /// <summary>
+        /// Event handler that is called every nth update.
+        /// </summary>
+        public static readonly Event OnFrameIntervalUpdate = new Event(EventIds.FrameIntervalUpdate);
+
+        /// <summary>
+        /// Event handler that is called every nth unscaled second.
+        /// </summary>
+        public static readonly Event OnTimeIntervalUpdate = new Event(EventIds.TimeIntervalUpdate);
+
+        /// <summary>
+        /// Gets or sets the interval (in frames) at which <see cref="OnFrameIntervalUpdate"/> is invoked.
+        /// </summary>
+        public static int FrameInterval
+        {
+            get { return _frameInterval; }
+            set
+            {
+                _frameInterval = value;
+                _nextFrameUpdate = BetterTime.FrameCount + value;
+            }
+        }
+
+        /// <summary>
+        /// Gets or sets the interval (in unscaled seconds) at which <see cref="OnTimeIntervalUpdate"/> is invoked.
+        /// </summary>
+        public static float TimeInterval
+        {
+            get { return _timeInterval; }
+            set
+            {
+                _timeInterval = value;
+                _nextTimeUpdate = BetterTime.UnscaledTime + value;
+            }
+        }
+
+        /// <summary>
+        /// Gets the difference in seconds since the previous update of the currently running type. (Scaled according to <see cref="Time.timeScale"/>)
+        /// </summary>
+        public static float DeltaTime { get; private set; }
+
+        /// <summary>
+        /// Gets the unscaled difference in seconds since the previous update of the currently running type.
+        /// </summary>
+        public static float UnscaledDeltaTime { get; private set; }
+
+        private static float _nextTimeUpdate = float.MinValue;
+        private static int _nextFrameUpdate = int.MinValue;
+
+        private static float _lastFrameUpdateTime;
+        private static float _lastFrameUpdateUnscaledTime;
+        private static float _lastTimeUpdateTime;
+        private static float _lastTimeUpdateUnscaledTime;
+
+        private static int _frameInterval = 10;
+        private static float _timeInterval = 1/7f;
+
+        /// <summary>
         /// Relayed event ids.
         /// </summary>
         public static class EventIds
         {
 #pragma warning disable 1591
             public const int
+                // ReSharper disable MemberHidesStaticFromOuterClass
                 Update = BuiltinEventIds.Update,
                 LateUpdate = BuiltinEventIds.LateUpdate,
-                FixedUpdate = BuiltinEventIds.FixedUpdate;
+                FixedUpdate = BuiltinEventIds.FixedUpdate,
+                // ReSharper restore MemberHidesStaticFromOuterClass
+                FrameIntervalUpdate = BuiltinEventIds.FrameIntervalUpdate,
+                TimeIntervalUpdate = BuiltinEventIds.TimeIntervalUpdate;
 #pragma warning restore 1591
         }
 
@@ -59,6 +122,55 @@ namespace Archon.SwissArmyLib.Events
                 ServiceLocator.RegisterSingleton<ManagedUpdateTicker>();
 
             ServiceLocator.GlobalReset += () => ServiceLocator.RegisterSingleton<ManagedUpdateTicker>();
+        }
+
+        internal static void Update()
+        {
+            DeltaTime = BetterTime.DeltaTime;
+            UnscaledDeltaTime = BetterTime.UnscaledDeltaTime;
+            OnUpdate.Invoke();
+
+            var time = BetterTime.Time;
+            var unscaledTime = BetterTime.UnscaledTime;
+            var frameCount = BetterTime.FrameCount;
+
+            if (frameCount >= _nextFrameUpdate)
+            {
+                DeltaTime = time - _lastFrameUpdateTime;
+                UnscaledDeltaTime = unscaledTime - _lastFrameUpdateUnscaledTime;
+
+                OnFrameIntervalUpdate.Invoke();
+
+                _lastFrameUpdateTime = time;
+                _lastFrameUpdateUnscaledTime = unscaledTime;
+                _nextFrameUpdate = frameCount + _frameInterval;
+            }
+
+            if (unscaledTime >= _nextTimeUpdate)
+            {
+                DeltaTime = time - _lastTimeUpdateTime;
+                UnscaledDeltaTime = unscaledTime - _lastTimeUpdateUnscaledTime;
+
+                OnTimeIntervalUpdate.Invoke();
+
+                _lastTimeUpdateTime = time;
+                _lastTimeUpdateUnscaledTime = unscaledTime;
+                _nextTimeUpdate = unscaledTime + TimeInterval;
+            }
+        }
+
+        internal static void LateUpdate()
+        {
+            DeltaTime = BetterTime.DeltaTime;
+            UnscaledDeltaTime = BetterTime.UnscaledDeltaTime;
+            OnLateUpdate.Invoke();
+        }
+
+        internal static void FixedUpdate()
+        {
+            DeltaTime = BetterTime.FixedDeltaTime;
+            UnscaledDeltaTime = BetterTime.FixedUnscaledDeltaTime;
+            OnFixedUpdate.Invoke();
         }
     }
 
@@ -79,19 +191,19 @@ namespace Archon.SwissArmyLib.Events
         [UsedImplicitly]
         private void Update()
         {
-            ManagedUpdate.OnUpdate.Invoke();
+            ManagedUpdate.Update();
         }
 
         [UsedImplicitly]
         private void LateUpdate()
         {
-            ManagedUpdate.OnLateUpdate.Invoke();
+            ManagedUpdate.LateUpdate();
         }
 
         [UsedImplicitly]
         private void FixedUpdate()
         {
-            ManagedUpdate.OnFixedUpdate.Invoke();
+            ManagedUpdate.FixedUpdate();
         }
     }
 }

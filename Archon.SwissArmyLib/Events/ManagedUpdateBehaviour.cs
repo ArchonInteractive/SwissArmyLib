@@ -37,6 +37,28 @@ namespace Archon.SwissArmyLib.Events
     }
 
     /// <summary>
+    /// Makes a <see cref="ManagedUpdateBehaviour"/> subclass get notified on a frame-based interval update.
+    /// </summary>
+    public interface IFrameIntervalUpdateable
+    {
+        /// <summary>
+        /// Called every Nth frame according to <see cref="ManagedUpdate.FrameInterval"/>.
+        /// </summary>
+        void OnFrameIntervalUpdate();
+    }
+
+    /// <summary>
+    /// Makes a <see cref="ManagedUpdateBehaviour"/> subclass get notified on a time-based interval update.
+    /// </summary>
+    public interface ITimeIntervalUpdateable
+    {
+        /// <summary>
+        /// Called every Nth unscaled second according to <see cref="ManagedUpdate.TimeInterval"/>.
+        /// </summary>
+        void OnTimeIntervalUpdate();
+    }
+
+    /// <summary>
     /// A subclass of MonoBehaviour that uses <see cref="ManagedUpdate"/> for update events.
     /// </summary>
     public abstract class ManagedUpdateBehaviour : MonoBehaviour, IEventListener
@@ -53,6 +75,8 @@ namespace Archon.SwissArmyLib.Events
         private IUpdateable _updateable;
         private ILateUpdateable _lateUpdateable;
         private IFixedUpdateable _fixedUpdateable;
+        private IFrameIntervalUpdateable _frameIntervalUpdateable;
+        private ITimeIntervalUpdateable _timeIntervalUpdateable;
 
         /// <summary>
         /// Start is called on the frame when a script is enabled just before any of the Update methods is called the first time.
@@ -63,11 +87,15 @@ namespace Archon.SwissArmyLib.Events
             _updateable = this as IUpdateable;
             _lateUpdateable = this as ILateUpdateable;
             _fixedUpdateable = this as IFixedUpdateable;
+            _frameIntervalUpdateable = this as IFrameIntervalUpdateable;
+            _timeIntervalUpdateable = this as ITimeIntervalUpdateable;
             // ReSharper restore SuspiciousTypeConversion.Global
 
             if (_updateable == null
                 && _lateUpdateable == null
-                && _fixedUpdateable == null)
+                && _fixedUpdateable == null
+                && _frameIntervalUpdateable == null
+                && _timeIntervalUpdateable == null)
             {
                 Debug.LogWarning("This component doesn't implement any update interfaces.");
             }
@@ -88,6 +116,8 @@ namespace Archon.SwissArmyLib.Events
                 if (_updateable == null) _updateable = this as IUpdateable;
                 if (_lateUpdateable == null) _lateUpdateable = this as ILateUpdateable;
                 if (_fixedUpdateable == null) _fixedUpdateable = this as IFixedUpdateable;
+                if (_frameIntervalUpdateable == null) _frameIntervalUpdateable = this as IFrameIntervalUpdateable;
+                if (_timeIntervalUpdateable == null) _timeIntervalUpdateable = this as ITimeIntervalUpdateable;
                 // ReSharper restore SuspiciousTypeConversion.Global
             }
 
@@ -119,6 +149,10 @@ namespace Archon.SwissArmyLib.Events
                 ManagedUpdate.OnLateUpdate.AddListener(this, ExecutionOrder);
             if (_fixedUpdateable != null)
                 ManagedUpdate.OnFixedUpdate.AddListener(this, ExecutionOrder);
+            if (_frameIntervalUpdateable != null)
+                ManagedUpdate.OnFrameIntervalUpdate.AddListener(this, ExecutionOrder);
+            if (_timeIntervalUpdateable != null)
+                ManagedUpdate.OnTimeIntervalUpdate.AddListener(this, ExecutionOrder);
 
             _isListening = true;
         }
@@ -137,6 +171,10 @@ namespace Archon.SwissArmyLib.Events
                 ManagedUpdate.OnLateUpdate.RemoveListener(this);
             if (_fixedUpdateable != null)
                 ManagedUpdate.OnFixedUpdate.RemoveListener(this);
+            if (_frameIntervalUpdateable != null)
+                ManagedUpdate.OnFrameIntervalUpdate.RemoveListener(this);
+            if (_timeIntervalUpdateable != null)
+                ManagedUpdate.OnTimeIntervalUpdate.RemoveListener(this);
 
             _isListening = false;
         }
@@ -154,6 +192,12 @@ namespace Archon.SwissArmyLib.Events
                     return;
                 case EventIds.FixedUpdate:
                     _fixedUpdateable.OnFixedUpdate();
+                    return;
+                case EventIds.FrameIntervalUpdate:
+                    _frameIntervalUpdateable.OnFrameIntervalUpdate();
+                    return;
+                case EventIds.TimeIntervalUpdate:
+                    _timeIntervalUpdateable.OnTimeIntervalUpdate();
                     return;
             }
         }
