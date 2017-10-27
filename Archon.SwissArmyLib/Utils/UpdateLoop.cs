@@ -1,4 +1,4 @@
-﻿namespace Archon.SwissArmyLib.Coroutines
+﻿namespace Archon.SwissArmyLib.Utils
 {
     /// <summary>
     /// Unity's update loops.
@@ -9,8 +9,6 @@
         Update,
         LateUpdate,
         FixedUpdate,
-        FrameIntervalUpdate,
-        TimeIntervalUpdate
 #pragma warning restore 1591
     }
 }

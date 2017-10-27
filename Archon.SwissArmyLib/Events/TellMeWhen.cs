@@ -31,7 +31,7 @@ namespace Archon.SwissArmyLib.Events
 
         private TellMeWhen()
         {
-            ManagedUpdate.OnUpdate.AddListener(this);
+            Loops.ManagedUpdate.OnUpdate.AddListener(this);
         }
 
         /// <summary>
@@ -39,7 +39,7 @@ namespace Archon.SwissArmyLib.Events
         /// </summary>
         ~TellMeWhen()
         {
-            ManagedUpdate.OnUpdate.RemoveListener(this);
+            Loops.ManagedUpdate.OnUpdate.RemoveListener(this);
         }
 
         /// <summary>
@@ -356,7 +356,7 @@ namespace Archon.SwissArmyLib.Events
 
         void IEventListener.OnEvent(int eventId)
         {
-            if (eventId != ManagedUpdate.EventIds.Update) return;
+            if (eventId != Loops.ManagedUpdate.EventIds.Update) return;
 
             UpdateList(BetterTime.Time, EntriesScaled);
             UpdateList(BetterTime.UnscaledTime, EntriesUnscaled);

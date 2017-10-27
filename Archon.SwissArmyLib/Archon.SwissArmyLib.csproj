@@ -69,7 +69,8 @@
     <Compile Include="Coroutines\BetterCoroutine.cs" />
     <Compile Include="Coroutines\BetterCoroutinesExtensions.cs" />
     <Compile Include="Coroutines\IPoolableYieldInstruction.cs" />
-    <Compile Include="Coroutines\UpdateLoop.cs" />
+    <Compile Include="Events\Loops\ICustomUpdateLoop.cs" />
+    <Compile Include="Utils\UpdateLoop.cs" />
     <Compile Include="Coroutines\WaitForAsyncOperation.cs" />
     <Compile Include="Coroutines\WaitForSecondsLite.cs" />
     <Compile Include="Coroutines\WaitForSecondsRealtimeLite.cs" />
@@ -77,11 +78,14 @@
     <Compile Include="Coroutines\WaitUntilLite.cs" />
     <Compile Include="Coroutines\WaitWhileLite.cs" />
     <Compile Include="Events\BuiltinEventIds.cs" />
+    <Compile Include="Events\Loops\CustomUpdateLoopBase.cs" />
     <Compile Include="Events\Event.cs" />
+    <Compile Include="Events\Loops\FrameIntervalUpdateLoop.cs" />
     <Compile Include="Events\GlobalEvents.cs" />
     <Compile Include="Events\IEventListener.cs" />
-    <Compile Include="Events\ManagedUpdate.cs" />
-    <Compile Include="Events\ManagedUpdateBehaviour.cs" />
+    <Compile Include="Events\Loops\ManagedUpdate.cs" />
+    <Compile Include="Events\Loops\ManagedUpdateBehaviour.cs" />
+    <Compile Include="Events\Loops\TimeIntervalUpdateLoop.cs" />
     <Compile Include="Gravity\GravitationalEntity.cs" />
     <Compile Include="Gravity\IGravitationalAffecter.cs" />
     <Compile Include="Gravity\SphericalGravitationalPoint.cs" />

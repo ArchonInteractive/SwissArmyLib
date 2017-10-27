@@ -11,9 +11,7 @@
         public const int
             Update = -1000,
             LateUpdate = -1001,
-            FixedUpdate = -1002,
-            FrameIntervalUpdate = -1003,
-            TimeIntervalUpdate = -1004;
+            FixedUpdate = -1002;
 
         /// <summary>
         ///     ResourcePool

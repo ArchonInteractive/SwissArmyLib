@@ -3,6 +3,7 @@ using System.Collections;
 using System.Collections.Generic;
 using Archon.SwissArmyLib.Collections;
 using Archon.SwissArmyLib.Events;
+using Archon.SwissArmyLib.Events.Loops;
 using Archon.SwissArmyLib.Pooling;
 using Archon.SwissArmyLib.Utils;
 using JetBrains.Annotations;
