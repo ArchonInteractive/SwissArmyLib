@@ -2,6 +2,7 @@
 using System.Collections.ObjectModel;
 using Archon.SwissArmyLib.Collections;
 using UnityEngine;
+using Object = UnityEngine.Object;
 
 namespace Archon.SwissArmyLib.Events
 {
@@ -172,10 +173,11 @@ namespace Archon.SwissArmyLib.Events
             var listenerCount = _listeners.Count;
             for (var i = 0; i < listenerCount; i++)
             {
+                var listener = _listeners[i].Item;
+
                 // gotta wrap it up so one guy doesn't spoil it for everyone
                 try
                 {
-                    var listener = _listeners[i].Item;
                     if (listener.InterfaceListener != null)
                         listener.InterfaceListener.OnEvent(_id);
                     else
@@ -184,7 +186,13 @@ namespace Archon.SwissArmyLib.Events
                 catch (Exception e)
                 {
                     if (!SuppressExceptions)
-                        Debug.LogError(e);
+                    {
+                        var context = listener.InterfaceListener as Object;
+                        if (context != null)
+                            Debug.LogException(e, context);
+                        else
+                            Debug.LogException(e);
+                    }
                 }
             }
             _isIterating = false;

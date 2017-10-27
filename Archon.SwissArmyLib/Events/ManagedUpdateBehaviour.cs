@@ -97,7 +97,7 @@ namespace Archon.SwissArmyLib.Events
                 && _frameIntervalUpdateable == null
                 && _timeIntervalUpdateable == null)
             {
-                Debug.LogWarning("This component doesn't implement any update interfaces.");
+                Debug.LogWarning("This component doesn't implement any update interfaces.", this);
             }
 
             _startWasCalled = true;
