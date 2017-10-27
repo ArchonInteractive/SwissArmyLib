@@ -49,6 +49,7 @@ namespace Archon.SwissArmyLib.Events.Loops
         public static readonly Event OnFixedUpdate = new Event(EventIds.FixedUpdate);
 
         private static Dictionary<int, ICustomUpdateLoop> _idToUpdateLoop;
+        private static Dictionary<int, UpdateLoop> _idToUnityUpdateLoop;
         private static Dictionary<UpdateLoop, PrioritizedList<ICustomUpdateLoop>> _customUpdateLoops;
 
         /// <summary>
@@ -95,6 +96,7 @@ namespace Archon.SwissArmyLib.Events.Loops
             if (_idToUpdateLoop == null)
             {
                 _idToUpdateLoop = new Dictionary<int, ICustomUpdateLoop>(4);
+                _idToUnityUpdateLoop = new Dictionary<int, UpdateLoop>(4);
                 _customUpdateLoops = new Dictionary<UpdateLoop, PrioritizedList<ICustomUpdateLoop>>(3);
             }
 
@@ -111,6 +113,7 @@ namespace Archon.SwissArmyLib.Events.Loops
             }
 
             _idToUpdateLoop[id] = updateLoop;
+            _idToUnityUpdateLoop[id] = parentLoop;
             customLoops.Add(updateLoop, priority);
         }
 
@@ -118,31 +121,37 @@ namespace Archon.SwissArmyLib.Events.Loops
         /// Removes a custom update loop.
         /// </summary>
         /// <param name="updateLoop">The update loop to remove.</param>
-        /// <param name="parentLoop">Which Unity update loop is it part of?</param>
-        public static void RemoveCustomUpdateLoop(ICustomUpdateLoop updateLoop, UpdateLoop parentLoop = UpdateLoop.Update)
+        public static void RemoveCustomUpdateLoop(ICustomUpdateLoop updateLoop)
         {
             if (_customUpdateLoops == null)
                 return;
 
-            PrioritizedList<ICustomUpdateLoop> customLoops;
-            if (!_customUpdateLoops.TryGetValue(parentLoop, out customLoops))
+            var id = updateLoop.Event.Id;
+
+            UpdateLoop unityUpdateLoop;
+            if (!_idToUnityUpdateLoop.TryGetValue(id, out unityUpdateLoop))
                 return;
 
+            PrioritizedList<ICustomUpdateLoop> customLoops;
+            if (!_customUpdateLoops.TryGetValue(unityUpdateLoop, out customLoops))
+                return;
+
+
             customLoops.Remove(updateLoop);
-            _idToUpdateLoop.Remove(updateLoop.Event.Id);
+            _idToUpdateLoop.Remove(id);
+            _idToUnityUpdateLoop.Remove(id);
         }
 
         /// <summary>
         /// Removes a custom update loop with the given event id.
         /// </summary>
         /// <param name="eventId">The event id that the custom update loop uses.</param>
-        /// <param name="parentLoop">Which Unity update loop is it part of?</param>
-        public static void RemoveCustomUpdateLoop(int eventId, UpdateLoop parentLoop = UpdateLoop.Update)
+        public static void RemoveCustomUpdateLoop(int eventId)
         {
             var updateLoop = GetCustomUpdateLoop(eventId);
 
             if (updateLoop != null)
-                RemoveCustomUpdateLoop(updateLoop, parentLoop);
+                RemoveCustomUpdateLoop(updateLoop);
         }
 
         /// <summary>
@@ -260,6 +269,23 @@ namespace Archon.SwissArmyLib.Events.Loops
             OnFixedUpdate.Invoke();
 
             ProcessCustomLoops(UpdateLoop.FixedUpdate);
+        }
+
+        internal static UpdateLoop GetParentLoopForid(int eventId)
+        {
+            switch (eventId)
+            {
+                case EventIds.Update:
+                    return UpdateLoop.Update;
+                case EventIds.LateUpdate:
+                    return UpdateLoop.LateUpdate;
+                case EventIds.FixedUpdate:
+                    return UpdateLoop.FixedUpdate;
+                default:
+                    UpdateLoop updateLoop;
+                    _idToUnityUpdateLoop.TryGetValue(eventId, out updateLoop);
+                    return updateLoop;
+            }
         }
 
         private static void ProcessCustomLoops(UpdateLoop unityLoop)

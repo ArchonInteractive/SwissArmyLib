@@ -1,6 +1,6 @@
 using System.Collections;
+using Archon.SwissArmyLib.Events.Loops;
 using Archon.SwissArmyLib.Pooling;
-using Archon.SwissArmyLib.Utils;
 using UnityEngine;
 
 namespace Archon.SwissArmyLib.Coroutines
@@ -11,7 +11,7 @@ namespace Archon.SwissArmyLib.Coroutines
         internal bool IsDone;
         internal bool IsPaused;
         internal bool IsParentPaused;
-        internal UpdateLoop UpdateLoop;
+        internal int UpdateLoopId;
         internal IEnumerator Enumerator;
         internal BetterCoroutine Parent;
         internal BetterCoroutine Child;
@@ -40,7 +40,7 @@ namespace Archon.SwissArmyLib.Coroutines
             IsDone = false;
             IsPaused = false;
             IsParentPaused = false;
-            UpdateLoop = UpdateLoop.Update;
+            UpdateLoopId = ManagedUpdate.EventIds.Update;
             Enumerator = null;
             Parent = null;
             Child = null;

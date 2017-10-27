@@ -49,9 +49,7 @@ namespace Archon.SwissArmyLib.Coroutines
 
         private static readonly Pool<LinkedListNode<BetterCoroutine>> SharedNodePool = new Pool<LinkedListNode<BetterCoroutine>>(() => new LinkedListNode<BetterCoroutine>(null));
 
-        private static readonly PooledLinkedList<BetterCoroutine> CoroutinesUpdate = new PooledLinkedList<BetterCoroutine>(SharedNodePool);
-        private static readonly PooledLinkedList<BetterCoroutine> CoroutinesLateUpdate = new PooledLinkedList<BetterCoroutine>(SharedNodePool);
-        private static readonly PooledLinkedList<BetterCoroutine> CoroutinesFixedUpdate = new PooledLinkedList<BetterCoroutine>(SharedNodePool);
+        private static readonly Dictionary<int, PooledLinkedList<BetterCoroutine>> UpdateLoopToCoroutines = new Dictionary<int, PooledLinkedList<BetterCoroutine>>();
         private static readonly PooledLinkedList<BetterCoroutine> CoroutinesWaitingForEndOfFrame = new PooledLinkedList<BetterCoroutine>(SharedNodePool);
 
         private static LinkedListNode<BetterCoroutine> _current;
@@ -59,17 +57,18 @@ namespace Archon.SwissArmyLib.Coroutines
         private static readonly DictionaryWithDefault<int, BetterCoroutine> IdToCoroutine = new DictionaryWithDefault<int, BetterCoroutine>();
         private static int _nextId = 1;
 
+        private static readonly BetterCoroutines Instance = new BetterCoroutines();
+
         static BetterCoroutines()
         {
-            var instance = new BetterCoroutines();
-            ServiceLocator.RegisterSingleton(instance);
+            ServiceLocator.RegisterSingleton(Instance);
 
             if (!ServiceLocator.IsRegistered<BetterCoroutinesEndOfFrame>())
                 ServiceLocator.RegisterSingleton<BetterCoroutinesEndOfFrame>();
 
             ServiceLocator.GlobalReset += () =>
             {
-                ServiceLocator.RegisterSingleton(instance);
+                ServiceLocator.RegisterSingleton(Instance);
                 ServiceLocator.RegisterSingleton<BetterCoroutinesEndOfFrame>();
             };
         }
@@ -99,10 +98,21 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <returns>The id of the coroutine.</returns>
         public static int Start(IEnumerator enumerator, UpdateLoop updateLoop = UpdateLoop.Update)
         {
+            return Start(enumerator, GetEventId(updateLoop));
+        }
+
+        /// <summary>
+        /// Starts a new coroutine.
+        /// </summary>
+        /// <param name="enumerator"></param>
+        /// <param name="updateLoopId">Which update loop should the coroutine be part of?</param>
+        /// <returns>The id of the coroutine.</returns>
+        public static int Start(IEnumerator enumerator, int updateLoopId)
+        {
             if (ReferenceEquals(enumerator, null))
                 throw new ArgumentNullException("enumerator");
 
-            var coroutine = SpawnCoroutine(enumerator, updateLoop);
+            var coroutine = SpawnCoroutine(enumerator, updateLoopId);
 
             Start(coroutine);
 
@@ -117,7 +127,22 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <param name="linkedObject">Which gameobject to link the coroutine's lifetime with.</param>
         /// <param name="updateLoop">Which update loop should the coroutine be part of?</param>
         /// <returns>The id of the coroutine.</returns>
-        public static int Start(IEnumerator enumerator, GameObject linkedObject, UpdateLoop updateLoop = UpdateLoop.Update)
+        public static int Start(IEnumerator enumerator, GameObject linkedObject,
+            UpdateLoop updateLoop = UpdateLoop.Update)
+        {
+            return Start(enumerator, linkedObject, GetEventId(updateLoop));
+        }
+
+        /// <summary>
+        /// Starts a new coroutine and links its lifetime to a gameobject.
+        /// The coroutine will be stopped when the linked gameobject is disabled or destroyed.
+        /// </summary>
+        /// <param name="enumerator"></param>
+        /// <param name="linkedObject">Which gameobject to link the coroutine's lifetime with.</param>
+        /// <param name="updateLoopId">Which update loop should the coroutine be part of?</param>
+        /// <returns>The id of the coroutine.</returns>
+        public static int Start(IEnumerator enumerator, GameObject linkedObject,
+            int updateLoopId)
         {
             if (ReferenceEquals(enumerator, null))
                 throw new ArgumentNullException("enumerator");
@@ -125,7 +150,7 @@ namespace Archon.SwissArmyLib.Coroutines
             if (ReferenceEquals(linkedObject, null))
                 throw new ArgumentNullException("linkedObject");
 
-            var coroutine = SpawnCoroutine(enumerator, updateLoop);
+            var coroutine = SpawnCoroutine(enumerator, updateLoopId);
             coroutine.LinkedObject = linkedObject;
             coroutine.IsLinkedToObject = true;
 
@@ -142,7 +167,22 @@ namespace Archon.SwissArmyLib.Coroutines
         /// <param name="linkedComponent">Which component to link the coroutine's lifetime with.</param>
         /// <param name="updateLoop">Which update loop should the coroutine be part of?</param>
         /// <returns>The id of the coroutine.</returns>
-        public static int Start(IEnumerator enumerator, MonoBehaviour linkedComponent, UpdateLoop updateLoop = UpdateLoop.Update)
+        public static int Start(IEnumerator enumerator, MonoBehaviour linkedComponent,
+            UpdateLoop updateLoop = UpdateLoop.Update)
+        {
+            return Start(enumerator, linkedComponent, GetEventId(updateLoop));
+        }
+
+        /// <summary>
+        /// Starts a new coroutine and links its lifetime to a component.
+        /// The coroutine will be stopped when the linked component is disabled or destroyed.
+        /// </summary>
+        /// <param name="enumerator"></param>
+        /// <param name="linkedComponent">Which component to link the coroutine's lifetime with.</param>
+        /// <param name="updateLoopId">Which update loop should the coroutine be part of?</param>
+        /// <returns>The id of the coroutine.</returns>
+        public static int Start(IEnumerator enumerator, MonoBehaviour linkedComponent,
+            int updateLoopId)
         {
             if (ReferenceEquals(enumerator, null))
                 throw new ArgumentNullException("enumerator");
@@ -150,7 +190,7 @@ namespace Archon.SwissArmyLib.Coroutines
             if (ReferenceEquals(linkedComponent, null))
                 throw new ArgumentNullException("linkedComponent");
 
-            var coroutine = SpawnCoroutine(enumerator, updateLoop);
+            var coroutine = SpawnCoroutine(enumerator, updateLoopId);
             coroutine.LinkedComponent = linkedComponent;
             coroutine.IsLinkedToComponent = true;
 
@@ -161,12 +201,17 @@ namespace Archon.SwissArmyLib.Coroutines
 
         private static void Start(BetterCoroutine coroutine)
         {
-            var scaledTime = GetTime(coroutine.UpdateLoop, false);
-            var unscaledTime = GetTime(coroutine.UpdateLoop, true);
+            var scaledTime = GetTime(coroutine.UpdateLoopId, false);
+            var unscaledTime = GetTime(coroutine.UpdateLoopId, true);
 
             IdToCoroutine[coroutine.Id] = coroutine;
 
-            var list = GetList(coroutine.UpdateLoop);
+            var list = GetList(coroutine.UpdateLoopId);
+            if (list == null)
+            {
+                UpdateLoopToCoroutines[coroutine.UpdateLoopId] = list = new PooledLinkedList<BetterCoroutine>(SharedNodePool);
+                ManagedUpdate.AddListener(coroutine.UpdateLoopId, Instance);
+            }
 
             var node = list.AddFirst(coroutine);
 
@@ -188,7 +233,7 @@ namespace Archon.SwissArmyLib.Coroutines
 
         private static void StartChild(IEnumerator enumerator, BetterCoroutine parent)
         {
-            var child = SpawnCoroutine(enumerator, parent.UpdateLoop);
+            var child = SpawnCoroutine(enumerator, parent.UpdateLoopId);
             child.Parent = parent;
             parent.Child = child;
             Start(child);
@@ -308,9 +353,8 @@ namespace Archon.SwissArmyLib.Coroutines
         /// </summary>
         public static void StopAll()
         {
-            StopAll(UpdateLoop.Update);
-            StopAll(UpdateLoop.LateUpdate);
-            StopAll(UpdateLoop.FixedUpdate);
+            foreach (var updateLoop in UpdateLoopToCoroutines.Keys)
+                StopAll(updateLoop);
         }
 
         /// <summary>
@@ -318,8 +362,20 @@ namespace Archon.SwissArmyLib.Coroutines
         /// </summary>
         public static void StopAll(UpdateLoop updateLoop)
         {
-            var coroutines = GetList(updateLoop);
-            var isInUpdate = _current != null && _current.Value.UpdateLoop == updateLoop;
+            StopAll(GetEventId(updateLoop));
+        }
+
+        /// <summary>
+        /// Stops all coroutines that are running in the specified update loop.
+        /// </summary>
+        public static void StopAll(int updateLoopId)
+        {
+            var coroutines = GetList(updateLoopId);
+
+            if (coroutines == null)
+                return;
+
+            var isInUpdate = _current != null && _current.Value.UpdateLoopId == updateLoopId;
 
             var current = coroutines.First;
             while (current != null)
@@ -418,12 +474,12 @@ namespace Archon.SwissArmyLib.Coroutines
             return WaitWhileLite.Create(predicate);
         }
 
-        private static BetterCoroutine SpawnCoroutine(IEnumerator enumerator, UpdateLoop updateLoop)
+        private static BetterCoroutine SpawnCoroutine(IEnumerator enumerator, int updateLoopId)
         {
             var coroutine = PoolHelper<BetterCoroutine>.Spawn();
             coroutine.Id = GetNextId();
             coroutine.Enumerator = enumerator;
-            coroutine.UpdateLoop = updateLoop;
+            coroutine.UpdateLoopId = updateLoopId;
             return coroutine;
         }
 
@@ -435,19 +491,11 @@ namespace Archon.SwissArmyLib.Coroutines
             return _nextId++;
         }
 
-        private static PooledLinkedList<BetterCoroutine> GetList(UpdateLoop updateLoop)
+        private static PooledLinkedList<BetterCoroutine> GetList(int updateLoopId)
         {
-            switch (updateLoop)
-            {
-                case UpdateLoop.Update:
-                    return CoroutinesUpdate;
-                case UpdateLoop.LateUpdate:
-                    return CoroutinesLateUpdate;
-                case UpdateLoop.FixedUpdate:
-                    return CoroutinesFixedUpdate;
-                default:
-                    throw new ArgumentOutOfRangeException("updateLoop", updateLoop, null);
-            }
+            PooledLinkedList<BetterCoroutine> list;
+            UpdateLoopToCoroutines.TryGetValue(updateLoopId, out list);
+            return list;
         }
 
         private static void Update(PooledLinkedList<BetterCoroutine> coroutines)
@@ -585,25 +633,32 @@ namespace Archon.SwissArmyLib.Coroutines
 
         void IEventListener.OnEvent(int eventId)
         {
-            switch (eventId)
+            PooledLinkedList<BetterCoroutine> coroutineList;
+            if (UpdateLoopToCoroutines.TryGetValue(eventId, out coroutineList))
+                Update(coroutineList);
+        }
+
+        private static int GetEventId(UpdateLoop updateLoop)
+        {
+            switch (updateLoop)
             {
-                case ManagedUpdate.EventIds.Update:
-                    Update(CoroutinesUpdate);
-                    return;
-                case ManagedUpdate.EventIds.LateUpdate:
-                    Update(CoroutinesLateUpdate);
-                    return;
-                case ManagedUpdate.EventIds.FixedUpdate:
-                    Update(CoroutinesFixedUpdate);
-                    return;
+                case UpdateLoop.Update:
+                    return ManagedUpdate.EventIds.Update;
+                case UpdateLoop.LateUpdate:
+                    return ManagedUpdate.EventIds.LateUpdate;
+                case UpdateLoop.FixedUpdate:
+                    return ManagedUpdate.EventIds.FixedUpdate;
+                default:
+                    throw new ArgumentOutOfRangeException("updateLoop", updateLoop, null);
             }
         }
 
-        private static float GetTime(UpdateLoop updateLoop, bool unscaled)
+        private static float GetTime(int updateLoopId, bool unscaled)
         {
             float currentTime;
 
-            if (updateLoop == UpdateLoop.FixedUpdate)
+            if (updateLoopId == ManagedUpdate.EventIds.FixedUpdate 
+                || ManagedUpdate.GetParentLoopForid(updateLoopId) == UpdateLoop.FixedUpdate)
             {
                 currentTime = unscaled
                     ? BetterTime.FixedUnscaledTime
@@ -631,8 +686,8 @@ namespace Archon.SwissArmyLib.Coroutines
                 {
                     routine.WaitingForEndOfFrame = false;
 
-                    var scaledTime = GetTime(routine.UpdateLoop, false);
-                    var unscaledTime = GetTime(routine.UpdateLoop, true);
+                    var scaledTime = GetTime(routine.UpdateLoopId, false);
+                    var unscaledTime = GetTime(routine.UpdateLoopId, true);
 
                     var shouldContinue = UpdateCoroutine(scaledTime, unscaledTime, routine);
 
