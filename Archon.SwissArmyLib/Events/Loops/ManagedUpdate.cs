@@ -50,7 +50,7 @@ namespace Archon.SwissArmyLib.Events.Loops
 
         private static Dictionary<int, ICustomUpdateLoop> _idToUpdateLoop;
         private static Dictionary<int, UpdateLoop> _idToUnityUpdateLoop;
-        private static Dictionary<UpdateLoop, PrioritizedList<ICustomUpdateLoop>> _customUpdateLoops;
+        private static Dictionary<int, PrioritizedList<ICustomUpdateLoop>> _customUpdateLoops;
 
         /// <summary>
         /// Gets the difference in seconds since the previous update of the currently running type. (Scaled according to <see cref="Time.timeScale"/>)
@@ -97,12 +97,12 @@ namespace Archon.SwissArmyLib.Events.Loops
             {
                 _idToUpdateLoop = new Dictionary<int, ICustomUpdateLoop>(4);
                 _idToUnityUpdateLoop = new Dictionary<int, UpdateLoop>(4);
-                _customUpdateLoops = new Dictionary<UpdateLoop, PrioritizedList<ICustomUpdateLoop>>(3);
+                _customUpdateLoops = new Dictionary<int, PrioritizedList<ICustomUpdateLoop>>(3);
             }
 
             PrioritizedList<ICustomUpdateLoop> customLoops;
-            if (!_customUpdateLoops.TryGetValue(parentLoop, out customLoops))
-                _customUpdateLoops[parentLoop] = customLoops = new PrioritizedList<ICustomUpdateLoop>(4);
+            if (!_customUpdateLoops.TryGetValue((int)parentLoop, out customLoops))
+                _customUpdateLoops[(int)parentLoop] = customLoops = new PrioritizedList<ICustomUpdateLoop>(4);
 
             var id = updateLoop.Event.Id;
 
@@ -133,7 +133,7 @@ namespace Archon.SwissArmyLib.Events.Loops
                 return;
 
             PrioritizedList<ICustomUpdateLoop> customLoops;
-            if (!_customUpdateLoops.TryGetValue(unityUpdateLoop, out customLoops))
+            if (!_customUpdateLoops.TryGetValue((int)unityUpdateLoop, out customLoops))
                 return;
 
 
@@ -293,7 +293,7 @@ namespace Archon.SwissArmyLib.Events.Loops
             if (_customUpdateLoops == null) return;
 
             PrioritizedList<ICustomUpdateLoop> customLoops;
-            if (!_customUpdateLoops.TryGetValue(unityLoop, out customLoops))
+            if (!_customUpdateLoops.TryGetValue((int)unityLoop, out customLoops))
                 return;
 
             for (var i = 0; i < customLoops.Count; i++)

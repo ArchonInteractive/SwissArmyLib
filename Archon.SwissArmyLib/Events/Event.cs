@@ -209,7 +209,7 @@ namespace Archon.SwissArmyLib.Events
         /// <summary>
         /// Represents either a delegate or interface listener.
         /// </summary>
-        public struct Listener
+        public struct Listener : IEquatable<Listener>
         {
             /// <summary>
             /// Gets this listener's delegate reference.
@@ -231,6 +231,40 @@ namespace Archon.SwissArmyLib.Events
             {
                 InterfaceListener = listener;
                 DelegateListener = null;
+            }
+
+            /// <inheritdoc />
+            public bool Equals(Listener other)
+            {
+                return ReferenceEquals(DelegateListener, other.DelegateListener) &&
+                       ReferenceEquals(InterfaceListener, other.InterfaceListener);
+            }
+
+            /// <inheritdoc />
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                return obj is Listener && Equals((Listener) obj);
+            }
+
+            /// <inheritdoc />
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return ((DelegateListener != null ? DelegateListener.GetHashCode() : 0) * 397) ^
+                           (InterfaceListener != null ? InterfaceListener.GetHashCode() : 0);
+                }
+            }
+
+            public static bool operator ==(Listener left, Listener right)
+            {
+                return left.Equals(right);
+            }
+
+            public static bool operator !=(Listener left, Listener right)
+            {
+                return !left.Equals(right);
             }
         }
     }
@@ -431,7 +465,7 @@ namespace Archon.SwissArmyLib.Events
         /// <summary>
         /// Represents either a delegate or interface listener.
         /// </summary>
-        public struct Listener
+        public struct Listener : IEquatable<Listener>
         {
             /// <summary>
             /// Gets this listener's delegate reference.
@@ -453,6 +487,40 @@ namespace Archon.SwissArmyLib.Events
             {
                 InterfaceListener = listener;
                 DelegateListener = null;
+            }
+
+            /// <inheritdoc />
+            public bool Equals(Listener other)
+            {
+                return ReferenceEquals(DelegateListener, other.DelegateListener) &&
+                       ReferenceEquals(InterfaceListener, other.InterfaceListener);
+            }
+
+            /// <inheritdoc />
+            public override bool Equals(object obj)
+            {
+                if (ReferenceEquals(null, obj)) return false;
+                return obj is Listener && Equals((Listener) obj);
+            }
+
+            /// <inheritdoc />
+            public override int GetHashCode()
+            {
+                unchecked
+                {
+                    return ((DelegateListener != null ? DelegateListener.GetHashCode() : 0) * 397) ^
+                           (InterfaceListener != null ? InterfaceListener.GetHashCode() : 0);
+                }
+            }
+
+            public static bool operator ==(Listener left, Listener right)
+            {
+                return left.Equals(right);
+            }
+
+            public static bool operator !=(Listener left, Listener right)
+            {
+                return !left.Equals(right);
             }
         }
     }

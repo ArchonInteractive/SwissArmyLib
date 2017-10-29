@@ -13,12 +13,12 @@ namespace Archon.SwissArmyLib.Collections
         /// <summary>
         /// The item that is prioritized.
         /// </summary>
-        public T Item;
+        public readonly T Item;
 
         /// <summary>
         /// The priority of the item.
         /// </summary>
-        public int Priority;
+        public readonly int Priority;
 
         /// <summary>
         /// Creates a new prioritized item.
@@ -29,6 +29,7 @@ namespace Archon.SwissArmyLib.Collections
             Priority = priority;
         }
 
+        /// <inheritdoc />
         public bool Equals(PrioritizedItem<T> other)
         {
             if (default(T) == null)
@@ -37,12 +38,14 @@ namespace Archon.SwissArmyLib.Collections
             return EqualityComparer<T>.Default.Equals(Item, other.Item);
         }
 
+        /// <inheritdoc />
         public override bool Equals(object obj)
         {
             if (ReferenceEquals(null, obj)) return false;
             return obj is PrioritizedItem<T> && Equals((PrioritizedItem<T>) obj);
         }
 
+        /// <inheritdoc />
         public override int GetHashCode()
         {
             return EqualityComparer<T>.Default.GetHashCode(Item);
@@ -199,7 +202,19 @@ namespace Archon.SwissArmyLib.Collections
         /// <returns>True if found and removed, false otherwise.</returns>
         public bool Remove(PrioritizedItem<T> item)
         {
-            return _items.Remove(item);
+            var comparer = EqualityComparer<PrioritizedItem<T>>.Default;
+
+            var itemCount = _items.Count;
+            for (var i = 0; i < itemCount; i++)
+            {
+                if (comparer.Equals(item, _items[i]))
+                {
+                    _items.RemoveAt(i);
+                    return true;
+                }
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -209,10 +224,12 @@ namespace Archon.SwissArmyLib.Collections
         /// <returns>True if found and removed, false otherwise.</returns>
         public bool Remove(T item)
         {
+            var comparer = EqualityComparer<T>.Default;
+
             var itemCount = _items.Count;
             for (var i = 0; i < itemCount; i++)
             {
-                if (_items[i].Item.Equals(item))
+                if (comparer.Equals(item, _items[i].Item))
                 {
                     _items.RemoveAt(i);
                     return true;
@@ -246,7 +263,16 @@ namespace Archon.SwissArmyLib.Collections
         /// <returns>True if found, false otherwise.</returns>
         public bool Contains(PrioritizedItem<T> item)
         {
-            return _items.Contains(item);
+            var comparer = EqualityComparer<PrioritizedItem<T>>.Default;
+
+            var itemCount = _items.Count;
+            for (var i = 0; i < itemCount; i++)
+            {
+                if (comparer.Equals(item, _items[i]))
+                    return true;
+            }
+
+            return false;
         }
 
         /// <summary>
@@ -256,10 +282,12 @@ namespace Archon.SwissArmyLib.Collections
         /// <returns>True if found, false otherwise.</returns>
         public bool Contains(T item)
         {
+            var comparer = EqualityComparer<T>.Default;
+
             var itemCount = _items.Count;
             for (var i = 0; i < itemCount; i++)
             {
-                if (_items[i].Item.Equals(item))
+                if (comparer.Equals(item, _items[i].Item))
                     return true;
             }
 
@@ -296,7 +324,15 @@ namespace Archon.SwissArmyLib.Collections
         /// <returns>The index of the item in the list or -1 if not found.</returns>
         public int IndexOf(PrioritizedItem<T> item)
         {
-            return _items.IndexOf(item);
+            var comparer = EqualityComparer<PrioritizedItem<T>>.Default;
+
+            for (var i = 0; i < _items.Count; i++)
+            {
+                if (comparer.Equals(item, _items[i]))
+                    return i;
+            }
+
+            return -1;
         }
 
         /// <summary>
@@ -306,9 +342,11 @@ namespace Archon.SwissArmyLib.Collections
         /// <returns>The index of the item in the list or -1 if not found.</returns>
         public int IndexOf(T item)
         {
+            var comparer = EqualityComparer<T>.Default;
+
             for (var i = 0; i < _items.Count; i++)
             {
-                if (_items[i].Item.Equals(item))
+                if (comparer.Equals(item, _items[i].Item))
                     return i;
             }
 
