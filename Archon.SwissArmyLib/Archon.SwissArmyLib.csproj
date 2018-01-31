@@ -70,6 +70,7 @@
     <Compile Include="Coroutines\BetterCoroutinesExtensions.cs" />
     <Compile Include="Coroutines\IPoolableYieldInstruction.cs" />
     <Compile Include="Events\Loops\ICustomUpdateLoop.cs" />
+    <Compile Include="Utils\MainThreadDispatcher.cs" />
     <Compile Include="Utils\UpdateLoop.cs" />
     <Compile Include="Coroutines\WaitForAsyncOperation.cs" />
     <Compile Include="Coroutines\WaitForSecondsLite.cs" />
