@@ -75,19 +75,7 @@ namespace Archon.SwissArmyLib.Coroutines
 
         private BetterCoroutines()
         {
-            ManagedUpdate.OnUpdate.AddListener(this, int.MinValue);
-            ManagedUpdate.OnLateUpdate.AddListener(this, int.MinValue);
-            ManagedUpdate.OnFixedUpdate.AddListener(this, int.MinValue);
-        }
 
-        /// <summary>
-        /// Destructor.
-        /// </summary>
-        ~BetterCoroutines()
-        {
-            ManagedUpdate.OnUpdate.RemoveListener(this);
-            ManagedUpdate.OnLateUpdate.RemoveListener(this);
-            ManagedUpdate.OnFixedUpdate.RemoveListener(this);
         }
 
         /// <summary>
