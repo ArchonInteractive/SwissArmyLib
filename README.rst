@@ -15,7 +15,7 @@ SwissArmyLib
     :alt: Download
     :target: https://bintray.com/phault/SwissArmyLib/development/_latestVersion#files
 
-`API Reference <https://archoninteractive.com/swissarmylib/>`_
+`API Reference <https://casperlindschouw.com/swissarmylib/>`_
 
 ----
 
