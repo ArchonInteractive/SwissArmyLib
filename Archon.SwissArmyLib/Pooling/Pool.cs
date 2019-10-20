@@ -52,7 +52,7 @@ namespace Archon.SwissArmyLib.Pooling
                 Free.Capacity = targetCount;
 
             for (var i = 0; i < targetCount && Free.Count < targetCount; i++)
-                Free.Add(_factory());
+                Despawn(_factory());
         }
 
         /// <summary>
