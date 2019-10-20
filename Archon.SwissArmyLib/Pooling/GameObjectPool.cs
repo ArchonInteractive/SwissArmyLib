@@ -87,8 +87,11 @@ namespace Archon.SwissArmyLib.Pooling
 
             var gameObject = GetGameObject(obj);
             gameObject.transform.SetParent(null, false);
+
             if (_multiScene)
                 SceneManager.MoveGameObjectToScene(gameObject, SceneManager.GetActiveScene());
+
+            gameObject.SetActive(true);
 
             return obj;
         }
